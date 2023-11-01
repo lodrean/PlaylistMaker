@@ -14,39 +14,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:orientation="horizontal"
         android:paddingStart="4dp"
         android:paddingTop="4dp"
         android:paddingEnd="52dp"
-        android:paddingBottom="4dp"
-        android:orientation="horizontal">
+        android:paddingBottom="4dp">
 
-            <Button
-                android:id="@+id/back"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/white"
-                app:icon="@drawable/arrow_back"
-                app:iconTint="@color/YP_black"
-                />
+        <Button
+            android:id="@+id/back"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            app:icon="@drawable/arrow_back"
+            app:iconTint="@color/YP_black" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:fontFamily="sans-serif-medium"
-                android:paddingStart="12dp"
-                android:paddingTop="10dp"
-                android:text="@string/settings"
-                android:textColor="@color/YP_black"
-                android:textSize="@dimen/medium_text_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:paddingStart="12dp"
+            android:paddingTop="8dp"
+            android:text="@string/settings"
+            android:textColor="@color/YP_black"
+            android:textSize="@dimen/medium_text_size" />
 
-            </TextView>
     </LinearLayout>
 
     <LinearLayout
@@ -72,21 +66,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_height"
             android:paddingStart="@dimen/settings_margin_left"
-            android:paddingEnd="@dimen/settings_margin_right"
-            android:paddingBottom="@dimen/settings_margin_bottom"
-
-            >
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/settings_height"
-                android:visibility="invisible" />
+            android:paddingTop="@dimen/settings_margin_top"
+            android:paddingEnd="@dimen/settings_margin_right">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:paddingTop="@dimen/settings_margin_top"
+                android:gravity="start"
                 android:text="@string/share_settings"
                 android:textColor="@color/black"
                 android:textSize="@dimen/settings_text_size" />
@@ -95,40 +82,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:contentDescription="TODO"
-                android:paddingTop="@dimen/settings_margin_top"
-                android:src="@drawable/share" />
-
+                android:src="@drawable/share"/>
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_height"
             android:paddingStart="@dimen/settings_margin_left"
+            android:paddingTop="@dimen/settings_margin_top"
             android:paddingEnd="@dimen/settings_margin_right">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/settings_height"
-                android:visibility="invisible" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:paddingTop="@dimen/settings_margin_top"
-                android:paddingBottom="@dimen/settings_margin_bottom"
                 android:text="@string/support_connect"
                 android:textColor="@color/black"
-
                 android:textSize="@dimen/settings_text_size" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:contentDescription="TODO"
-                android:paddingTop="@dimen/settings_margin_top"
                 android:src="@drawable/group" />
 
 
@@ -138,21 +113,13 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_height"
             android:paddingStart="@dimen/settings_margin_left"
-            android:paddingEnd="@dimen/settings_margin_right"
-
-            >
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/settings_height"
-                android:visibility="invisible" />
+            android:paddingTop="@dimen/settings_margin_top"
+            android:paddingEnd="@dimen/settings_margin_right">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:paddingTop="@dimen/settings_margin_top"
-                android:paddingBottom="@dimen/settings_margin_bottom"
                 android:text="@string/user_agreement"
                 android:textColor="@color/black"
                 android:textSize="@dimen/settings_text_size" />
@@ -161,8 +128,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:contentDescription="TODO"
-                android:paddingTop="@dimen/settings_margin_top"
                 android:src="@drawable/arrow__forward" />
 
         </FrameLayout>
