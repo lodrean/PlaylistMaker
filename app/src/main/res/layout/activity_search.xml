@@ -43,50 +43,28 @@
         android:layout_width="match_parent"
         android:layout_height="52dp">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="16dp"
-            android:src="@drawable/search_field">
-
-
-        </ImageView>
-
-        <ImageView
-            android:layout_width="12dp"
-            android:layout_height="16dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="28dp"
-            android:background="@color/YP_Light_Gray"
-            android:backgroundTint="@color/YP_Light_Gray"
-            android:src="@drawable/search"
-            app:tint="@color/YP_Text_Gray" />
-
         <EditText
             android:id="@+id/inputEditText"
+            style="@style/EditTextStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="52dp"
-            android:layout_marginEnd="56dp"
-            android:background="@null"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/search_field"
             android:contextClickable="true"
+            android:drawableStart="@drawable/search"
+            android:drawablePadding="8dp"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/search"
             android:inputType="text"
             android:maxLines="1"
+            android:paddingStart="12dp"
+            android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textColorHint="@color/YP_Text_Gray"
-            android:textCursorDrawable="@color/YP_Blue" />
+            android:textCursorDrawable="@color/YP_Blue"/>
 
-        <ImageView
-            style="@style/IconSearchStyle"
-            android:layout_width="16dp"
-            android:layout_height="14dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="28dp"
-            android:src="@drawable/search" />
+
 
         <ImageView
             android:id="@+id/clearIcon"

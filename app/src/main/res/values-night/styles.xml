@@ -53,7 +53,7 @@
         <item name="android:layout_height">48dp</item>
         <item name="iconGravity">textStart</item>
         <item name="android:backgroundTint">@color/YP_black</item>
-        <item name="iconTint">#FFFFFF</item>
+        <item name="iconTint">@color/white</item>
     </style>
 
     <style name="TextActivitySettings">
@@ -77,8 +77,8 @@
         <item name="android:orientation">vertical</item>
     </style>
     <style name="BrandedSwitch" parent="Theme.AppCompat.Light">
-        <item name="colorControlActivated">#3772E7</item>
-        <item name="colorSwitchThumbNormal">#9FBBF3</item>
+        <item name="colorControlActivated">@color/YP_Blue</item>
+        <item name="colorSwitchThumbNormal">@color/YP_Blue_Light</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">60dp</item>
         <item name="thumbTint">@color/YP_Blue</item>
@@ -96,6 +96,8 @@
     </style>
     <style name="EditTextStyle">
         <item name="android:textColorHint">@color/YP_black</item>
+        <item name="android:drawableTint">@color/YP_black</item>
+        <item name="android:backgroundTint">@color/white</item>
     </style>
 
 </resources>

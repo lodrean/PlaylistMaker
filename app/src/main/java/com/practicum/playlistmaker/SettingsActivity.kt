@@ -46,12 +46,12 @@ class SettingsActivity : AppCompatActivity() {
         }
 
 
-        val share_text_1_btn = findViewById<FrameLayout>(R.id.shareButton)
+        val shareButton = findViewById<FrameLayout>(R.id.shareButton)
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, getString(R.string.app_link))
         }
-        share_text_1_btn.setOnClickListener {
+        shareButton.setOnClickListener {
             startActivity(
                 Intent.createChooser(
                     shareIntent,
