@@ -4,88 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_blue"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:paddingHorizontal="16dp"
     app:layout_constraintDimensionRatio="1:1"
     tools:context=".MainActivity">
 
 
     <TextView
-
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_gravity="start"
+        style="@style/MessageTextStyle"
         android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="@dimen/medium_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
+        android:textColor="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
         android:paddingTop="24dp"
         android:paddingBottom="16dp">
 
 
         <Button
             android:id="@+id/search_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:fontFamily="sans-serif-medium"
-            android:padding="@dimen/main_button_padding"
+            style="@style/ButtonMainStyle"
             android:text="@string/search"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/YP_black"
-            android:textSize="@dimen/medium_text_size"
-            app:cornerRadius="@dimen/main_button_radius"
             app:icon="@drawable/search"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/icon_padding"
             app:iconTint="@color/YP_black" />
 
         <Button
             android:id="@+id/mediateka_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:fontFamily="sans-serif-medium"
-            android:padding="@dimen/main_button_padding"
+            style="@style/ButtonMainStyle"
             android:text="@string/mediateka"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/YP_black"
-            android:textSize="@dimen/medium_text_size"
-            app:cornerRadius="@dimen/main_button_radius"
             app:icon="@drawable/mediateka"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/icon_padding"
             app:iconTint="@color/YP_black" />
 
         <Button
             android:id="@+id/settings_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:fontFamily="sans-serif-medium"
-            android:padding="@dimen/main_button_padding"
+            style="@style/ButtonMainStyle"
             android:text="@string/settings"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/YP_black"
-            android:textSize="@dimen/medium_text_size"
-            app:cornerRadius="@dimen/main_button_radius"
             app:icon="@drawable/settings"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/icon_padding"
             app:iconTint="@color/YP_black" />
 
 

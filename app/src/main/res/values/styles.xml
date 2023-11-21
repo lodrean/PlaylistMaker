@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MessageTextStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="paddingStart">12dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <style name="ButtonMainStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:padding">@dimen/main_button_padding</item>
+        <item name="android:layout_marginVertical">4dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:textColor">@color/YP_black</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="cornerRadius">@dimen/main_button_radius</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/icon_padding</item>
+    </style>
+
+    <style name="FrameSetting">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:textColor">@color/black</item>
+        <!--<item name="iconTint">@color/YP_black</item>-->
+    </style>
+
+    <style name="TextSettingsStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:textColor">@color/YP_black</item>
+    </style>
+
+    <style name="BackSettingsButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+
+        <item name="iconTint">@color/YP_black</item>
+    </style>
+
+    <style name="TextActivitySettings">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/settings_text_size</item>
+        <item name="android:gravity">start</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="ImageSettingsStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="tint">@color/YP_Text_Gray</item>
+    </style>
+
+    <style name="SettingsActivityStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="BrandedSwitch">
+        <item name="colorControlActivated">@color/YP_Text_Gray</item>
+        <item name="colorSwitchThumbNormal">@color/YP_Light_Gray</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="thumbTint">@color/YP_Text_Gray</item>
+        <item name="trackTint">@color/YP_Light_Gray</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:textColor">@color/YP_black</item>
+    </style>
+
+    <style name="SearchField">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@color/YP_Text_Gray</item>
+        <item name="android:layout_marginHorizontal">16dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
+
+    <style name="IconSearchStyle">
+        <item name="tint">@color/YP_Text_Gray</item>
+        <item name="android:background">@color/YP_Light_Gray</item>
+    </style>
+
+    <style name="EditTextStyle">
+        <item name="android:textColorHint">@color/YP_Text_Gray</item>
+        <item name="android:drawableTint">@color/YP_Text_Gray</item>
+        <item name="android:backgroundTint">@color/YP_Light_Gray</item>
+    </style>
+</resources>
