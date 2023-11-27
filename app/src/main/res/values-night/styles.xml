@@ -94,10 +94,11 @@
         <item name="tint">@color/YP_black</item>
         <item name="android:background">@color/white</item>
     </style>
-    <style name="EditTextStyle">
+    <style name="SearchTextStyle">
         <item name="android:textColorHint">@color/YP_black</item>
         <item name="android:drawableTint">@color/YP_black</item>
         <item name="android:backgroundTint">@color/white</item>
     </style>
+
 
 </resources>
