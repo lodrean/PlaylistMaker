@@ -38,7 +38,9 @@ class TrackAdapter(private val tracks: List<Track>) :
             tvTrackName.text = model.trackName
             tvArtistName.text = model.artistName
             tvTrackTime.text = model.trackTime
-            Glide.with(this.itemView.context).load(model.artworkUrl100).fitCenter().dontAnimate()
+            Glide.with(this.itemView.context)
+                .load(model.artworkUrl100)
+                .fitCenter().dontAnimate()
                 .placeholder(R.drawable.placeholder)
                 .transform(RoundedCorners(dpToPx(8F, itemView.context))).into(ivArtwork)
         }
