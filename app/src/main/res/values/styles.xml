@@ -110,9 +110,28 @@
         <item name="android:background">@color/YP_Light_Gray</item>
     </style>
 
-    <style name="EditTextStyle">
+    <style name="SearchTextStyle">
         <item name="android:textColorHint">@color/YP_Text_Gray</item>
         <item name="android:drawableTint">@color/YP_Text_Gray</item>
         <item name="android:backgroundTint">@color/YP_Light_Gray</item>
     </style>
+    <style name="FontStyle">
+        <item name="font">?attr/main_font</item>
+
+    </style>
+    <style name="FontStyle.Track">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/text_color_primary</item>
+    </style>
+    <style name="FontStyle.Track.ArtistName">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">?attr/text_color_secondary</item>
+    </style>
+    <style name="Icon">
+        <item name="tint">?attr/text_color_secondary</item>
+    </style>
+
 </resources>
