@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/Theme.PlaylistMaker"
     android:layout_width="match_parent"
-    android:layout_height="61dp">
+    android:layout_height="64dp">
 <ImageView
     android:id="@+id/iv_artwork"
     android:layout_marginStart="13dp"
@@ -25,7 +25,7 @@
             android:id="@+id/tv_trackName"
             style="@style/FontStyle.Track"
             android:layout_width="match_parent"
-            android:layout_height="19dp"
+            android:layout_height="20dp"
             android:gravity="start"
             tools:text="Long text to demonstrate problemLong text to demonstrate problem" />
 
