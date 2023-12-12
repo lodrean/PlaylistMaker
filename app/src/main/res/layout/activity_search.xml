@@ -57,13 +57,14 @@
             android:drawablePadding="8dp"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/search"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
             android:paddingStart="12dp"
+            android:singleLine="true"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textCursorDrawable="@color/YP_Blue"/>
-
+            android:textCursorDrawable="@color/YP_Blue" />
 
 
         <ImageView
@@ -75,14 +76,59 @@
             android:layout_marginTop="18dp"
             android:layout_marginEnd="28dp"
             android:src="@drawable/baseline_close_24"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchRecyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_track" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_track" />
+
+        <LinearLayout
+            android:id="@+id/placeholderView"
+            android:layout_width="312dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="102dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/placeholderIV"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                tools:src="@drawable/placeholder_not_find" />
+
+            <TextView
+                android:id="@+id/placeholderTV"
+                style="@style/FontStyle.Placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_horizontal" />
+
+            <Button
+
+                android:id="@+id/refreshButton"
+                style="@style/RefreshButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/refresh"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
 
 </LinearLayout>

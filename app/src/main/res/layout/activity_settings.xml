@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/Theme.PlaylistMaker"
     style="@style/SettingsActivityStyle"
+    android:theme="@style/Theme.PlaylistMaker"
     app:layout_constraintDimensionRatio="1:1"
     tools:context=".MainActivity">
 
@@ -29,10 +29,10 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:fontFamily="@font/ys_display_medium"
-            android:textFontWeight="500"
             android:paddingStart="14dp"
             android:paddingTop="10dp"
             android:text="@string/settings"
+            android:textFontWeight="500"
             android:textSize="@dimen/medium_text_size" />
 
     </LinearLayout>
@@ -47,7 +47,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/themeSwitch"
             style="@style/BrandedSwitch"
-            android:text="@string/dark_theme"/>
+            android:text="@string/dark_theme" />
 
         <FrameLayout
             android:id="@+id/shareButton"
@@ -61,7 +61,7 @@
 
             <ImageView
                 style="@style/ImageSettingsStyle"
-                android:src="@drawable/share"/>
+                android:src="@drawable/share" />
         </FrameLayout>
 
         <FrameLayout
@@ -70,7 +70,7 @@
 
             <TextView
                 style="@style/TextActivitySettings"
-                android:text="@string/support_connect"/>
+                android:text="@string/support_connect" />
 
             <ImageView
                 style="@style/ImageSettingsStyle"

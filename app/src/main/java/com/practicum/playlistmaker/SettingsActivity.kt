@@ -19,8 +19,10 @@ class SettingsActivity : AppCompatActivity() {
 
         var themeSwitch = findViewById<SwitchCompat>(R.id.themeSwitch)
 
-        val DarkModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK// Retrieve the Mode of the App.
-        val isDarkModeOn = DarkModeFlags == Configuration.UI_MODE_NIGHT_YES//Check if the Dark Mode is On
+        val DarkModeFlags =
+            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK// Retrieve the Mode of the App.
+        val isDarkModeOn =
+            DarkModeFlags == Configuration.UI_MODE_NIGHT_YES//Check if the Dark Mode is On
         if (isDarkModeOn) {
             themeSwitch.setChecked(true)
         }

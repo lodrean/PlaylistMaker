@@ -1,10 +1,10 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,14 +14,16 @@ class MainActivity : AppCompatActivity() {
         val mediaButton = findViewById<Button>(R.id.mediateka_button)
         val settingsButton = findViewById<Button>(R.id.settings_button)
 
-        searchButton.setOnClickListener {startActivity(Intent(this, SearchActivity::class.java))
+        searchButton.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
         }
         val mediaClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
-               startActivity(Intent(this@MainActivity, MediatekaActivity::class.java))
+                startActivity(Intent(this@MainActivity, MediatekaActivity::class.java))
             }
         }
-       settingsButton.setOnClickListener {startActivity(Intent(this, SettingsActivity::class.java))
+        settingsButton.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
         mediaButton.setOnClickListener(mediaClickListener)
     }

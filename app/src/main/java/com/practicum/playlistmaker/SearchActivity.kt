@@ -4,57 +4,49 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.searchretrofit.ItunesApi
+import com.practicum.playlistmaker.searchretrofit.TracksResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    val trackList: ArrayList<Track> = arrayListOf(
-        Track(
-            "Smells Like Teen Spirit",
-            "Nirvana",
-            "5:01",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Billie Jean",
-            "Michael Jackson",
-            "4:35",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Stayin' Alive",
-            "Bee Gees",
-            "4:10",
-            "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Nirvana",
-            "5:01",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Sweet Child O'Mine",
-            "Guns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        )
-    )
-
+    private lateinit var placeholderMessage: TextView
+    private lateinit var placeholderImage: ImageView
+    private lateinit var refreshButton: Button
+    private lateinit var placeholder: View
+    private lateinit var inputEditText: EditText
+    private lateinit var itunesService: ItunesApi
+    private lateinit var trackAdapter: TrackAdapter
+    private val trackList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
-        val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val backButton = findViewById<Button>(R.id.back)
+        inputEditText = findViewById(R.id.inputEditText)
+        placeholder = findViewById(R.id.placeholderView)
+        placeholderMessage = findViewById(R.id.placeholderTV)
+        placeholderImage = findViewById(R.id.placeholderIV)
+        refreshButton = findViewById(R.id.refreshButton)
+        val itunesBaseUrl = "https://itunes.apple.com"
+        trackAdapter = TrackAdapter(trackList)
         inputEditText.setText(inputText)
         backButton.setOnClickListener {
             finish()
@@ -63,10 +55,16 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         clearButton.setOnClickListener {
+            trackList.clear()
+            trackAdapter.notifyDataSetChanged()
             inputEditText.setText("")
+            placeholder.visibility = View.GONE
+
+
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
+
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -82,13 +80,76 @@ class SearchActivity : AppCompatActivity() {
                 inputText.plus(s)
             }
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        val trackAdapter = TrackAdapter(trackList)
+        val retrofit = Retrofit.Builder()
+            .baseUrl(itunesBaseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        itunesService = retrofit.create(ItunesApi::class.java)
+        inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
 
-    }
+        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (inputEditText.text.isNotEmpty()) {
+                    itunesService.search(inputEditText.text.toString()).enqueue(/* callback = */
+                        object :
+                            Callback<TracksResponse> {
+                            override fun onResponse(
+                                call: Call<TracksResponse>,
+                                response: Response<TracksResponse>
+                            ) {
+                                if (response.code() == 200) {
+                                    trackList.clear()
+                                    trackAdapter.notifyDataSetChanged()
+                                    Log.d("LOG", "response: ${response.body()?.results}")
+                                    if (response.body()?.results?.isNotEmpty() == true) {
+                                        Log.d("LOG", "мы в создании списка")
+                                        placeholder.visibility = View.GONE
+                                        trackList.addAll(response.body()?.results!!)
+                                        trackAdapter.notifyDataSetChanged()
+                                    }
+                                    if (trackList.isEmpty()) {
+                                        placeholder.visibility = View.VISIBLE
+                                        Log.d("LOG", "мы в пустом списке")
+                                        showMessage(getString(R.string.nothing_found), "")
+                                        placeholderImage.setImageResource(R.drawable.placeholder_not_find)
+                                        refreshButton.visibility = View.GONE
+                                    } else {
+                                        showMessage("", "")
+                                    }
+                                } else {
+                                    placeholder.visibility = View.VISIBLE
+                                    placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
+                                    showMessage(getString(R.string.something_went_wrong), "")
+                                    refreshButton.visibility = View.VISIBLE
+                                }
+                            }
 
+                            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+
+                                placeholder.visibility = View.VISIBLE
+                                placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
+                                refreshButton.visibility = View.VISIBLE
+
+                                showMessage(
+                                    getString(R.string.something_went_wrong),
+                                    t.message.toString()
+                                )
+                                refreshButton.setOnClickListener {
+                                    itunesService.search(inputEditText.text.toString())
+                                        .enqueue(this)
+                                }
+                            }
+
+                        })
+                }
+            }
+            false
+        }
+
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
 
@@ -108,6 +169,24 @@ class SearchActivity : AppCompatActivity() {
             View.GONE
         } else {
             View.VISIBLE
+        }
+    }
+
+    private fun showMessage(text: String, additionalMessage: String) {
+
+        if (text.isNotEmpty()) {
+            trackList.clear()
+            trackAdapter.notifyDataSetChanged()
+            placeholderMessage.visibility = View.VISIBLE
+            placeholderMessage.text = text
+            Log.d("LOG", "мы в showmessage ${placeholderMessage.text}")
+            if (additionalMessage.isNotEmpty()) {
+                Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
+                    .show()
+            }
+        } else {
+            Log.d("LOG", "тут нас не должно быть ${placeholderMessage.text}")
+            placeholderMessage.visibility = View.GONE
         }
     }
 
