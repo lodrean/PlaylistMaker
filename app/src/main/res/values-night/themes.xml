@@ -16,5 +16,6 @@
 
         <item name="text_color_primary">@color/white</item>
         <item name="text_color_secondary">@color/white</item>
+        <item name="note_color">@color/white</item>
     </style>
 </resources>

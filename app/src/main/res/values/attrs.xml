@@ -3,5 +3,6 @@
     <attr name="text_color_primary"/>
     <attr name="text_color_secondary"/>
     <attr name="main_font"/>
+    <attr name="note_color"/>
 
 </resources>

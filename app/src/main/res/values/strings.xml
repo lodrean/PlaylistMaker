@@ -13,5 +13,8 @@
     <string name="app_link">https://practicum.yandex.ru/profile/android-developer/</string>
     <string name="app_link_share_title">Поделиться Playlist_Maker</string>
     <string name="user_aggreement_link">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refresh">Обновить</string>
 
 </resources>

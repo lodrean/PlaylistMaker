@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.util.Locale
+
 
 class TrackAdapter(private val tracks: List<Track>) :
     RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
@@ -37,7 +40,8 @@ class TrackAdapter(private val tracks: List<Track>) :
         fun bind(model: Track) {
             tvTrackName.text = model.trackName
             tvArtistName.text = model.artistName
-            tvTrackTime.text = model.trackTime
+            tvTrackTime.text =
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime.toLong())
             Glide.with(this.itemView.context)
                 .load(model.artworkUrl100)
                 .fitCenter().dontAnimate()
