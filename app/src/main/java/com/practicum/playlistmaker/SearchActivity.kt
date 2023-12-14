@@ -33,8 +33,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var inputEditText: EditText
     private lateinit var itunesService: ItunesApi
     private lateinit var trackAdapter: TrackAdapter
+    private lateinit var itunesBaseUrl: String
+    private lateinit var retrofit: Retrofit
+
     private val trackList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -45,12 +49,18 @@ class SearchActivity : AppCompatActivity() {
         placeholderMessage = findViewById(R.id.placeholderTV)
         placeholderImage = findViewById(R.id.placeholderIV)
         refreshButton = findViewById(R.id.refreshButton)
-        val itunesBaseUrl = "https://itunes.apple.com"
+        itunesBaseUrl = ITUNES_BASE_URL
         trackAdapter = TrackAdapter(trackList)
         inputEditText.setText(inputText)
         backButton.setOnClickListener {
             finish()
         }
+
+        retrofit = Retrofit.Builder()
+            .baseUrl(itunesBaseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
         val recyclerView = findViewById<RecyclerView>(R.id.searchRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -81,11 +91,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(itunesBaseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
         itunesService = retrofit.create(ItunesApi::class.java)
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
@@ -100,19 +105,18 @@ class SearchActivity : AppCompatActivity() {
                                 call: Call<TracksResponse>,
                                 response: Response<TracksResponse>
                             ) {
-                                if (response.code() == 200) {
+                                val tracklistResponse = response.body()?.results
+                                if (response.isSuccessful) {
                                     trackList.clear()
                                     trackAdapter.notifyDataSetChanged()
-                                    Log.d("LOG", "response: ${response.body()?.results}")
-                                    if (response.body()?.results?.isNotEmpty() == true) {
-                                        Log.d("LOG", "мы в создании списка")
+
+                                    if (tracklistResponse?.isNotEmpty() == true) {
                                         placeholder.visibility = View.GONE
-                                        trackList.addAll(response.body()?.results!!)
+                                        trackList.addAll(tracklistResponse)
                                         trackAdapter.notifyDataSetChanged()
                                     }
                                     if (trackList.isEmpty()) {
                                         placeholder.visibility = View.VISIBLE
-                                        Log.d("LOG", "мы в пустом списке")
                                         showMessage(getString(R.string.nothing_found), "")
                                         placeholderImage.setImageResource(R.drawable.placeholder_not_find)
                                         refreshButton.visibility = View.GONE
@@ -120,10 +124,7 @@ class SearchActivity : AppCompatActivity() {
                                         showMessage("", "")
                                     }
                                 } else {
-                                    placeholder.visibility = View.VISIBLE
-                                    placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
-                                    showMessage(getString(R.string.something_went_wrong), "")
-                                    refreshButton.visibility = View.VISIBLE
+                                    showMessage(getString(R.string.something_went_wrong), response.code().toString())
                                 }
                             }
 
@@ -179,18 +180,17 @@ class SearchActivity : AppCompatActivity() {
             trackAdapter.notifyDataSetChanged()
             placeholderMessage.visibility = View.VISIBLE
             placeholderMessage.text = text
-            Log.d("LOG", "мы в showmessage ${placeholderMessage.text}")
             if (additionalMessage.isNotEmpty()) {
                 Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
                     .show()
             }
         } else {
-            Log.d("LOG", "тут нас не должно быть ${placeholderMessage.text}")
             placeholderMessage.visibility = View.GONE
         }
     }
 
     companion object {
+        const val ITUNES_BASE_URL = "https://itunes.apple.com"
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
     }
