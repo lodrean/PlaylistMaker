@@ -44,10 +44,13 @@
         android:orientation="vertical">
 
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/themeSwitch"
             style="@style/BrandedSwitch"
-            android:text="@string/dark_theme" />
+        android:layout_width ="match_parent"
+        android:layout_height = "60dp"
+            android:layout_gravity="start"
+        android:text="@string/dark_theme" />
 
         <FrameLayout
             android:id="@+id/shareButton"

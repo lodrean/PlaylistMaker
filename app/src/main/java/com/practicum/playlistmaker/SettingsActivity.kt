@@ -1,13 +1,11 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 
 class SettingsActivity : AppCompatActivity() {
@@ -17,22 +15,22 @@ class SettingsActivity : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.back)
         backButton.setOnClickListener { super.finish() }
 
-        var themeSwitch = findViewById<SwitchCompat>(R.id.themeSwitch)
+        var themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
 
-        val DarkModeFlags =
-            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK// Retrieve the Mode of the App.
-        val isDarkModeOn =
-            DarkModeFlags == Configuration.UI_MODE_NIGHT_YES//Check if the Dark Mode is On
-        if (isDarkModeOn) {
-            themeSwitch.setChecked(true)
+        if ((applicationContext as App).darkTheme) {
+            themeSwitcher.setChecked(true)
         }
 
-        themeSwitch.setOnCheckedChangeListener { _, checkedId ->
+        /*themeSwitcher.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 true -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
                 false -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
+        }*/
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
         }
         val supportButton = findViewById<FrameLayout>(R.id.supportButton)
         val selectorIntent = Intent(Intent.ACTION_SENDTO).apply {

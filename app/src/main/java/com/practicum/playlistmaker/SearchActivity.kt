@@ -34,7 +34,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var itunesBaseUrl: String
     private lateinit var retrofit: Retrofit
-
+    private lateinit var searchHistoryView: View
+    private lateinit var searchView: View
+    private lateinit var searchHistoryRecyclerView: RecyclerView
+    private lateinit var clearHistory: Button
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var onItemClickListener: OnItemClickListener
+    private lateinit var trackHistoryAdapter: TrackHistoryAdapter
+    private val trackHistoryList: ArrayList<Track> = arrayListOf()
     private val trackList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
 
@@ -48,41 +55,74 @@ class SearchActivity : AppCompatActivity() {
         placeholderMessage = findViewById(R.id.placeholderTV)
         placeholderImage = findViewById(R.id.placeholderIV)
         refreshButton = findViewById(R.id.refreshButton)
+        searchHistoryView = findViewById(R.id.searchHistoryGroupView)
+        searchView = findViewById(R.id.searchView)
+        searchHistoryRecyclerView = findViewById(R.id.searchHistoryRecyclerView)
+        searchHistory = SearchHistory(applicationContext)
+        clearHistory = findViewById(R.id.clearButton)
+        trackHistoryAdapter = TrackHistoryAdapter()
+
         itunesBaseUrl = ITUNES_BASE_URL
-        trackAdapter = TrackAdapter(trackList)
+
         inputEditText.setText(inputText)
         backButton.setOnClickListener {
+
             finish()
         }
 
-        retrofit = Retrofit.Builder()
-            .baseUrl(itunesBaseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+
+        retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+
 
         val recyclerView = findViewById<RecyclerView>(R.id.searchRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
+        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
+        searchHistoryRecyclerView.adapter = trackHistoryAdapter
+        trackHistoryAdapter.updateItems(searchHistory.getItems())
+        onItemClickListener = object : OnItemClickListener {
+            override fun onItemClick(track: Track) {
+                searchHistory.tracks
+                searchHistory.addTrackToHistory(track)
+                trackHistoryAdapter.updateItems(searchHistory.tracks!!)
+                trackHistoryAdapter.run { notifyDataSetChanged() }
+            }
+        }
+        searchHistoryView.visibility =
+            if (trackHistoryAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        trackAdapter = TrackAdapter(trackList, onItemClickListener)
         clearButton.setOnClickListener {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             inputEditText.setText("")
             placeholder.visibility = View.GONE
-
-
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
 
         }
+        clearHistory.setOnClickListener() {
+            searchHistory.clearHistory()
+            trackHistoryAdapter.updateItems(trackHistoryList)
+            searchHistoryView.visibility = View.GONE
+            trackHistoryAdapter.run { notifyDataSetChanged() }
+        }
+
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
+
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+
+                searchView.visibility =
+                    if (inputEditText.hasFocus() && s?.isEmpty() == true) View.GONE else View.VISIBLE
+                if (s?.isEmpty() == true) trackList.clear()
+                searchHistoryView.visibility =
+                    if (inputEditText.hasFocus() && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)) View.VISIBLE else View.GONE
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -98,11 +138,9 @@ class SearchActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
                     itunesService.search(inputEditText.text.toString()).enqueue(/* callback = */
-                        object :
-                            Callback<TracksResponse> {
+                        object : Callback<TracksResponse> {
                             override fun onResponse(
-                                call: Call<TracksResponse>,
-                                response: Response<TracksResponse>
+                                call: Call<TracksResponse>, response: Response<TracksResponse>
                             ) {
                                 val tracklistResponse = response.body()?.results
                                 if (response.isSuccessful) {
@@ -123,7 +161,10 @@ class SearchActivity : AppCompatActivity() {
                                         showMessage("", "")
                                     }
                                 } else {
-                                    showMessage(getString(R.string.something_went_wrong), response.code().toString())
+                                    showMessage(
+                                        getString(R.string.something_went_wrong),
+                                        response.code().toString()
+                                    )
                                 }
                             }
 
@@ -134,8 +175,7 @@ class SearchActivity : AppCompatActivity() {
                                 refreshButton.visibility = View.VISIBLE
 
                                 showMessage(
-                                    getString(R.string.something_went_wrong),
-                                    t.message.toString()
+                                    getString(R.string.something_went_wrong), t.message.toString()
                                 )
                                 refreshButton.setOnClickListener {
                                     itunesService.search(inputEditText.text.toString())
@@ -150,6 +190,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
 
@@ -180,8 +221,7 @@ class SearchActivity : AppCompatActivity() {
             placeholderMessage.visibility = View.VISIBLE
             placeholderMessage.text = text
             if (additionalMessage.isNotEmpty()) {
-                Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
-                    .show()
+                Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG).show()
             }
         } else {
             placeholderMessage.visibility = View.GONE
@@ -192,5 +232,6 @@ class SearchActivity : AppCompatActivity() {
         const val ITUNES_BASE_URL = "https://itunes.apple.com"
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
+
     }
 }
