@@ -9,7 +9,7 @@ const val EDIT_THEME = "dark_theme_enabled"
 
 class App : Application() {
 
-    var darkTheme = false
+    private var darkTheme = false
     lateinit var sharedPrefs: SharedPreferences
 
     override fun onCreate() {
@@ -29,8 +29,6 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
-        sharedPrefs.edit()
-            .putBoolean(EDIT_THEME, darkTheme)
-            .apply()
+        sharedPrefs.edit().putBoolean(EDIT_THEME, darkTheme).apply()
     }
 }

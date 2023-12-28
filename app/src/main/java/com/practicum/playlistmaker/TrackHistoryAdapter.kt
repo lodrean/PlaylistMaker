@@ -12,12 +12,6 @@ class TrackHistoryAdapter(
     private var tracks: MutableList<Track> = mutableListOf()
     private val limit = 10
 
-    /*fun updateItems(tracks: MutableList<Track>?){
-        if (tracks != null) {
-            this.tracks = tracks
-        }
-        notifyDataSetChanged()
-    }*/
     fun updateItems(newItems: MutableList<Track>) {
         val oldItems = tracks
         tracks = newItems
@@ -56,7 +50,6 @@ class TrackHistoryAdapter(
             tracks.size
         }
     }
-
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])

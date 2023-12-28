@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -16,18 +17,11 @@ class SettingsActivity : AppCompatActivity() {
         backButton.setOnClickListener { super.finish() }
 
         var themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
-
-        if ((applicationContext as App).darkTheme) {
+        val DarkModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val isDarkModeOn = DarkModeFlags == Configuration.UI_MODE_NIGHT_YES
+        if (isDarkModeOn) {
             themeSwitcher.setChecked(true)
         }
-
-        /*themeSwitcher.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                true -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
-                false -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }*/
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
