@@ -80,8 +80,10 @@
     </FrameLayout>
 
     <FrameLayout
+        android:id="@+id/searchView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchRecyclerView"
@@ -98,6 +100,7 @@
             android:layout_marginTop="102dp"
             android:gravity="center_horizontal"
             android:orientation="vertical"
+
             android:visibility="gone">
 
             <ImageView
@@ -130,5 +133,41 @@
 
     </FrameLayout>
 
+    <LinearLayout
+        android:id="@+id/searchHistoryGroupView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
 
+        <TextView
+            style="@style/FontStyle.youSearched"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="16dp"
+            android:text="@string/You_search" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchHistoryRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_track" />
+
+
+        <Button
+            android:id="@+id/clearButton"
+            style="@style/RefreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginVertical="24dp"
+            android:text="@string/clear_history" />
+
+    </LinearLayout>
 </LinearLayout>
