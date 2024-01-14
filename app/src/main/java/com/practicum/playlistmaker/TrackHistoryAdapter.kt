@@ -6,11 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
 
-class TrackHistoryAdapter(
+class TrackHistoryAdapter(private val onItemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<TrackViewHolder>() {
     private var tracks: MutableList<Track> = mutableListOf()
     private val limit = 10
+
 
     fun updateItems(newItems: MutableList<Track>) {
         val oldItems = tracks
@@ -53,5 +54,6 @@ class TrackHistoryAdapter(
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
+        holder.itemView.setOnClickListener { onItemClickListener.onItemClick(tracks[holder.adapterPosition]) }
     }
 }

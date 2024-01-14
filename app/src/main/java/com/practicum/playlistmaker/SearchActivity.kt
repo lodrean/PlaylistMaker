@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -40,6 +41,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistory: Button
     private lateinit var searchHistory: SearchHistory
     private lateinit var onItemClickListener: OnItemClickListener
+    private lateinit var onHistoryItemClickListener: OnItemClickListener
     private lateinit var trackHistoryAdapter: TrackHistoryAdapter
     private val trackHistoryList: ArrayList<Track> = arrayListOf()
     private val trackList: ArrayList<Track> = arrayListOf()
@@ -60,7 +62,8 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerView = findViewById(R.id.searchHistoryRecyclerView)
         searchHistory = SearchHistory(applicationContext)
         clearHistory = findViewById(R.id.clearButton)
-        trackHistoryAdapter = TrackHistoryAdapter()
+
+
 
         itunesBaseUrl = ITUNES_BASE_URL
 
@@ -70,15 +73,23 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-
+        onHistoryItemClickListener = object : OnItemClickListener {
+            override fun onItemClick(track: Track) {
+                val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
+                startActivity(intent)
+            }
+        }
+        trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
         retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl)
             .addConverterFactory(GsonConverterFactory.create()).build()
-
 
         val recyclerView = findViewById<RecyclerView>(R.id.searchRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
+
+
+
         trackHistoryAdapter.updateItems(searchHistory.getItems())
         onItemClickListener = object : OnItemClickListener {
             override fun onItemClick(track: Track) {
@@ -86,11 +97,15 @@ class SearchActivity : AppCompatActivity() {
                 searchHistory.addTrackToHistory(track)
                 trackHistoryAdapter.updateItems(searchHistory.tracks!!)
                 trackHistoryAdapter.run { notifyDataSetChanged() }
+
+                val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
+                startActivity(intent)
             }
         }
         searchHistoryView.visibility =
             if (trackHistoryAdapter.itemCount > 0) View.VISIBLE else View.GONE
         trackAdapter = TrackAdapter(trackList, onItemClickListener)
+
         clearButton.setOnClickListener {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
@@ -232,6 +247,6 @@ class SearchActivity : AppCompatActivity() {
         const val ITUNES_BASE_URL = "https://itunes.apple.com"
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
-
+        const val CHOSEN_TRACK = "chosenTrack"
     }
 }
