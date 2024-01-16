@@ -23,5 +23,6 @@
     <string name="Year">Год</string>
     <string name="Genre">Жанр</string>
     <string name="Country">Страна</string>
+    <string name="progressTime">00:30</string>
 
 </resources>

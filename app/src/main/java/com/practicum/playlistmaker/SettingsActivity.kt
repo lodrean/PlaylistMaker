@@ -20,7 +20,7 @@ class SettingsActivity : AppCompatActivity() {
         val DarkModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val isDarkModeOn = DarkModeFlags == Configuration.UI_MODE_NIGHT_YES
         if (isDarkModeOn) {
-            themeSwitcher.setChecked(true)
+            themeSwitcher.isChecked = true
         }
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
@@ -48,8 +48,7 @@ class SettingsActivity : AppCompatActivity() {
         shareButton.setOnClickListener {
             startActivity(
                 Intent.createChooser(
-                    shareIntent,
-                    getString(R.string.app_link_share_title)
+                    shareIntent, getString(R.string.app_link_share_title)
                 )
             )
         }

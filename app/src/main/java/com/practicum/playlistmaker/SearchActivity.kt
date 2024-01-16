@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.practicum.playlistmaker.searchretrofit.ItunesApi
 import com.practicum.playlistmaker.searchretrofit.TracksResponse
 import retrofit2.Call
@@ -76,7 +77,9 @@ class SearchActivity : AppCompatActivity() {
         onHistoryItemClickListener = object : OnItemClickListener {
             override fun onItemClick(track: Track) {
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
+                intent.putExtra("track", Gson().toJson(track))
                 startActivity(intent)
+
             }
         }
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
@@ -99,6 +102,7 @@ class SearchActivity : AppCompatActivity() {
                 trackHistoryAdapter.run { notifyDataSetChanged() }
 
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
+                intent.putExtra("track", Gson().toJson(track))
                 startActivity(intent)
             }
         }
@@ -247,6 +251,5 @@ class SearchActivity : AppCompatActivity() {
         const val ITUNES_BASE_URL = "https://itunes.apple.com"
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
-        const val CHOSEN_TRACK = "chosenTrack"
     }
 }

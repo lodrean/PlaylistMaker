@@ -53,8 +53,7 @@
 
     <style name="BackSettingsButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">48dp</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:layout_height">48dp</item>х
         <item name="iconGravity">textStart</item>
 
     </style>
