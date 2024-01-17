@@ -12,7 +12,8 @@ const val SHARED_PREFERENCES = "playlist_search_preferences"
 class SearchHistory(context: Context) {
 
     private val sharedPref = context.getSharedPreferences(
-        SHARED_PREFERENCES, AppCompatActivity.MODE_PRIVATE
+        SHARED_PREFERENCES,
+        AppCompatActivity.MODE_PRIVATE
     )
     var tracks: MutableList<Track>? = null
 
@@ -49,7 +50,9 @@ class SearchHistory(context: Context) {
     }
 
     private fun saveTracklist(sharedPrefs: SharedPreferences, tracks: MutableList<Track>?) {
-        sharedPrefs.edit().putString(TRACK_LIST_KEY, createJsonFromTracksList(tracks)).apply()
+        sharedPrefs.edit()
+            .putString(TRACK_LIST_KEY, createJsonFromTracksList(tracks))
+            .apply()
     }
 
     private fun createTracksListFromJson(json: String): MutableList<Track> {
