@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
 
-class TrackHistoryAdapter(private val onItemClickListener: OnItemClickListener
-) :
-    RecyclerView.Adapter<TrackViewHolder>() {
+class TrackHistoryAdapter(
+    private val onItemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<TrackViewHolder>() {
     private var tracks: MutableList<Track> = mutableListOf()
     private val limit = 10
 
@@ -43,8 +43,7 @@ class TrackHistoryAdapter(private val onItemClickListener: OnItemClickListener
         return TrackViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        /*return tracks!!.size*/
+    override fun getItemCount(): Int {/*return tracks!!.size*/
         return if (tracks.size > limit) {
             limit
         } else {

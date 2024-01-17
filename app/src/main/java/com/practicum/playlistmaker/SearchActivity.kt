@@ -63,14 +63,9 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerView = findViewById(R.id.searchHistoryRecyclerView)
         searchHistory = SearchHistory(applicationContext)
         clearHistory = findViewById(R.id.clearButton)
-
-
-
         itunesBaseUrl = ITUNES_BASE_URL
-
         inputEditText.setText(inputText)
         backButton.setOnClickListener {
-
             finish()
         }
 
@@ -79,7 +74,6 @@ class SearchActivity : AppCompatActivity() {
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
                 intent.putExtra("track", Gson().toJson(track))
                 startActivity(intent)
-
             }
         }
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
@@ -91,8 +85,6 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
-
-
         trackHistoryAdapter.updateItems(searchHistory.getItems())
         onItemClickListener = object : OnItemClickListener {
             override fun onItemClick(track: Track) {
@@ -100,7 +92,6 @@ class SearchActivity : AppCompatActivity() {
                 searchHistory.addTrackToHistory(track)
                 trackHistoryAdapter.updateItems(searchHistory.tracks!!)
                 trackHistoryAdapter.run { notifyDataSetChanged() }
-
                 val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
                 intent.putExtra("track", Gson().toJson(track))
                 startActivity(intent)
@@ -118,7 +109,6 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
-
         }
         clearHistory.setOnClickListener() {
             searchHistory.clearHistory()
@@ -127,16 +117,12 @@ class SearchActivity : AppCompatActivity() {
             trackHistoryAdapter.run { notifyDataSetChanged() }
         }
 
-
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
-
                 searchView.visibility =
                     if (inputEditText.hasFocus() && s?.isEmpty() == true) View.GONE else View.VISIBLE
                 if (s?.isEmpty() == true) trackList.clear()
@@ -152,7 +138,6 @@ class SearchActivity : AppCompatActivity() {
         itunesService = retrofit.create(ItunesApi::class.java)
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
-
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
@@ -188,7 +173,6 @@ class SearchActivity : AppCompatActivity() {
                             }
 
                             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-
                                 placeholder.visibility = View.VISIBLE
                                 placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
                                 refreshButton.visibility = View.VISIBLE
@@ -201,29 +185,20 @@ class SearchActivity : AppCompatActivity() {
                                         .enqueue(this)
                                 }
                             }
-
                         })
                 }
             }
             false
         }
-
     }
-
-
     override fun onSaveInstanceState(outState: Bundle) {
-
         super.onSaveInstanceState(outState)
-
         outState.putString(TEXT_AMOUNT, inputText)
-
     }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         inputText = savedInstanceState.getString(TEXT_AMOUNT, AMOUNT_DEF)
     }
-
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
@@ -233,7 +208,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showMessage(text: String, additionalMessage: String) {
-
         if (text.isNotEmpty()) {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()

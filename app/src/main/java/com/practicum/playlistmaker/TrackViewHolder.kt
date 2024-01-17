@@ -21,13 +21,12 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         tvArtistName.text = model.artistName
         tvTrackTime.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime.toLong())
-        Glide.with(this.itemView.context)
-            .load(model.artworkUrl100)
-            .fitCenter().dontAnimate()
+        Glide.with(this.itemView.context).load(model.artworkUrl100).fitCenter().dontAnimate()
             .placeholder(R.drawable.placeholder)
             .transform(RoundedCorners(dpToPx(8F, itemView.context))).into(ivArtwork)
     }
 }
+
 fun dpToPx(dp: Float, context: Context): Int {
     return TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics

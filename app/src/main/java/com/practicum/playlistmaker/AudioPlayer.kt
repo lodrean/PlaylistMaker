@@ -48,8 +48,6 @@ class AudioPlayer : AppCompatActivity() {
             .fitCenter().dontAnimate()
             .placeholder(R.drawable.placeholder)
             .transform(RoundedCorners(dpToPx(8F, applicationContext))).into(albumImage)
-
-
     }
 }
 fun formatMilliseconds(milliseconds: Long): String {

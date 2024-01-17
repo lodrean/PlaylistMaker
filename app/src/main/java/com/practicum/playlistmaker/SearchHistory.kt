@@ -9,11 +9,10 @@ import com.google.gson.reflect.TypeToken
 const val TRACK_LIST_KEY = "key_for_track_list"
 const val SHARED_PREFERENCES = "playlist_search_preferences"
 
-class SearchHistory(private val context: Context) {
+class SearchHistory(context: Context) {
 
     private val sharedPref = context.getSharedPreferences(
-        SHARED_PREFERENCES,
-        AppCompatActivity.MODE_PRIVATE
+        SHARED_PREFERENCES, AppCompatActivity.MODE_PRIVATE
     )
     var tracks: MutableList<Track>? = null
 
@@ -31,13 +30,10 @@ class SearchHistory(private val context: Context) {
         } else {
             return mutableListOf()
         }
-
     }
 
     fun clearHistory() {
-        sharedPref.edit()
-            .clear()
-            .apply()
+        sharedPref.edit().clear().apply()
     }
 
     fun addTrackToHistory(track: Track) {
@@ -50,23 +46,19 @@ class SearchHistory(private val context: Context) {
             tracks!!.add(0, track)
             saveTracklist(sharedPref, tracks)
         }
-
     }
 
-    fun saveTracklist(sharedPrefs: SharedPreferences, tracks: MutableList<Track>?) {
-        sharedPrefs.edit()
-            .putString(TRACK_LIST_KEY, createJsonFromTracksList(tracks))
-            .apply()
+    private fun saveTracklist(sharedPrefs: SharedPreferences, tracks: MutableList<Track>?) {
+        sharedPrefs.edit().putString(TRACK_LIST_KEY, createJsonFromTracksList(tracks)).apply()
     }
 
-    fun createTracksListFromJson(json: String): MutableList<Track> {
+    private fun createTracksListFromJson(json: String): MutableList<Track> {
         return Gson().fromJson<MutableList<Track>>(
-            json,
-            object : TypeToken<MutableList<Track>>() {}.type
+            json, object : TypeToken<MutableList<Track>>() {}.type
         )
     }
 
-    fun createJsonFromTracksList(tracks: MutableList<Track>?): String {
+    private fun createJsonFromTracksList(tracks: MutableList<Track>?): String {
         return Gson().toJson(tracks)
     }
 

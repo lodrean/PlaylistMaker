@@ -161,7 +161,7 @@
 
 
     <style name="FontStyle.Track.Player.InformationMenu">
-        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:fontFamily">@font/ys_text_regular</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/YP_Text_Gray</item>
     </style>
@@ -173,7 +173,7 @@
 
     <style name="FontStyle.Track.Player.InformationValue">
         <item name="android:fontFamily">@font/ys_text_regular</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
 
     </style>
 
