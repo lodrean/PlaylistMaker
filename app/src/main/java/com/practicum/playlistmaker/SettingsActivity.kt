@@ -48,8 +48,7 @@ class SettingsActivity : AppCompatActivity() {
         shareButton.setOnClickListener {
             startActivity(
                 Intent.createChooser(
-                    shareIntent,
-                    getString(R.string.app_link_share_title)
+                    shareIntent, getString(R.string.app_link_share_title)
                 )
             )
         }
