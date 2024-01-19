@@ -16,14 +16,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.practicum.playlistmaker.searchretrofit.ItunesApi
 import com.practicum.playlistmaker.searchretrofit.TracksResponse
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -69,12 +71,8 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        onHistoryItemClickListener = object : OnItemClickListener {
-            override fun onItemClick(track: Track) {
-                val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
-                intent.putExtra("track", Gson().toJson(track))
-                startActivity(intent)
-            }
+        onHistoryItemClickListener = OnItemClickListener { track ->
+            launchAudioPlayer(track)
         }
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
         retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl)
@@ -86,16 +84,12 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
         trackHistoryAdapter.updateItems(searchHistory.getItems())
-        onItemClickListener = object : OnItemClickListener {
-            override fun onItemClick(track: Track) {
-                searchHistory.tracks
-                searchHistory.addTrackToHistory(track)
-                trackHistoryAdapter.updateItems(searchHistory.tracks!!)
-                trackHistoryAdapter.run { notifyDataSetChanged() }
-                val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
-                intent.putExtra("track", Gson().toJson(track))
-                startActivity(intent)
-            }
+        onItemClickListener = OnItemClickListener { track ->
+            searchHistory.tracks
+            searchHistory.addTrackToHistory(track)
+            trackHistoryAdapter.updateItems(searchHistory.tracks!!)
+            trackHistoryAdapter.run { notifyDataSetChanged() }
+            launchAudioPlayer(track)
         }
         searchHistoryView.visibility =
             if (trackHistoryAdapter.itemCount > 0) View.VISIBLE else View.GONE
@@ -110,7 +104,7 @@ class SearchActivity : AppCompatActivity() {
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
         }
-        clearHistory.setOnClickListener() {
+        clearHistory.setOnClickListener {
             searchHistory.clearHistory()
             trackHistoryAdapter.updateItems(trackHistoryList)
             searchHistoryView.visibility = View.GONE
@@ -191,14 +185,23 @@ class SearchActivity : AppCompatActivity() {
             false
         }
     }
+
+    private fun launchAudioPlayer(track: Track) {
+        val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
+        intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
+        startActivity(intent)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_AMOUNT, inputText)
     }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         inputText = savedInstanceState.getString(TEXT_AMOUNT, AMOUNT_DEF)
     }
+
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
@@ -225,5 +228,6 @@ class SearchActivity : AppCompatActivity() {
         const val ITUNES_BASE_URL = "https://itunes.apple.com"
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
+        const val CHOSEN_TRACK = "track"
     }
 }
