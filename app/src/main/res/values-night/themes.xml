@@ -15,6 +15,7 @@
         <item name="colorOnPrimary">@color/YP_black</item>
         <item name="android:background">@color/YP_black</item>
         <item name="android:iconTint">@color/YP_black</item>
+        <item name="icon_color">@color/white</item>
 
         <item name="text_color_primary">@color/white</item>
         <item name="text_color_secondary">@color/white</item>

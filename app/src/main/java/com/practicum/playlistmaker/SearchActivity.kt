@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,11 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.searchretrofit.ItunesApi
 import com.practicum.playlistmaker.searchretrofit.TracksResponse
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -40,6 +44,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistory: Button
     private lateinit var searchHistory: SearchHistory
     private lateinit var onItemClickListener: OnItemClickListener
+    private lateinit var onHistoryItemClickListener: OnItemClickListener
     private lateinit var trackHistoryAdapter: TrackHistoryAdapter
     private val trackHistoryList: ArrayList<Track> = arrayListOf()
     private val trackList: ArrayList<Track> = arrayListOf()
@@ -60,37 +65,36 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerView = findViewById(R.id.searchHistoryRecyclerView)
         searchHistory = SearchHistory(applicationContext)
         clearHistory = findViewById(R.id.clearButton)
-        trackHistoryAdapter = TrackHistoryAdapter()
-
         itunesBaseUrl = ITUNES_BASE_URL
-
         inputEditText.setText(inputText)
         backButton.setOnClickListener {
-
             finish()
         }
 
-
+        onHistoryItemClickListener = OnItemClickListener { track ->
+            launchAudioPlayer(track)
+        }
+        trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
         retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl)
             .addConverterFactory(GsonConverterFactory.create()).build()
-
 
         val recyclerView = findViewById<RecyclerView>(R.id.searchRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
+
         trackHistoryAdapter.updateItems(searchHistory.getItems())
-        onItemClickListener = object : OnItemClickListener {
-            override fun onItemClick(track: Track) {
-                searchHistory.tracks
-                searchHistory.addTrackToHistory(track)
-                trackHistoryAdapter.updateItems(searchHistory.tracks!!)
-                trackHistoryAdapter.run { notifyDataSetChanged() }
-            }
+        onItemClickListener = OnItemClickListener { track ->
+            searchHistory.tracks
+            searchHistory.addTrackToHistory(track)
+            trackHistoryAdapter.updateItems(searchHistory.tracks!!)
+            trackHistoryAdapter.run { notifyDataSetChanged() }
+            launchAudioPlayer(track)
         }
         searchHistoryView.visibility =
             if (trackHistoryAdapter.itemCount > 0) View.VISIBLE else View.GONE
         trackAdapter = TrackAdapter(trackList, onItemClickListener)
+
         clearButton.setOnClickListener {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
@@ -99,25 +103,20 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
-
         }
-        clearHistory.setOnClickListener() {
+        clearHistory.setOnClickListener {
             searchHistory.clearHistory()
             trackHistoryAdapter.updateItems(trackHistoryList)
             searchHistoryView.visibility = View.GONE
             trackHistoryAdapter.run { notifyDataSetChanged() }
         }
 
-
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
-
                 searchView.visibility =
                     if (inputEditText.hasFocus() && s?.isEmpty() == true) View.GONE else View.VISIBLE
                 if (s?.isEmpty() == true) trackList.clear()
@@ -133,7 +132,6 @@ class SearchActivity : AppCompatActivity() {
         itunesService = retrofit.create(ItunesApi::class.java)
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
-
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
@@ -169,7 +167,6 @@ class SearchActivity : AppCompatActivity() {
                             }
 
                             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-
                                 placeholder.visibility = View.VISIBLE
                                 placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
                                 refreshButton.visibility = View.VISIBLE
@@ -182,22 +179,22 @@ class SearchActivity : AppCompatActivity() {
                                         .enqueue(this)
                                 }
                             }
-
                         })
                 }
             }
             false
         }
-
     }
 
+    private fun launchAudioPlayer(track: Track) {
+        val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
+        intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
+        startActivity(intent)
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
-
         super.onSaveInstanceState(outState)
-
         outState.putString(TEXT_AMOUNT, inputText)
-
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -214,7 +211,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showMessage(text: String, additionalMessage: String) {
-
         if (text.isNotEmpty()) {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
@@ -232,6 +228,6 @@ class SearchActivity : AppCompatActivity() {
         const val ITUNES_BASE_URL = "https://itunes.apple.com"
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
-
+        const val CHOSEN_TRACK = "track"
     }
 }
