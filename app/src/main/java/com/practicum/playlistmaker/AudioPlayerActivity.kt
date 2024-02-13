@@ -17,34 +17,36 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+enum class State {
+    DEFAULT,
+    PREPARED,
+    PLAYING,
+    PAUSED
+}
+
 class AudioPlayer : AppCompatActivity() {
 
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val PROGRESS_DELAY = 400L
+        private const val PROGRESS_DELAY_MILLIS = 400L
     }
 
-    private var playerState = STATE_DEFAULT
-    private lateinit var track: Track
-    private lateinit var play: ImageView
+    private var playerState = State.DEFAULT
+    private var track: Track? = Track()
+    private var play: ImageView? = null
     private var mediaPlayer = MediaPlayer()
-    private lateinit var playingProgress: TextView
-    private lateinit var progressTimer: Runnable
-    private lateinit var binding: ActivityAudioPlayerBinding
+    private var playingProgress: TextView? = null
+    private var progressTimer: Runnable? = null
+    private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
-        val view = binding.root
+        val view = binding?.root
         setContentView(view)
-        val backButton = binding.backButton
-        playingProgress = binding.tvPlayingProgress
+        val backButton = binding?.backButton
+        playingProgress = binding?.tvPlayingProgress
         progressTimer = createProgressTimer()
-        backButton.setOnClickListener { super.finish() }
-        track = Track(0, "", "", "", "", "", "", "", "", "")
+        backButton?.setOnClickListener { super.finish() }
         val extras: Bundle? = intent.extras
         extras?.let {
             val jsonTrack: String? = it.getString(CHOSEN_TRACK)
@@ -52,25 +54,29 @@ class AudioPlayer : AppCompatActivity() {
         }
         mainThreadHandler = Handler(Looper.getMainLooper())
 
-        binding.tvTrackTitle.text = track.trackName
-        binding.tvTrackArtist.text = track.artistName
-        binding.tvDurationTime.text = formatMilliseconds(track.trackTime.toLong())
-        binding.tvAlbumName.text = track.collectionName
-        binding.tvYearValue.text = track.releaseDate.removeRange(4, track.releaseDate.lastIndex + 1)
-        binding.tvGenreValue.text = track.genre
-        binding.tvCountryValue.text = track.country
+        binding?.tvTrackTitle?.text = track?.trackName
+        binding?.tvTrackArtist?.text = track?.artistName
+        binding?.tvDurationTime?.text = track?.trackTime?.let { formatMilliseconds(it.toLong()) }
+        binding?.tvAlbumName?.text = track?.collectionName
+        binding?.tvYearValue?.text =
+            track?.releaseDate?.removeRange(4, track!!.releaseDate.lastIndex + 1)
+        binding?.tvGenreValue?.text = track?.genre
+        binding?.tvCountryValue?.text = track?.country
 
         val cornerRadius = 8F
-        Glide.with(this.applicationContext).load(track.getCoverArtwork()).fitCenter().dontAnimate()
-            .placeholder(R.drawable.placeholder)
-            .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext)))
-            .into(binding.albumImage)
+        binding?.albumImage?.let {
+            Glide.with(this.applicationContext).load(track?.getCoverArtwork()).fitCenter()
+                .dontAnimate()
+                .placeholder(R.drawable.placeholder)
+                .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext)))
+                .into(it)
+        }
 
-        play = binding.ivPlayButton
+        play = binding?.ivPlayButton
 
         preparePlayer()
 
-        play.setOnClickListener {
+        play?.setOnClickListener {
             playbackControl()
             startProgressTimer()
         }
@@ -84,45 +90,45 @@ class AudioPlayer : AppCompatActivity() {
 
     private fun playbackControl() {
         when (playerState) {
-            STATE_PLAYING -> {
+            State.PLAYING -> {
                 pausePlayer()
             }
 
-            STATE_PREPARED, STATE_PAUSED -> {
+            State.PREPARED, State.PAUSED, State.DEFAULT -> {
                 startPlayer()
             }
         }
     }
 
     private fun preparePlayer() {
-        mediaPlayer.setDataSource(track.url)
+        mediaPlayer.setDataSource(track?.url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            play.isEnabled = true
-            playerState = STATE_PREPARED
+            play?.isEnabled = true
+            playerState = State.PREPARED
         }
         mediaPlayer.setOnCompletionListener {
-            play.setImageResource(R.drawable.play_button)
-            playerState = STATE_PREPARED
+            play?.setImageResource(R.drawable.play_button)
+            playerState = State.PREPARED
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        play.setImageResource(R.drawable.pause_button)
-        playerState = STATE_PLAYING
+        play?.setImageResource(R.drawable.pause_button)
+        playerState = State.PLAYING
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
-        play.setImageResource(R.drawable.play_button)
-        playerState = STATE_PAUSED
+        play?.setImageResource(R.drawable.play_button)
+        playerState = State.PAUSED
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.release()
-        mainThreadHandler?.removeCallbacks(progressTimer)
+        progressTimer?.let { mainThreadHandler?.removeCallbacks(it) }
     }
 
     private fun formatMilliseconds(milliseconds: Long): String {
@@ -131,27 +137,27 @@ class AudioPlayer : AppCompatActivity() {
     }
 
     private fun startProgressTimer() {
-        mainThreadHandler?.post(progressTimer)
+        progressTimer?.let { mainThreadHandler?.post(it) }
     }
 
     private fun createProgressTimer(): Runnable {
         return object : Runnable {
             override fun run() {
                 when (playerState) {
-                    STATE_PLAYING -> {
-                        playingProgress.text = SimpleDateFormat(
+                    State.PLAYING -> {
+                        playingProgress?.text = SimpleDateFormat(
                             "mm:ss", Locale.getDefault()
                         ).format(mediaPlayer.currentPosition)
-                        mainThreadHandler?.postDelayed(this, PROGRESS_DELAY)
+                        mainThreadHandler?.postDelayed(this, PROGRESS_DELAY_MILLIS)
                     }
 
-                    STATE_PAUSED -> {
+                    State.PAUSED -> {
                         mainThreadHandler?.removeCallbacks(this)
                     }
 
-                    STATE_PREPARED, STATE_DEFAULT -> {
+                    State.PREPARED, State.DEFAULT -> {
                         mainThreadHandler?.removeCallbacks(this)
-                        playingProgress.text = getText(R.string.defaultProgressTime).toString()
+                        playingProgress?.text = getText(R.string.defaultProgressTime).toString()
                     }
                 }
             }
