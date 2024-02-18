@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.data.dto.Track
 
 const val TRACK_LIST_KEY = "key_for_track_list"
 const val SHARED_PREFERENCES = "playlist_search_preferences"

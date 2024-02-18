@@ -20,9 +20,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.data.dto.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.searchretrofit.ItunesApi
-import com.practicum.playlistmaker.searchretrofit.TracksResponse
+import com.practicum.playlistmaker.data.network.ItunesApiService
+import com.practicum.playlistmaker.data.dto.TracksSearchResponse
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import retrofit2.Call
@@ -40,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderImage: ImageView
     private lateinit var refreshButton: Button
     private lateinit var placeholder: View
-    private lateinit var itunesService: ItunesApi
+    private lateinit var itunesService: ItunesApiService
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var itunesBaseUrl: String
     private lateinit var retrofit: Retrofit
@@ -146,7 +147,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        itunesService = retrofit.create(ItunesApi::class.java)
+        itunesService = retrofit.create(ItunesApiService::class.java)
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -162,9 +163,9 @@ class SearchActivity : AppCompatActivity() {
             recyclerView.isVisible = false
             progressBar.isVisible = true
             itunesService.search(inputEditText.text.toString()).enqueue(/* callback = */
-                object : Callback<TracksResponse> {
+                object : Callback<TracksSearchResponse> {
                     override fun onResponse(
-                        call: Call<TracksResponse>, response: Response<TracksResponse>
+                        call: Call<TracksSearchResponse>, response: Response<TracksSearchResponse>
                     ) {
                         progressBar.isVisible = false
                         val tracklistResponse = response.body()?.results
@@ -194,7 +195,7 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
 
-                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
                         progressBar.isVisible = false
                         placeholder.isVisible = true
                         placeholderImage.setImageResource(R.drawable.placeholder_no_internet)

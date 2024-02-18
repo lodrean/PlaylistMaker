@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.SearchActivity.Companion.CHOSEN_TRACK
+import com.practicum.playlistmaker.data.dto.Track
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat

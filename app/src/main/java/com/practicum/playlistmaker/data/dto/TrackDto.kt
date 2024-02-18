@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data.dto
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
