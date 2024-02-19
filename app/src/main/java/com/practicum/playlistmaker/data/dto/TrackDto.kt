@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Track(
+data class TrackDto(
     @SerializedName("trackId") val trackId: Int = 0,
     @SerializedName("trackName") val trackName: String? = "",
     @SerializedName("artistName") val artistName: String = "",

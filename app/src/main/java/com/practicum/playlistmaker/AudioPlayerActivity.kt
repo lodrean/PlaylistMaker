@@ -11,8 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.SearchActivity.Companion.CHOSEN_TRACK
-import com.practicum.playlistmaker.data.dto.Track
+
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.domain.models.Track
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -66,7 +67,8 @@ class AudioPlayer : AppCompatActivity() {
 
         val cornerRadius = 8F
         binding?.albumImage?.let {
-            Glide.with(this.applicationContext).load(track?.getCoverArtwork()).fitCenter()
+            Glide.with(this.applicationContext)
+                .load(track?.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")).fitCenter()
                 .dontAnimate()
                 .placeholder(R.drawable.placeholder)
                 .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext)))

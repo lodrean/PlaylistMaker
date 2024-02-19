@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
-import com.practicum.playlistmaker.data.dto.Track
+import com.practicum.playlistmaker.domain.models.Track
+
 
 fun interface OnItemClickListener {
     fun onItemClick(track: Track)

@@ -20,10 +20,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.data.dto.Track
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.data.network.ItunesApiService
 import com.practicum.playlistmaker.data.dto.TracksSearchResponse
+import com.practicum.playlistmaker.domain.models.Track
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import retrofit2.Call
@@ -162,7 +162,7 @@ class SearchActivity : AppCompatActivity() {
         if (inputEditText.text?.isNotEmpty() == true) {
             recyclerView.isVisible = false
             progressBar.isVisible = true
-            itunesService.search(inputEditText.text.toString()).enqueue(/* callback = */
+            itunesService.searchTracks(inputEditText.text.toString()).enqueue(/* callback = */
                 object : Callback<TracksSearchResponse> {
                     override fun onResponse(
                         call: Call<TracksSearchResponse>, response: Response<TracksSearchResponse>
@@ -205,7 +205,7 @@ class SearchActivity : AppCompatActivity() {
                             getString(R.string.something_went_wrong), t.message.toString()
                         )
                         refreshButton.setOnClickListener {
-                            itunesService.search(inputEditText.text.toString())
+                            itunesService.searchTracks(inputEditText.text.toString())
                                 .enqueue(this)
                         }
                     }
