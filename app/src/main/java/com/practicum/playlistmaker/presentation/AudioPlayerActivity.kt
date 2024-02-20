@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -10,21 +10,18 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.SearchActivity.Companion.CHOSEN_TRACK
 
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.domain.models.AudioPlayerState
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.dpToPx
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-enum class State {
-    DEFAULT,
-    PREPARED,
-    PLAYING,
-    PAUSED
-}
 
 class AudioPlayer : AppCompatActivity() {
 
@@ -32,7 +29,7 @@ class AudioPlayer : AppCompatActivity() {
         private const val PROGRESS_DELAY_MILLIS = 400L
     }
 
-    private var playerState = State.DEFAULT
+    private var playerAudioPlayerState = AudioPlayerState.DEFAULT
     private var track: Track? = Track()
     private var play: ImageView? = null
     private var mediaPlayer = MediaPlayer()
@@ -92,12 +89,12 @@ class AudioPlayer : AppCompatActivity() {
     }
 
     private fun playbackControl() {
-        when (playerState) {
-            State.PLAYING -> {
+        when (playerAudioPlayerState) {
+            AudioPlayerState.PLAYING -> {
                 pausePlayer()
             }
 
-            State.PREPARED, State.PAUSED, State.DEFAULT -> {
+            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED, AudioPlayerState.DEFAULT -> {
                 startPlayer()
             }
         }
@@ -108,24 +105,24 @@ class AudioPlayer : AppCompatActivity() {
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             play?.isEnabled = true
-            playerState = State.PREPARED
+            playerAudioPlayerState = AudioPlayerState.PREPARED
         }
         mediaPlayer.setOnCompletionListener {
             play?.setImageResource(R.drawable.play_button)
-            playerState = State.PREPARED
+            playerAudioPlayerState = AudioPlayerState.PREPARED
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
         play?.setImageResource(R.drawable.pause_button)
-        playerState = State.PLAYING
+        playerAudioPlayerState = AudioPlayerState.PLAYING
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         play?.setImageResource(R.drawable.play_button)
-        playerState = State.PAUSED
+        playerAudioPlayerState = AudioPlayerState.PAUSED
     }
 
     override fun onDestroy() {
@@ -146,19 +143,19 @@ class AudioPlayer : AppCompatActivity() {
     private fun createProgressTimer(): Runnable {
         return object : Runnable {
             override fun run() {
-                when (playerState) {
-                    State.PLAYING -> {
+                when (playerAudioPlayerState) {
+                    AudioPlayerState.PLAYING -> {
                         playingProgress?.text = SimpleDateFormat(
                             "mm:ss", Locale.getDefault()
                         ).format(mediaPlayer.currentPosition)
                         mainThreadHandler?.postDelayed(this, PROGRESS_DELAY_MILLIS)
                     }
 
-                    State.PAUSED -> {
+                    AudioPlayerState.PAUSED -> {
                         mainThreadHandler?.removeCallbacks(this)
                     }
 
-                    State.PREPARED, State.DEFAULT -> {
+                    AudioPlayerState.PREPARED, AudioPlayerState.DEFAULT -> {
                         mainThreadHandler?.removeCallbacks(this)
                         playingProgress?.text = getText(R.string.defaultProgressTime).toString()
                     }

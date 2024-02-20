@@ -5,4 +5,5 @@ import com.practicum.playlistmaker.domain.models.Track
 
 interface TracksHistoryRepository {
     fun showSearchHistoryTracks(): List<Track>
+
 }

@@ -7,10 +7,10 @@ import com.practicum.playlistmaker.domain.models.Track
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
-    override fun searchTracks(expression: String): List<Track> {
+    override fun searchTracks(expression: String): ArrayList<Track> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
         if (response.resultCode == 200) {
-            return (response as TracksSearchResponse).results.map {
+            return ArrayList((response as TracksSearchResponse).results.map { it ->
                 Track(
                     it.trackId,
                     it.trackName,
@@ -23,9 +23,8 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                     it.genre,
                     it.country
                 )
-            }
-        } else {
-            return emptyList()
+            })
+        } else
+            return arrayListOf()
         }
     }
-}
