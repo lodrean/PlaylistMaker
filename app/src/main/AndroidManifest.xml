@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.AudioPlayer"
+            android:name=".presentation.AudioPlayer.AudioPlayer"
             android:exported="false" />
         <activity
             android:name=".SearchActivity"

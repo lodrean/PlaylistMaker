@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation
+package com.practicum.playlistmaker.presentation.AudioPlayer
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -28,7 +28,6 @@ class AudioPlayer : AppCompatActivity() {
     companion object {
         private const val PROGRESS_DELAY_MILLIS = 400L
     }
-
     private var playerAudioPlayerState = AudioPlayerState.DEFAULT
     private var track: Track? = Track()
     private var play: ImageView? = null

@@ -23,8 +23,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.data.network.ItunesApiService
 import com.practicum.playlistmaker.data.dto.TracksSearchResponse
+import com.practicum.playlistmaker.domain.api.TracksHistoryRepository
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.AudioPlayer
+import com.practicum.playlistmaker.presentation.AudioPlayer.AudioPlayer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import retrofit2.Call
@@ -52,13 +53,16 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var clearHistory: Button
-    private lateinit var searchHistory: SearchHistory
+    private lateinit var tracksHistoryRepository: TracksHistoryRepository
+
+    private val getTracksRepository = Creator.provideTracksInteractor()
     private val trackHistoryList: ArrayList<Track> = arrayListOf()
     private val trackList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { searchRequest() }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,10 +80,11 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryView = binding?.searchHistoryGroupView!!
         searchView = binding?.searchView!!
         searchHistoryRecyclerView = binding?.searchHistoryRecyclerView!!
-        searchHistory = SearchHistory(applicationContext)
+        tracksHistoryRepository = TracksHistoryRepository(applicationContext)
         clearHistory = binding?.clearButton!!
         progressBar = binding?.progressBar!!
         itunesBaseUrl = ITUNES_BASE_URL
+
         inputEditText.setText(inputText)
         backButton?.setOnClickListener {
             super.finish()
@@ -99,12 +104,12 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
-        trackHistoryAdapter.updateItems(searchHistory.getItems())
+        trackHistoryAdapter.updateItems(tracksHistoryRepository.getItems())
         val onItemClickListener = OnItemClickListener { track ->
             if (clickDebounce()) {
-                searchHistory.tracks
-                searchHistory.addTrackToHistory(track)
-                trackHistoryAdapter.updateItems(searchHistory.tracks!!)
+                tracksHistoryRepository.getItems()
+                tracksHistoryRepository.addTrackToHistory(track)
+                trackHistoryAdapter.updateItems(tracksHistoryRepository.getItems())
                 trackHistoryAdapter.run { notifyDataSetChanged() }
                 launchAudioPlayer(track)
             }
@@ -123,7 +128,7 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
         }
         clearHistory.setOnClickListener {
-            searchHistory.clearHistory()
+            tracksHistoryRepository.clearHistory()
             trackHistoryAdapter.updateItems(trackHistoryList)
             searchHistoryView.isVisible = false
             trackHistoryAdapter.run { notifyDataSetChanged() }
@@ -158,6 +163,7 @@ class SearchActivity : AppCompatActivity() {
             false
         }
     }
+
 
     private fun searchRequest() {
         if (inputEditText.text?.isNotEmpty() == true) {

@@ -4,6 +4,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.AudioPlayerState
 
 interface AudioPlayerInteractor {
-    fun startPlayer()
-    fun pausePlayer()
+// кнопки play
+
+
 }
