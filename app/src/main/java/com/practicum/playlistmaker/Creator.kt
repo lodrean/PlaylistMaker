@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.app.Application
 import android.content.Context
 import com.practicum.playlistmaker.data.TracksHistoryRepositoryImpl
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
@@ -21,11 +22,11 @@ object Creator {
         return TracksInteractorImpl(getTracksRepository())
     }
 
-    private fun getTracksHistoryRepository(): TracksHistoryRepository {
-        return TracksHistoryRepositoryImpl()
+    private fun getTracksHistoryRepository(context: Context): TracksHistoryRepository {
+        return TracksHistoryRepositoryImpl(context)
     }
 
-    fun provideTracksHistoryInteractor(): TracksHistoryInteractor {
-        return TracksHistoryInteractorImpl(getTracksHistoryRepository())
+    fun provideTracksHistoryInteractor(context: Context): TracksHistoryInteractor {
+        return TracksHistoryInteractorImpl(getTracksHistoryRepository(context))
     }
 }

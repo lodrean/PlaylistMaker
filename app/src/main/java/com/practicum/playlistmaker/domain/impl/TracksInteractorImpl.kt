@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.domain.impl
 
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.domain.api.TracksRepository
+import com.practicum.playlistmaker.domain.models.Track
 import java.util.concurrent.Executors
 
 class TracksInteractorImpl(
@@ -14,5 +15,13 @@ class TracksInteractorImpl(
         executor.execute {
             consumer.consume(repository.searchTracks(expression))
         }
+    }
+
+    override fun saveToHistory(track: Track) {
+        TODO("Not yet implemented")
+    }
+
+    override fun loadFromHistory(): ArrayList<Track> {
+        TODO("Not yet implemented")
     }
 }
