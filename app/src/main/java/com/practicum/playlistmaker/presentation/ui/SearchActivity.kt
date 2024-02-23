@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.ui
 
 import android.content.Context
 import android.content.Intent
@@ -21,17 +21,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.presentation.TrackAdapter
+import com.practicum.playlistmaker.presentation.TrackHistoryAdapter
 import com.practicum.playlistmaker.data.network.ItunesApiService
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.domain.api.TracksHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.AudioPlayer.AudioPlayer
+import com.practicum.playlistmaker.presentation.OnItemClickListener
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.math.log
 
 
 class SearchActivity : AppCompatActivity() {
@@ -165,10 +168,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun searchRequest() {
         if (inputEditText.text?.isNotEmpty() == true) {
-            recyclerView.isVisible = false
+            recyclerView.isVisible = true
             progressBar.isVisible = true
             tracksInteractor.searchTracks(
-                inputEditText.text.toString(),
+                expression = inputEditText.text.toString(),
                 consumer = object : TracksInteractor.TracksConsumer {
                     override fun consume(foundTracks: ArrayList<Track>) {
                         val currentRunnable = detailsRunnable
@@ -177,22 +180,24 @@ class SearchActivity : AppCompatActivity() {
                         }
                         val newDetailsRunnable = Runnable {
                             progressBar.isVisible = false
+                            recyclerView.isVisible = true
                             trackList.clear()
                             trackAdapter.notifyDataSetChanged()
                             if (foundTracks.isNotEmpty()) {
-                                Log.d("tag", "dafadsf")
+                                Log.d("tag", "есть результат")
                                 placeholder.isVisible = false
-                                recyclerView.isVisible = true
                                 trackList.addAll(foundTracks)
                                 trackAdapter.notifyDataSetChanged()
+
                             }
 
                             if (foundTracks.isEmpty()) {
-                                Log.d("tag", "dafadsfdfgsdfgsdfg")
+                                Log.d("tag", "нет результата")
                                 placeholder.isVisible = true
                                 showMessage(getString(R.string.nothing_found), "")
                                 placeholderImage.setImageResource(R.drawable.placeholder_not_find)
                                 refreshButton.isVisible = false
+                                trackAdapter.notifyDataSetChanged()
                             } else {
                                 showMessage(
                                     getString(R.string.something_went_wrong),

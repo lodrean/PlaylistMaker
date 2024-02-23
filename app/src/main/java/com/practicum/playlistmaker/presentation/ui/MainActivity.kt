@@ -1,14 +1,11 @@
-package com.practicum.playlistmaker.presentation
+package com.practicum.playlistmaker.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.practicum.playlistmaker.MediatekaActivity
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.SearchActivity
-import com.practicum.playlistmaker.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

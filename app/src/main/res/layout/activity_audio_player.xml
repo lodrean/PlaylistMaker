@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.PlaylistMaker"
-    tools:context=".presentation.AudioPlayer.AudioPlayer">
+    tools:context=".presentation.ui.AudioPlayer">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"

@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.domain.impl
 
 import com.practicum.playlistmaker.domain.api.TracksHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksHistoryRepository
-import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.models.Track
 
 class TracksHistoryInteractorImpl(private val repository: TracksHistoryRepository) :
