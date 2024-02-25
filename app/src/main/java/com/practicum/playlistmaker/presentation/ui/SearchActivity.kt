@@ -25,7 +25,6 @@ import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.presentation.TrackAdapter
 import com.practicum.playlistmaker.presentation.TrackHistoryAdapter
-import com.practicum.playlistmaker.data.network.ItunesApiService
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.domain.api.TracksHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksInteractor
@@ -33,7 +32,6 @@ import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.presentation.OnItemClickListener
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
@@ -45,10 +43,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderImage: ImageView
     private lateinit var refreshButton: Button
     private lateinit var placeholder: View
-    private lateinit var itunesService: ItunesApiService
+    /*private lateinit var itunesService: ItunesApiService*/
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var itunesBaseUrl: String
-    private lateinit var retrofit: Retrofit
+
+    /*private lateinit var retrofit: Retrofit*/
     private lateinit var searchHistoryView: View
     private lateinit var searchView: View
     private lateinit var progressBar: View
@@ -86,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = Creator.provideTracksHistoryInteractor(applicationContext)
         clearHistory = binding?.clearButton!!
         progressBar = binding?.progressBar!!
-        itunesBaseUrl = ITUNES_BASE_URL
+        /*itunesBaseUrl = ITUNES_BASE_URL*/
         inputEditText.setText(inputText)
         backButton?.setOnClickListener {
             super.finish()
@@ -98,8 +97,8 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         val trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
-        retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl)
-            .addConverterFactory(GsonConverterFactory.create()).build()
+        /*retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl)
+            .addConverterFactory(GsonConverterFactory.create()).build()*/
 
         recyclerView = binding?.searchRecyclerView!!
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -155,7 +154,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        itunesService = retrofit.create(ItunesApiService::class.java)
+        /*itunesService = retrofit.create(ItunesApiService::class.java)*/
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -182,16 +181,16 @@ class SearchActivity : AppCompatActivity() {
                             progressBar.isVisible = false
                             recyclerView.isVisible = true
                             trackList.clear()
-                            trackAdapter.notifyDataSetChanged()
                             if (foundTracks.isNotEmpty()) {
                                 Log.d("tag", "есть результат")
                                 placeholder.isVisible = false
+                                searchView.isVisible = true
+                                recyclerView.isVisible = true
+                                progressBar.isVisible = false
+                                searchHistoryRecyclerView.isVisible = false
                                 trackList.addAll(foundTracks)
                                 trackAdapter.notifyDataSetChanged()
-
-                            }
-
-                            if (foundTracks.isEmpty()) {
+                            } else if (foundTracks.isEmpty()) {
                                 Log.d("tag", "нет результата")
                                 placeholder.isVisible = true
                                 showMessage(getString(R.string.nothing_found), "")
@@ -324,7 +323,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val ITUNES_BASE_URL = "https://itunes.apple.com"
+        /*const val ITUNES_BASE_URL = "https://itunes.apple.com"*/
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
         const val CHOSEN_TRACK = "track"
