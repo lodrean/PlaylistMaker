@@ -61,7 +61,7 @@ class AudioPlayer : AppCompatActivity() {
         val cornerRadius = 8F
         binding?.albumImage?.let {
             Glide.with(this.applicationContext)
-                .load(track?.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")).fitCenter()
+                .load(track?.getCoverArtwork()).fitCenter()
                 .dontAnimate()
                 .placeholder(R.drawable.placeholder)
                 .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext)))
