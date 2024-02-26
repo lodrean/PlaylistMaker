@@ -14,6 +14,7 @@ import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
 
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.domain.api.PlayerStateListener
 import com.practicum.playlistmaker.domain.models.AudioPlayerState
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.presentation.dpToPx
@@ -36,6 +37,8 @@ class AudioPlayer : AppCompatActivity() {
     private var progressTimer: Runnable? = null
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
@@ -47,6 +50,7 @@ class AudioPlayer : AppCompatActivity() {
         backButton?.setOnClickListener { super.finish() }
         track = Creator.getTrack(this.intent)
 
+
         mainThreadHandler = Handler(Looper.getMainLooper())
 
         binding?.tvTrackTitle?.text = track?.trackName
@@ -57,6 +61,7 @@ class AudioPlayer : AppCompatActivity() {
             track?.releaseDate?.removeRange(4, track!!.releaseDate.lastIndex + 1)
         binding?.tvGenreValue?.text = track?.genre
         binding?.tvCountryValue?.text = track?.country
+
 
         val cornerRadius = 8F
         binding?.albumImage?.let {
@@ -159,6 +164,7 @@ class AudioPlayer : AppCompatActivity() {
             }
         }
     }
+
 
 }
 

@@ -17,11 +17,5 @@ class TracksInteractorImpl(
         }
     }
 
-    override fun saveToHistory(track: Track) {
-        TODO("Not yet implemented")
-    }
 
-    override fun loadFromHistory(): ArrayList<Track> {
-        TODO("Not yet implemented")
-    }
 }
