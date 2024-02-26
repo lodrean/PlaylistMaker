@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.domain.models
+import kotlinx.serialization.Serializable
 
-import com.google.gson.annotations.SerializedName
-
+@Serializable
 data class Track(
     val trackId: Int = 0,
     val trackName: String? = "",
@@ -13,4 +13,6 @@ data class Track(
     val releaseDate: String = "",
     val genre: String = "",
     val country: String = "",
-)
+) {
+    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+}

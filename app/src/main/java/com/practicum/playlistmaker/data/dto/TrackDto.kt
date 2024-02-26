@@ -15,6 +15,4 @@ data class TrackDto(
     @SerializedName("releaseDate") val releaseDate: String = "",
     @SerializedName("primaryGenreName") val genre: String = "",
     @SerializedName("country") val country: String = "",
-) {
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-}
+)

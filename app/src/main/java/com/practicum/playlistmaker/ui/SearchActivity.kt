@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation.ui
+package com.practicum.playlistmaker.ui
 
 import android.content.Context
 import android.content.Intent
@@ -28,11 +28,11 @@ import com.practicum.playlistmaker.presentation.TrackHistoryAdapter
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.domain.api.TracksHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksInteractor
+import com.practicum.playlistmaker.domain.models.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.OnItemClickListener
+import com.practicum.playlistmaker.domain.api.OnItemClickListener
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 class SearchActivity : AppCompatActivity() {
@@ -183,25 +183,15 @@ class SearchActivity : AppCompatActivity() {
                             trackList.clear()
                             if (foundTracks.isNotEmpty()) {
                                 Log.d("tag", "есть результат")
-                                placeholder.isVisible = false
-                                searchView.isVisible = true
-                                recyclerView.isVisible = true
-                                progressBar.isVisible = false
-                                searchHistoryRecyclerView.isVisible = false
                                 trackList.addAll(foundTracks)
                                 trackAdapter.notifyDataSetChanged()
-                            } else if (foundTracks.isEmpty()) {
+                            } else {
                                 Log.d("tag", "нет результата")
                                 placeholder.isVisible = true
                                 showMessage(getString(R.string.nothing_found), "")
                                 placeholderImage.setImageResource(R.drawable.placeholder_not_find)
                                 refreshButton.isVisible = false
                                 trackAdapter.notifyDataSetChanged()
-                            } else {
-                                showMessage(
-                                    getString(R.string.something_went_wrong),
-                                    ""
-                                )
                             }
                         }
                         detailsRunnable = newDetailsRunnable
@@ -326,7 +316,6 @@ class SearchActivity : AppCompatActivity() {
         /*const val ITUNES_BASE_URL = "https://itunes.apple.com"*/
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
-        const val CHOSEN_TRACK = "track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }

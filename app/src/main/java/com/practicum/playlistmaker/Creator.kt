@@ -1,16 +1,19 @@
 package com.practicum.playlistmaker
 
-import android.app.Application
 import android.content.Context
+import android.content.Intent
+import com.practicum.playlistmaker.data.GetTrackFromIntentUseCaseImpl
 import com.practicum.playlistmaker.data.TracksHistoryRepositoryImpl
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
+import com.practicum.playlistmaker.domain.api.GetTrackFromIntentUseCase
 import com.practicum.playlistmaker.domain.api.TracksHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksHistoryRepository
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.impl.TracksHistoryInteractorImpl
 import com.practicum.playlistmaker.domain.impl.TracksInteractorImpl
+import com.practicum.playlistmaker.domain.models.Track
 
 object Creator {
     private fun getTracksRepository(): TracksRepository {
@@ -28,5 +31,13 @@ object Creator {
 
     fun provideTracksHistoryInteractor(context: Context): TracksHistoryInteractor {
         return TracksHistoryInteractorImpl(getTracksHistoryRepository(context))
+    }
+
+    private fun getTrackFromIntentUseCase(intent: Intent): GetTrackFromIntentUseCase {
+        return GetTrackFromIntentUseCaseImpl(intent)
+    }
+
+    fun getTrack(intent: Intent): Track {
+        return getTrackFromIntentUseCase(intent).execute()
     }
 }

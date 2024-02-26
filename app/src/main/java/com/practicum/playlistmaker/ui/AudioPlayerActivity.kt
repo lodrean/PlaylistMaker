@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation.ui
+package com.practicum.playlistmaker.ui
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -10,8 +10,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.presentation.ui.SearchActivity.Companion.CHOSEN_TRACK
 
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.domain.models.AudioPlayerState
@@ -45,11 +45,8 @@ class AudioPlayer : AppCompatActivity() {
         playingProgress = binding?.tvPlayingProgress
         progressTimer = createProgressTimer()
         backButton?.setOnClickListener { super.finish() }
-        val extras: Bundle? = intent.extras
-        extras?.let {
-            val jsonTrack: String? = it.getString(CHOSEN_TRACK)
-            track = Json.decodeFromString(jsonTrack!!)
-        }
+        track = Creator.getTrack(this.intent)
+
         mainThreadHandler = Handler(Looper.getMainLooper())
 
         binding?.tvTrackTitle?.text = track?.trackName
@@ -91,10 +88,12 @@ class AudioPlayer : AppCompatActivity() {
         when (playerAudioPlayerState) {
             AudioPlayerState.PLAYING -> {
                 pausePlayer()
-            }
+                play?.setImageResource(R.drawable.play_button)
 
+            }
             AudioPlayerState.PREPARED, AudioPlayerState.PAUSED, AudioPlayerState.DEFAULT -> {
                 startPlayer()
+                play?.setImageResource(R.drawable.pause_button)
             }
         }
     }
@@ -114,13 +113,11 @@ class AudioPlayer : AppCompatActivity() {
 
     private fun startPlayer() {
         mediaPlayer.start()
-        play?.setImageResource(R.drawable.pause_button)
         playerAudioPlayerState = AudioPlayerState.PLAYING
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
-        play?.setImageResource(R.drawable.play_button)
         playerAudioPlayerState = AudioPlayerState.PAUSED
     }
 
