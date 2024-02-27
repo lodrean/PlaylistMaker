@@ -8,14 +8,11 @@ interface AudioPlayerInteractor {
     // кнопки play
     fun createAudioPlayer(
         url: String,
-        listener: PlayerStateListener/*, consumer: AudioPlayerConsumer*/
+        listener: PlayerStateListener
     )
 
     fun play()
     fun pause()
-    fun interface AudioPlayerConsumer {
-        fun consume(playerState: AudioPlayerState)
-    }
 
     fun getPlayerState(): AudioPlayerState
 

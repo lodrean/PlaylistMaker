@@ -10,7 +10,6 @@ import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.domain.api.AudioPlayerInteractor
 import com.practicum.playlistmaker.domain.api.AudioPlayerRepository
 import com.practicum.playlistmaker.domain.api.GetTrackFromIntentUseCase
-import com.practicum.playlistmaker.domain.api.PlayerStateListener
 import com.practicum.playlistmaker.domain.api.TracksHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksHistoryRepository
 import com.practicum.playlistmaker.domain.api.TracksInteractor
