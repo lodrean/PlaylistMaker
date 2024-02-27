@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -160,8 +159,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun searchRequest() {
         if (inputEditText.text?.isNotEmpty() == true) {
-            recyclerView.isVisible = true
-            progressBar.isVisible = true
+            inProgressSearch()
             tracksInteractor.searchTracks(
                 expression = inputEditText.text.toString(),
                 consumer = object : TracksInteractor.TracksConsumer {
@@ -171,19 +169,13 @@ class SearchActivity : AppCompatActivity() {
                             handler.removeCallbacks(currentRunnable)
                         }
                         val newDetailsRunnable = Runnable {
-                            progressBar.isVisible = false
-                            recyclerView.isVisible = true
+                            showSearchResults()
                             trackList.clear()
                             if (foundTracks.isNotEmpty()) {
-                                Log.d("tag", "есть результат")
                                 trackList.addAll(foundTracks)
                                 trackAdapter.notifyDataSetChanged()
                             } else {
-                                Log.d("tag", "нет результата")
-                                placeholder.isVisible = true
-                                showMessage(getString(R.string.nothing_found), "")
-                                placeholderImage.setImageResource(R.drawable.placeholder_not_find)
-                                refreshButton.isVisible = false
+                                showEmptyResults()
                                 trackAdapter.notifyDataSetChanged()
                             }
                         }
@@ -257,8 +249,25 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
+    private fun inProgressSearch() {
+        recyclerView.isVisible = true
+        progressBar.isVisible = true
+    }
+
+    private fun showSearchResults() {
+        progressBar.isVisible = false
+        recyclerView.isVisible = true
+    }
+
+    private fun showEmptyResults() {
+        placeholder.isVisible = true
+        showMessage(getString(R.string.nothing_found), "")
+        placeholderImage.setImageResource(R.drawable.placeholder_not_find)
+        refreshButton.isVisible = false
+    }
+
+
     companion object {
-        /*const val ITUNES_BASE_URL = "https://itunes.apple.com"*/
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
         private const val CLICK_DEBOUNCE_DELAY = 1000L
