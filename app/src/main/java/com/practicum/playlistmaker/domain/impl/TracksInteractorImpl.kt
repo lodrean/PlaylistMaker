@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.domain.impl
 
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.domain.api.TracksRepository
-import com.practicum.playlistmaker.domain.models.Track
 import java.util.concurrent.Executors
 
 class TracksInteractorImpl(

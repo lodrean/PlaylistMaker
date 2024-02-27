@@ -6,10 +6,11 @@ import com.practicum.playlistmaker.domain.api.PlayerStateListener
 import com.practicum.playlistmaker.domain.models.AudioPlayerState
 
 
-class AudioPlayerRepositoryImpl() : AudioPlayerRepository {
+class AudioPlayerRepositoryImpl(var playerAudioPlayerState: AudioPlayerState = AudioPlayerState.DEFAULT) :
+    AudioPlayerRepository {
 
-    var mediaPlayer = MediaPlayer()
-    var playerAudioPlayerState = AudioPlayerState.DEFAULT
+    private val mediaPlayer = MediaPlayer()
+
     override fun play() {
         mediaPlayer.start()
         playerAudioPlayerState = AudioPlayerState.PLAYING
@@ -28,16 +29,22 @@ class AudioPlayerRepositoryImpl() : AudioPlayerRepository {
         }
         mediaPlayer.setOnCompletionListener {
             listener.onCompletion()
+            playerAudioPlayerState = AudioPlayerState.PREPARED
         }
-        playerAudioPlayerState = AudioPlayerState.PREPARED
+
     }
 
     override fun playerStateReporter(): AudioPlayerState {
         return playerAudioPlayerState
+
     }
 
     override fun onDestroy() {
         mediaPlayer.release()
+    }
+
+    override fun getCurrentPosition(): Int {
+        return mediaPlayer.currentPosition
     }
 
 }

@@ -23,14 +23,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.presentation.TrackAdapter
-import com.practicum.playlistmaker.presentation.TrackHistoryAdapter
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.domain.api.OnItemClickListener
 import com.practicum.playlistmaker.domain.api.TracksHistoryInteractor
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.domain.models.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.domain.api.OnItemClickListener
+import com.practicum.playlistmaker.presentation.TrackAdapter
+import com.practicum.playlistmaker.presentation.TrackHistoryAdapter
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -43,11 +43,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderImage: ImageView
     private lateinit var refreshButton: Button
     private lateinit var placeholder: View
-    /*private lateinit var itunesService: ItunesApiService*/
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var itunesBaseUrl: String
-
-    /*private lateinit var retrofit: Retrofit*/
     private lateinit var searchHistoryView: View
     private lateinit var searchView: View
     private lateinit var progressBar: View
@@ -97,8 +93,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         val trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
-        /*retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl)
-            .addConverterFactory(GsonConverterFactory.create()).build()*/
 
         recyclerView = binding?.searchRecyclerView!!
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -116,7 +110,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         searchHistoryView.isVisible =
-            if (trackHistoryAdapter.itemCount > 0) true else false
+            trackHistoryAdapter.itemCount > 0
         trackAdapter = TrackAdapter(trackList, onItemClickListener)
 
         clearButton?.setOnClickListener {
@@ -154,7 +148,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        /*itunesService = retrofit.create(ItunesApiService::class.java)*/
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -200,54 +193,6 @@ class SearchActivity : AppCompatActivity() {
 
                 }
             )
-            /*itunesService.searchTracks(inputEditText.text.toString()).enqueue(*//* callback = *//*
-                object : Callback<TracksSearchResponse> {
-                    override fun onResponse(
-                        call: Call<TracksSearchResponse>, response: Response<TracksSearchResponse>
-                    ) {
-                        progressBar.isVisible = false
-                        val tracklistResponse = response.body()?.results
-                        if (response.isSuccessful) {
-                            trackList.clear()
-                            trackAdapter.notifyDataSetChanged()
-
-                            if (tracklistResponse?.isNotEmpty() == true) {
-                                placeholder.isVisible = false
-                                recyclerView.isVisible = true
-                                trackList.addAll(tracklistResponse)
-                                trackAdapter.notifyDataSetChanged()
-                            }
-                            if (trackList.isEmpty()) {
-                                placeholder.isVisible = true
-                                showMessage(getString(R.string.nothing_found), "")
-                                placeholderImage.setImageResource(R.drawable.placeholder_not_find)
-                                refreshButton.isVisible = false
-                            } else {
-                                showMessage("", "")
-                            }
-                        } else {
-                            showMessage(
-                                getString(R.string.something_went_wrong),
-                                response.code().toString()
-                            )
-                        }
-                    }
-
-                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
-                        progressBar.isVisible = false
-                        placeholder.isVisible = true
-                        placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
-                        refreshButton.isVisible = true
-
-                        showMessage(
-                            getString(R.string.something_went_wrong), t.message.toString()
-                        )
-                        refreshButton.setOnClickListener {
-                            itunesService.searchTracks(inputEditText.text.toString())
-                                .enqueue(this)
-                        }
-                    }
-                })*/
         }
     }
 

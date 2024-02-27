@@ -9,4 +9,5 @@ interface AudioPlayerRepository {
     fun preparePlayer(url: String, listener: PlayerStateListener)
     fun playerStateReporter(): AudioPlayerState
     fun onDestroy()
+    fun getCurrentPosition(): Int
 }
