@@ -9,7 +9,7 @@
     android:paddingHorizontal="16dp"
     android:theme="@style/Theme.PlaylistMaker"
     app:layout_constraintDimensionRatio="1:1"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
 
     <TextView

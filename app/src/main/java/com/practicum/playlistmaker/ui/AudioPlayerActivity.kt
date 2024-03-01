@@ -1,6 +1,5 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,19 +9,17 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.practicum.playlistmaker.SearchActivity.Companion.CHOSEN_TRACK
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
-import kotlinx.serialization.json.Json
+import com.practicum.playlistmaker.domain.api.PlayerStateListener
+import com.practicum.playlistmaker.domain.models.AudioPlayerState
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.dpToPx
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-enum class State {
-    DEFAULT,
-    PREPARED,
-    PLAYING,
-    PAUSED
-}
 
 class AudioPlayer : AppCompatActivity() {
 
@@ -30,14 +27,16 @@ class AudioPlayer : AppCompatActivity() {
         private const val PROGRESS_DELAY_MILLIS = 400L
     }
 
-    private var playerState = State.DEFAULT
+    private var playerAudioPlayerState = AudioPlayerState.DEFAULT
     private var track: Track? = Track()
     private var play: ImageView? = null
-    private var mediaPlayer = MediaPlayer()
     private var playingProgress: TextView? = null
     private var progressTimer: Runnable? = null
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
+    private var mediaPlayer = Creator.provideAudioPlayerInteractor()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
@@ -47,13 +46,17 @@ class AudioPlayer : AppCompatActivity() {
         playingProgress = binding?.tvPlayingProgress
         progressTimer = createProgressTimer()
         backButton?.setOnClickListener { super.finish() }
-        val extras: Bundle? = intent.extras
-        extras?.let {
-            val jsonTrack: String? = it.getString(CHOSEN_TRACK)
-            track = Json.decodeFromString(jsonTrack!!)
-        }
-        mainThreadHandler = Handler(Looper.getMainLooper())
+        track = Creator.provideTracksHistoryInteractor(this, this.intent).getTrack()
+        mediaPlayer.createAudioPlayer(track!!.url, object : PlayerStateListener {
+            override fun onPrepared() {
+                play?.isEnabled = true
+            }
 
+            override fun onCompletion() {
+                play?.setImageResource(R.drawable.play_button)
+            }
+        })
+        mainThreadHandler = Handler(Looper.getMainLooper())
         binding?.tvTrackTitle?.text = track?.trackName
         binding?.tvTrackArtist?.text = track?.artistName
         binding?.tvDurationTime?.text = track?.trackTime?.let { formatMilliseconds(it.toLong()) }
@@ -65,69 +68,40 @@ class AudioPlayer : AppCompatActivity() {
 
         val cornerRadius = 8F
         binding?.albumImage?.let {
-            Glide.with(this.applicationContext).load(track?.getCoverArtwork()).fitCenter()
-                .dontAnimate()
-                .placeholder(R.drawable.placeholder)
-                .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext)))
-                .into(it)
+            Glide.with(this).load(track?.getCoverArtwork()).fitCenter()
+                .dontAnimate().placeholder(R.drawable.placeholder)
+                .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext))).into(it)
         }
-
         play = binding?.ivPlayButton
-
-        preparePlayer()
-
         play?.setOnClickListener {
             playbackControl()
+            playerAudioPlayerState = mediaPlayer.getPlayerState()
             startProgressTimer()
         }
-
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        mediaPlayer.pause()
     }
 
     private fun playbackControl() {
-        when (playerState) {
-            State.PLAYING -> {
-                pausePlayer()
+        when (playerAudioPlayerState) {
+            AudioPlayerState.PLAYING -> {
+                mediaPlayer.pause()
+                play?.setImageResource(R.drawable.play_button)
             }
 
-            State.PREPARED, State.PAUSED, State.DEFAULT -> {
-                startPlayer()
+            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED, AudioPlayerState.DEFAULT -> {
+                mediaPlayer.play()
+                play?.setImageResource(R.drawable.pause_button)
             }
         }
-    }
-
-    private fun preparePlayer() {
-        mediaPlayer.setDataSource(track?.url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            play?.isEnabled = true
-            playerState = State.PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            play?.setImageResource(R.drawable.play_button)
-            playerState = State.PREPARED
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        play?.setImageResource(R.drawable.pause_button)
-        playerState = State.PLAYING
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        play?.setImageResource(R.drawable.play_button)
-        playerState = State.PAUSED
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        mediaPlayer.destroy()
         progressTimer?.let { mainThreadHandler?.removeCallbacks(it) }
     }
 
@@ -143,19 +117,19 @@ class AudioPlayer : AppCompatActivity() {
     private fun createProgressTimer(): Runnable {
         return object : Runnable {
             override fun run() {
-                when (playerState) {
-                    State.PLAYING -> {
+                when (playerAudioPlayerState) {
+                    AudioPlayerState.PLAYING -> {
                         playingProgress?.text = SimpleDateFormat(
                             "mm:ss", Locale.getDefault()
-                        ).format(mediaPlayer.currentPosition)
+                        ).format(mediaPlayer.getCurrentPosition())
                         mainThreadHandler?.postDelayed(this, PROGRESS_DELAY_MILLIS)
                     }
 
-                    State.PAUSED -> {
+                    AudioPlayerState.PAUSED -> {
                         mainThreadHandler?.removeCallbacks(this)
                     }
 
-                    State.PREPARED, State.DEFAULT -> {
+                    AudioPlayerState.PREPARED, AudioPlayerState.DEFAULT -> {
                         mainThreadHandler?.removeCallbacks(this)
                         playingProgress?.text = getText(R.string.defaultProgressTime).toString()
                     }
@@ -163,6 +137,5 @@ class AudioPlayer : AppCompatActivity() {
             }
         }
     }
-
 }
 
