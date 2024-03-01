@@ -77,7 +77,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryView = binding?.searchHistoryGroupView!!
         searchView = binding?.searchView!!
         searchHistoryRecyclerView = binding?.searchHistoryRecyclerView!!
-        searchHistory = Creator.provideTracksHistoryInteractor(applicationContext)
+        searchHistory = Creator.provideTracksHistoryInteractor(applicationContext, this.intent)
         clearHistory = binding?.clearButton!!
         progressBar = binding?.progressBar!!
         /*itunesBaseUrl = ITUNES_BASE_URL*/

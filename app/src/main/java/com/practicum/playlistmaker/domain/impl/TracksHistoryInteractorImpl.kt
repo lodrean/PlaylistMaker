@@ -17,4 +17,8 @@ class TracksHistoryInteractorImpl(private val repository: TracksHistoryRepositor
     override fun addTrackToHistory(track: Track) {
         repository.addTrackToHistory(track)
     }
+
+    override fun getTrack(): Track {
+        return repository.getTrackFromIntent()
+    }
 }
