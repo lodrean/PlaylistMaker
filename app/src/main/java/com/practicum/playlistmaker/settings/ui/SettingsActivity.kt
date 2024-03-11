@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.settings.data.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.creator.Creator
 
