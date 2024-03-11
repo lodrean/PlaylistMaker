@@ -15,6 +15,9 @@ import com.practicum.playlistmaker.search.domain.TracksHistoryRepository
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.TracksInteractorImpl
 import com.practicum.playlistmaker.search.domain.TracksRepository
+import com.practicum.playlistmaker.sharing.data.ExternalNavigator
+import com.practicum.playlistmaker.sharing.domain.SharingInteractor
+import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
 
 object Creator {
     private fun getTracksRepository(): TracksRepository {
@@ -45,5 +48,12 @@ object Creator {
     fun provideAudioPlayerInteractor()
             : AudioPlayerInteractor {
         return AudioPlayerInteractorImpl(getAudioRepository())
+    }
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
+        return SharingInteractorImpl(
+            context,
+            ExternalNavigator()
+        )
     }
 }
