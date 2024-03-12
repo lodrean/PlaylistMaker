@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.creator
+package com.practicum.playlistmaker.util
 
 import android.content.Context
 import android.content.Intent
@@ -24,13 +24,13 @@ import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
 
 object Creator {
-    private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient())
+    private fun getTracksRepository(context: Context): TracksRepository {
+        return TracksRepositoryImpl(RetrofitNetworkClient(context))
     }
 
-    fun provideTracksInteractor()
+    fun provideTracksInteractor(context: Context)
             : TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository())
+        return TracksInteractorImpl(getTracksRepository(context))
     }
 
     private fun getTracksHistoryRepository(

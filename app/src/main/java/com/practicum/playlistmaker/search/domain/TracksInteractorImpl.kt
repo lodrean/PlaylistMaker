@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.domain
 
+import com.practicum.playlistmaker.util.Resource
 import java.util.concurrent.Executors
 
 class TracksInteractorImpl(
@@ -10,7 +11,15 @@ class TracksInteractorImpl(
 
     override fun searchTracks(expression: String, consumer: TracksInteractor.TracksConsumer) {
         executor.execute {
-            consumer.consume(repository.searchTracks(expression))
+            when (val resource = repository.searchTracks(expression)) {
+                is Resource.Success -> {
+                    consumer.consume(resource.data, null)
+                }
+
+                is Resource.Error -> {
+                    consumer.consume(null, resource.message)
+                }
+            }
         }
     }
 

@@ -7,9 +7,9 @@ import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.practicum.playlistmaker.settings.data.App
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.util.Creator
+import com.practicum.playlistmaker.settings.data.App
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,18 +20,15 @@ class SettingsActivity : AppCompatActivity() {
 
         val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
 
-        val provideSettingsInteractor = Creator.provideSettingsInteractor(applicationContext)
-        /*
-                val DarkModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK*/
-
+        val DarkModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val isDarkModeOn = DarkModeFlags == Configuration.UI_MODE_NIGHT_YES
         val sharingInteractor = Creator.provideSharingInteractor(this)
-        val isDarkModeOn = provideSettingsInteractor.getThemeSettings()
-        if (isDarkModeOn.isChecked) {
+        if (isDarkModeOn) {
             themeSwitcher.isChecked = true
         }
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
 
-            if (!checked) provideSettingsInteractor.updateThemeSetting(provideSettingsInteractor.getThemeSettings())
+            (applicationContext as App).switchTheme(checked)
         }
         val supportButton = findViewById<FrameLayout>(R.id.supportButton)
         val selectorIntent: Intent = sharingInteractor.openSupport()

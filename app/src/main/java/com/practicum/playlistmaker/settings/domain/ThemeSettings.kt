@@ -1,5 +1,5 @@
 package com.practicum.playlistmaker.settings.domain
 
-data class ThemeSettings(val isChecked: Boolean) {
+data class ThemeSettings(var isDarkMode: Boolean) {
 
 }

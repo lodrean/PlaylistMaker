@@ -21,7 +21,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.util.Creator
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
@@ -48,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var clearHistory: Button
-    private val tracksInteractor = Creator.provideTracksInteractor()
+    private val tracksInteractor = Creator.provideTracksInteractor(this)
     private lateinit var searchHistory: TracksHistoryInteractor
     private val trackHistoryList: ArrayList<Track> = arrayListOf()
     private val trackList: ArrayList<Track> = arrayListOf()
@@ -162,7 +162,7 @@ class SearchActivity : AppCompatActivity() {
             tracksInteractor.searchTracks(
                 expression = inputEditText.text.toString(),
                 consumer = object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: ArrayList<Track>) {
+                    override fun consume(foundTracks: ArrayList<Track>?, errorMessage: String?) {
                         val currentRunnable = detailsRunnable
                         if (currentRunnable != null) {
                             handler.removeCallbacks(currentRunnable)
@@ -170,12 +170,14 @@ class SearchActivity : AppCompatActivity() {
                         val newDetailsRunnable = Runnable {
                             showSearchResults()
                             trackList.clear()
-                            if (foundTracks.isNotEmpty()) {
+                            if (foundTracks != null) {
                                 trackList.addAll(foundTracks)
                                 trackAdapter.notifyDataSetChanged()
-                            } else {
+                            }
+                            if (errorMessage != null) {
+                                showNoConnectionMessage(errorMessage)
+                            } else if (trackList.isEmpty()) {
                                 showEmptyResults()
-                                trackAdapter.notifyDataSetChanged()
                             }
                         }
                         detailsRunnable = newDetailsRunnable
@@ -249,11 +251,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun inProgressSearch() {
-        recyclerView.isVisible = true
+        placeholder.isVisible = false
+        recyclerView.isVisible = false
         progressBar.isVisible = true
     }
 
     private fun showSearchResults() {
+        placeholder.isVisible = false
         progressBar.isVisible = false
         recyclerView.isVisible = true
     }
@@ -265,6 +269,12 @@ class SearchActivity : AppCompatActivity() {
         refreshButton.isVisible = false
     }
 
+    private fun showNoConnectionMessage(errorMessage: String) {
+        placeholder.isVisible = true
+        showMessage(getString(R.string.something_went_wrong), errorMessage)
+        placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
+        refreshButton.isVisible = false
+    }
 
     companion object {
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
