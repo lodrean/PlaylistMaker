@@ -19,27 +19,30 @@ class SettingsActivity : AppCompatActivity() {
         backButton.setOnClickListener { super.finish() }
 
         val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
-        val DarkModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val isDarkModeOn = DarkModeFlags == Configuration.UI_MODE_NIGHT_YES
-        if (isDarkModeOn) {
-            themeSwitcher.isChecked = true
-        }
+
+        val provideSettingsInteractor = Creator.provideSettingsInteractor(applicationContext)
+        /*
+                val DarkModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK*/
 
         val sharingInteractor = Creator.provideSharingInteractor(this)
-
+        val isDarkModeOn = provideSettingsInteractor.getThemeSettings()
+        if (isDarkModeOn.isChecked) {
+            themeSwitcher.isChecked = true
+        }
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
+
+            if (!checked) provideSettingsInteractor.updateThemeSetting(provideSettingsInteractor.getThemeSettings())
         }
         val supportButton = findViewById<FrameLayout>(R.id.supportButton)
-        val selectorIntent = sharingInteractor.openSupport()
+        val selectorIntent: Intent = sharingInteractor.openSupport()
 
         supportButton.setOnClickListener {
-            startActivity(selectorIntent as Intent)
+            startActivity(selectorIntent)
         }
 
 
         val shareButton = findViewById<FrameLayout>(R.id.shareButton)
-        val shareIntent = sharingInteractor.shareApp()
+        val shareIntent: Intent = sharingInteractor.shareApp()
 
         shareButton.setOnClickListener {
             startActivity(shareIntent)
