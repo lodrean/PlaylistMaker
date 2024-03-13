@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.settings.ui
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
@@ -31,27 +32,34 @@ class SettingsActivity : AppCompatActivity() {
             (applicationContext as App).switchTheme(checked)
         }
         val supportButton = findViewById<FrameLayout>(R.id.supportButton)
-        val selectorIntent: Intent = sharingInteractor.openSupport()
+        val selectorIntent = Intent(Intent.ACTION_SENDTO).apply { sharingInteractor.openSupport() }
 
         supportButton.setOnClickListener {
-            startActivity(selectorIntent)
+            startActivity(Intent.createChooser(selectorIntent, "Send email..."))
         }
 
 
+
+
         val shareButton = findViewById<FrameLayout>(R.id.shareButton)
-        val shareIntent: Intent = sharingInteractor.shareApp()
+        val shareIntent = Intent(Intent.ACTION_SEND).apply { sharingInteractor.shareApp() }
 
         shareButton.setOnClickListener {
-            startActivity(shareIntent)
+            startActivity(
+                Intent.createChooser(
+                    shareIntent,
+                    getString(R.string.app_link_share_title)
+                )
+            )
         }
 
 
         val userAggreementButton = findViewById<FrameLayout>(R.id.userAggreement)
 
-        val internetIntent: Intent = sharingInteractor.openTerms()
+        val userAgreementIntent = Intent(Intent.ACTION_VIEW).apply { sharingInteractor.openTerms() }
 
         userAggreementButton.setOnClickListener {
-            startActivity(internetIntent)
+            startActivity(userAgreementIntent)
         }
     }
 

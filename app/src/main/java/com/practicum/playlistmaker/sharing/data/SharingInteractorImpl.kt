@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.sharing.data
 
 import android.content.Context
-import android.content.Intent
 import androidx.core.content.ContextCompat.getString
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.sharing.domain.EmailData
@@ -11,15 +10,15 @@ class SharingInteractorImpl(
     val context: Context,
     private val externalNavigator: ExternalNavigator,
 ) : SharingInteractor {
-    override fun shareApp(): Intent {
-        return externalNavigator.shareLink(getShareAppLink())
+    override fun shareApp() {
+        externalNavigator.shareLink(getShareAppLink())
     }
 
-    override fun openTerms(): Intent {
+    override fun openTerms() {
         return externalNavigator.openLink(getTermsLink())
     }
 
-    override fun openSupport(): Intent {
+    override fun openSupport() {
         return externalNavigator.openEmail(getSupportEmailData())
     }
 

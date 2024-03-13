@@ -1,41 +1,41 @@
 package com.practicum.playlistmaker.sharing.data
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.sharing.domain.EmailData
 
-class ExternalNavigator(private val context: Context) {
-    fun shareLink(appLink: String): Intent {
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+class ExternalNavigator() {
+    private val intent: Intent = Intent()
+    fun shareLink(appLink: String) {
+
+        intent.apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, appLink)
         }
-        Intent.createChooser(
-            shareIntent,
-            context.getString(R.string.app_link_share_title)
-        )
-        return shareIntent
+        /* Intent.createChooser(
+             shareIntent,
+             context.getString(R.string.app_link_share_title)
+         )
+     }*/
     }
 
-    fun openLink(termsLink: String): Intent {
-        return Intent(Intent.ACTION_VIEW).apply {
+    fun openLink(termsLink: String) {
+        intent.apply {
             data = Uri.parse(termsLink)
         }
 
     }
 
-    fun openEmail(emailData: EmailData): Intent {
-        val selectorIntent = Intent(Intent.ACTION_SENDTO).apply {
+    fun openEmail(emailData: EmailData) {
+        intent.apply {
             data = Uri.parse(
                 "mailto:" + Uri.encode(emailData.email) + "?subject=" + Uri.encode(
                     emailData.subject
                 ) + "&body=" + Uri.encode(emailData.body)
             )
         }
-        return Intent.createChooser(selectorIntent, "Send email...")
+        }
 
     }
 
-}
+
