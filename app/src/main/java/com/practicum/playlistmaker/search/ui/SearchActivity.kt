@@ -34,7 +34,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 
-class SearchActivity : ComponentActivity() {
+class SearchActivity : ComponentActivity(), MoviesView {
 
     private var binding: ActivitySearchBinding? = null
     private lateinit var placeholderMessage: TextView
@@ -178,7 +178,7 @@ class SearchActivity : ComponentActivity() {
                             if (errorMessage != null) {
                                 showNoConnectionMessage(errorMessage)
                             } else if (trackList.isEmpty()) {
-                                showEmptyResults()
+                                showEmpty(getString(R.string.nothing_found))
                             }
                         }
                         detailsRunnable = newDetailsRunnable
@@ -264,10 +264,7 @@ class SearchActivity : ComponentActivity() {
     }
 
     private fun showEmptyResults() {
-        placeholder.isVisible = true
-        showMessage(getString(R.string.nothing_found), "")
-        placeholderImage.setImageResource(R.drawable.placeholder_not_find)
-        refreshButton.isVisible = false
+
     }
 
     private fun showNoConnectionMessage(errorMessage: String) {
@@ -277,4 +274,42 @@ class SearchActivity : ComponentActivity() {
         refreshButton.isVisible = false
     }
 
+    companion object {
+        const val TEXT_AMOUNT = "TEXT_AMOUNT"
+        const val AMOUNT_DEF = ""
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private val SEARCH_REQUEST_TOKEN = Any()
+    }
+
+    fun showLoading() {
+        TODO("Not yet implemented")
+    }
+
+    fun showError(errorMessage: String) {
+        TODO("Not yet implemented")
+    }
+
+    fun showEmpty(emptyMessage: String) {
+        placeholder.isVisible = true
+        showMessage(emptyMessage, "")
+        placeholderImage.setImageResource(R.drawable.placeholder_not_find)
+        refreshButton.isVisible = false
+    }
+
+    fun showContent(trackList: ArrayList<Track>) {
+        TODO("Not yet implemented")
+    }
+
+    fun showHistoryContent(movies: ArrayList<Track>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun render(state: SearchState) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showToast(additionalMessage: String) {
+        TODO("Not yet implemented")
+    }
 }
