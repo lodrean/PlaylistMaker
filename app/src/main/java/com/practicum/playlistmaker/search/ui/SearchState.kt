@@ -7,7 +7,11 @@ sealed interface SearchState {
     object Loading : SearchState
 
     data class Content(
-        val movies: List<Track>
+        val trackList: List<Track>
+    ) : SearchState
+
+    data class History(
+        val trackHistoryList: List<Track>
     ) : SearchState
 
     data class Error(

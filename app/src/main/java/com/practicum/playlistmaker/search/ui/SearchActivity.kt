@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
@@ -60,6 +62,7 @@ class SearchActivity : ComponentActivity(), MoviesView {
     private val searchRunnable = Runnable {
         searchRequest()
     }
+    private lateinit var viewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +71,10 @@ class SearchActivity : ComponentActivity(), MoviesView {
         setContentView(view)
         val clearButton = binding?.clearIcon
         val backButton = binding?.back
-
+        viewModel = ViewModelProvider(
+            this,
+            SearchViewModel.getViewModelFactory()
+        )[SearchViewModel::class.java]
         inputEditText = binding?.inputEditText!!
         placeholder = binding?.placeholderView!!
         placeholderMessage = binding?.placeholderTV!!
@@ -80,7 +86,6 @@ class SearchActivity : ComponentActivity(), MoviesView {
         searchHistory = Creator.provideTracksHistoryInteractor(applicationContext, this.intent)
         clearHistory = binding?.clearButton!!
         progressBar = binding?.progressBar!!
-        /*itunesBaseUrl = ITUNES_BASE_URL*/
         inputEditText.setText(inputText)
         backButton?.setOnClickListener {
             super.finish()
@@ -301,12 +306,18 @@ class SearchActivity : ComponentActivity(), MoviesView {
         TODO("Not yet implemented")
     }
 
-    fun showHistoryContent(movies: ArrayList<Track>) {
+    fun showHistoryContent(trackHistoryList: ArrayList<Track>) {
         TODO("Not yet implemented")
     }
 
     override fun render(state: SearchState) {
-        TODO("Not yet implemented")
+        when (state) {
+            is SearchState.Content -> showContent(trackList)
+            is SearchState.Empty -> showEmpty(state.message)
+            is SearchState.Error -> showError(state.errorMessage)
+            SearchState.Loading -> showLoading()
+            is SearchState.History -> showHistoryContent(trackHistoryList)
+        }
     }
 
     override fun showToast(additionalMessage: String) {
