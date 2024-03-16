@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -18,7 +17,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,12 +29,11 @@ import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
-import com.practicum.playlistmaker.search.domain.TracksInteractor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 
-class SearchActivity : ComponentActivity(), MoviesView {
+class SearchActivity : ComponentActivity(), SearchView {
 
     private var binding: ActivitySearchBinding? = null
     private lateinit var placeholderMessage: TextView
@@ -144,7 +141,7 @@ class SearchActivity : ComponentActivity(), MoviesView {
                 if (s?.isEmpty() == true) trackList.clear()
                 searchHistoryView.isVisible =
                     inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
-                searchDebounce()
+                viewModel.searchDebounce(changedText = s.toString() ?: "")
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -156,44 +153,12 @@ class SearchActivity : ComponentActivity(), MoviesView {
         recyclerView.adapter = trackAdapter
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchRequest()
+                viewModel.searchRequest(inputEditText.text.toString())
             }
             false
         }
     }
 
-    private fun searchRequest() {
-        if (inputEditText.text?.isNotEmpty() == true) {
-            inProgressSearch()
-            tracksInteractor.searchTracks(
-                expression = inputEditText.text.toString(),
-                consumer = object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: ArrayList<Track>?, errorMessage: String?) {
-                        val currentRunnable = detailsRunnable
-                        if (currentRunnable != null) {
-                            handler.removeCallbacks(currentRunnable)
-                        }
-                        val newDetailsRunnable = Runnable {
-                            showSearchResults()
-                            trackList.clear()
-                            if (foundTracks != null) {
-                                trackList.addAll(foundTracks)
-                                trackAdapter.notifyDataSetChanged()
-                            }
-                            if (errorMessage != null) {
-                                showNoConnectionMessage(errorMessage)
-                            } else if (trackList.isEmpty()) {
-                                showEmpty(getString(R.string.nothing_found))
-                            }
-                        }
-                        detailsRunnable = newDetailsRunnable
-                        handler.post(newDetailsRunnable)
-                    }
-
-                }
-            )
-        }
-    }
 
     override fun onDestroy() {
         val currentRunnable = detailsRunnable
@@ -231,6 +196,10 @@ class SearchActivity : ComponentActivity(), MoviesView {
         } else {
             View.VISIBLE
         }
+    }
+
+    override fun showToast(additionalMessage: String) {
+        Toast.makeText(this, additionalMessage, Toast.LENGTH_LONG).show()
     }
 
     private fun showMessage(text: String, additionalMessage: String) {
@@ -320,7 +289,4 @@ class SearchActivity : ComponentActivity(), MoviesView {
         }
     }
 
-    override fun showToast(additionalMessage: String) {
-        TODO("Not yet implemented")
-    }
 }

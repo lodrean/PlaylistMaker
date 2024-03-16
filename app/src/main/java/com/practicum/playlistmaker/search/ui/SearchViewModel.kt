@@ -20,6 +20,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -52,121 +54,72 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     }
 
+    private val stateLiveData = MutableLiveData<SearchState>()
+    fun observeState(): LiveData<SearchState> = stateLiveData
+
+    private val showToast = SingleLiveEvent<String>()
+    fun observeShowToast(): LiveData<String> = showToast
+
     private var latestSearchText: String? = null
 
     private val tracksInteractor = Creator.provideTracksInteractor(getApplication<Application>())
     private val handler = Handler(Looper.getMainLooper())
 
-    private var binding: ActivitySearchBinding? = null
-    private lateinit var placeholderMessage: TextView
-    private lateinit var inputEditText: EditText
-    private lateinit var placeholderImage: ImageView
-    private lateinit var refreshButton: Button
-    private lateinit var placeholder: View
-    private lateinit var trackAdapter: TrackAdapter
-    private lateinit var progressBar: View
-    private lateinit var recyclerView: RecyclerView
     private val trackList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
     private var isClickAllowed = true
     private var detailsRunnable: Runnable? = null
-    private val searchRunnable = Runnable {
-        searchRequest()
+
+    fun searchDebounce(changedText: String) {
+        if (latestSearchText == changedText) {
+            return
+        }
+
+        this.latestSearchText = changedText
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        val searchRunnable = Runnable { searchRequest(changedText) }
+        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+
+        handler.postAtTime(
+            searchRunnable,
+            SEARCH_REQUEST_TOKEN,
+            postTime
+        )
     }
 
-    fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
-        setContentView(view)
-        searchHistory = Creator.provideTracksHistoryInteractor(applicationContext, this.intent)
-        /*itunesBaseUrl = ITUNES_BASE_URL*/
-        inputEditText.setText(inputText)
-        backButton?.setOnClickListener {
-            super.finish()
-        }
 
-        val onHistoryItemClickListener = OnItemClickListener { track ->
-            if (clickDebounce()) {
-                launchAudioPlayer(track)
-            }
-        }
-        val trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
+    fun searchRequest(newSearchText: String) {
+        if (newSearchText.isNotEmpty()) {
 
-        recyclerView = binding?.searchRecyclerView!!
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
-        searchHistoryRecyclerView.adapter = trackHistoryAdapter
-
-        trackHistoryAdapter.updateItems(searchHistory.getItems())
-        val onItemClickListener = OnItemClickListener { track ->
-            if (clickDebounce()) {
-                searchHistory.getItems()
-                searchHistory.addTrackToHistory(track)
-                trackHistoryAdapter.updateItems(searchHistory.getItems())
-                trackHistoryAdapter.run { notifyDataSetChanged() }
-                launchAudioPlayer(track)
-            }
-        }
-        searchHistoryView.isVisible =
-            trackHistoryAdapter.itemCount > 0
-        trackAdapter = TrackAdapter(trackList, onItemClickListener)
-
-        clearButton?.setOnClickListener {
-            trackList.clear()
-            trackAdapter.notifyDataSetChanged()
-            inputEditText.setText("")
-            placeholder.isVisible = false
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
-        }
-        clearHistory.setOnClickListener {
-            searchHistory.clearHistory()
-            trackHistoryAdapter.updateItems(trackHistoryList)
-            searchHistoryView.isVisible = false
-            trackHistoryAdapter.run { notifyDataSetChanged() }
-        }
-
-        val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton?.visibility = clearButtonVisibility(s)
-                searchView.isVisible =
-                    !(inputEditText.hasFocus() && s?.isEmpty() == true)
-                if (s?.isEmpty() == true) trackList.clear()
-                searchHistoryView.isVisible =
-                    inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
-                searchDebounce()
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                inputText.plus(s)
-            }
-        }
-
-        inputEditText.addTextChangedListener(simpleTextWatcher)
-        recyclerView.adapter = trackAdapter
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchRequest()
-            }
-            false
-        }
-    }
-    private fun searchRequest() {
-        if (inputEditText.text?.isNotEmpty() == true) {
-            inProgressSearch()
+            renderState(SearchState.Loading)
             tracksInteractor.searchTracks(
-                expression = inputEditText.text.toString(),
+                expression = newSearchText,
                 consumer = object : TracksInteractor.TracksConsumer {
                     override fun consume(foundTracks: ArrayList<Track>?, errorMessage: String?) {
-                        val currentRunnable = detailsRunnable
-                        if (currentRunnable != null) {
-                            handler.removeCallbacks(currentRunnable)
+                        val trackList = mutableListOf<Track>()
+                        if (foundTracks != null) {
+                            trackList.addAll(foundTracks)
                         }
-                        val newDetailsRunnable = Runnable {
+
+                        when {
+                            errorMessage != null -> {
+                                renderState(
+                                    SearchState.Error(
+                                        errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
+                                    )
+                                )
+                                showToast.postValue(errorMessage)
+                            }
+
+                            trackList.isEmpty() -> {
+                                renderState(
+                                    SearchState.Empty(
+                                        message = getApplication<Application>().getString(R.string.nothing_found),
+                                    )
+                                )
+                            }
+
+                        }
                             showSearchResults()
                             trackList.clear()
                             if (foundTracks != null) {
@@ -178,7 +131,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                             } else if (trackList.isEmpty()) {
                                 showEmptyResults()
                             }
-                        }
+
                         detailsRunnable = newDetailsRunnable
                         handler.post(newDetailsRunnable)
                     }
@@ -188,23 +141,13 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    override fun onDestroy() {
+    fun onDestroy() {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
-    fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
-            return
-        }
-        this.latestSearchText = changedText
 
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime
-        )
+    private fun renderState(state: SearchState) {
+        stateLiveData.postValue(state)
     }
 
     private fun launchAudioPlayer(track: Track) {
@@ -252,32 +195,6 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
-    }
-
-    private fun inProgressSearch() {
-        placeholder.isVisible = false
-        recyclerView.isVisible = false
-        progressBar.isVisible = true
-    }
-
-    private fun showSearchResults() {
-        placeholder.isVisible = false
-        progressBar.isVisible = false
-        recyclerView.isVisible = true
-    }
-
-    private fun showEmptyResults() {
-        placeholder.isVisible = true
-        showMessage(getString(R.string.nothing_found), "")
-        placeholderImage.setImageResource(R.drawable.placeholder_not_find)
-        refreshButton.isVisible = false
-    }
-
-    private fun showNoConnectionMessage(errorMessage: String) {
-        placeholder.isVisible = true
-        showMessage(getString(R.string.something_went_wrong), errorMessage)
-        placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
-        refreshButton.isVisible = false
     }
 
 

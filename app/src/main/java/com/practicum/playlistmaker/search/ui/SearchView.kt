@@ -1,8 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
-import com.practicum.playlistmaker.search.domain.Track
-
-interface MoviesView {
+interface SearchView {
 
     // Методы, меняющие внешний вид экрана
 
