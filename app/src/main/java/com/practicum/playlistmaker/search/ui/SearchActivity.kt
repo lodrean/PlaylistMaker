@@ -16,24 +16,22 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.util.Creator
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 
-class SearchActivity : ComponentActivity(), SearchView {
+class SearchActivity : AppCompatActivity() {
 
     private var binding: ActivitySearchBinding? = null
     private lateinit var placeholderMessage: TextView
@@ -48,17 +46,12 @@ class SearchActivity : ComponentActivity(), SearchView {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var clearHistory: Button
-    private val tracksInteractor = Creator.provideTracksInteractor(this)
-    private lateinit var searchHistory: TracksHistoryInteractor
+    private lateinit var trackHistoryAdapter: TrackHistoryAdapter
     private val trackHistoryList: ArrayList<Track> = arrayListOf()
-    private val trackList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private var detailsRunnable: Runnable? = null
-    private val searchRunnable = Runnable {
-        searchRequest()
-    }
     private lateinit var viewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,10 +61,6 @@ class SearchActivity : ComponentActivity(), SearchView {
         setContentView(view)
         val clearButton = binding?.clearIcon
         val backButton = binding?.back
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
         inputEditText = binding?.inputEditText!!
         placeholder = binding?.placeholderView!!
         placeholderMessage = binding?.placeholderTV!!
@@ -80,7 +69,6 @@ class SearchActivity : ComponentActivity(), SearchView {
         searchHistoryView = binding?.searchHistoryGroupView!!
         searchView = binding?.searchView!!
         searchHistoryRecyclerView = binding?.searchHistoryRecyclerView!!
-        searchHistory = Creator.provideTracksHistoryInteractor(applicationContext, this.intent)
         clearHistory = binding?.clearButton!!
         progressBar = binding?.progressBar!!
         inputEditText.setText(inputText)
@@ -88,34 +76,38 @@ class SearchActivity : ComponentActivity(), SearchView {
             super.finish()
         }
 
+        viewModel = ViewModelProvider(
+            this,
+            SearchViewModel.getViewModelFactory()
+        )[SearchViewModel::class.java]
+
         val onHistoryItemClickListener = OnItemClickListener { track ->
             if (clickDebounce()) {
                 launchAudioPlayer(track)
             }
         }
-        val trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
+
+        trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
 
         recyclerView = binding?.searchRecyclerView!!
         recyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
-        trackHistoryAdapter.updateItems(searchHistory.getItems())
         val onItemClickListener = OnItemClickListener { track ->
             if (clickDebounce()) {
-                searchHistory.getItems()
-                searchHistory.addTrackToHistory(track)
-                trackHistoryAdapter.updateItems(searchHistory.getItems())
+                viewModel.addTrackToHistory(track)
+                trackHistoryAdapter.updateItems(viewModel.getHistoyItems())
                 trackHistoryAdapter.run { notifyDataSetChanged() }
                 launchAudioPlayer(track)
             }
         }
         searchHistoryView.isVisible =
             trackHistoryAdapter.itemCount > 0
-        trackAdapter = TrackAdapter(trackList, onItemClickListener)
+        trackAdapter = TrackAdapter(onItemClickListener)
 
         clearButton?.setOnClickListener {
-            trackList.clear()
+            trackAdapter.tracks.clear()
             trackAdapter.notifyDataSetChanged()
             inputEditText.setText("")
             placeholder.isVisible = false
@@ -124,7 +116,7 @@ class SearchActivity : ComponentActivity(), SearchView {
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
         }
         clearHistory.setOnClickListener {
-            searchHistory.clearHistory()
+            viewModel.clearHistory()
             trackHistoryAdapter.updateItems(trackHistoryList)
             searchHistoryView.isVisible = false
             trackHistoryAdapter.run { notifyDataSetChanged() }
@@ -138,7 +130,7 @@ class SearchActivity : ComponentActivity(), SearchView {
                 clearButton?.visibility = clearButtonVisibility(s)
                 searchView.isVisible =
                     !(inputEditText.hasFocus() && s?.isEmpty() == true)
-                if (s?.isEmpty() == true) trackList.clear()
+                if (s?.isEmpty() == true) trackAdapter.tracks.clear()
                 searchHistoryView.isVisible =
                     inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
                 viewModel.searchDebounce(changedText = s.toString() ?: "")
@@ -151,12 +143,23 @@ class SearchActivity : ComponentActivity(), SearchView {
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
+
+
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+
+        viewModel.observeShowToast().observe(this) { toast ->
+            showToast(toast)
+        }
+
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.searchRequest(inputEditText.text.toString())
             }
             false
         }
+        viewModel.showHistoryTrackList()
     }
 
 
@@ -167,11 +170,6 @@ class SearchActivity : ComponentActivity(), SearchView {
         }
 
         super.onDestroy()
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun launchAudioPlayer(track: Track) {
@@ -198,13 +196,13 @@ class SearchActivity : ComponentActivity(), SearchView {
         }
     }
 
-    override fun showToast(additionalMessage: String) {
+    private fun showToast(additionalMessage: String) {
         Toast.makeText(this, additionalMessage, Toast.LENGTH_LONG).show()
     }
 
     private fun showMessage(text: String, additionalMessage: String) {
         if (text.isNotEmpty()) {
-            trackList.clear()
+            trackAdapter.tracks.clear()
             trackAdapter.notifyDataSetChanged()
             placeholderMessage.visibility = View.VISIBLE
             placeholderMessage.text = text
@@ -225,67 +223,63 @@ class SearchActivity : ComponentActivity(), SearchView {
         return current
     }
 
-    private fun inProgressSearch() {
-        placeholder.isVisible = false
-        recyclerView.isVisible = false
-        progressBar.isVisible = true
-    }
-
-    private fun showSearchResults() {
-        placeholder.isVisible = false
-        progressBar.isVisible = false
-        recyclerView.isVisible = true
-    }
-
-    private fun showEmptyResults() {
-
-    }
-
-    private fun showNoConnectionMessage(errorMessage: String) {
-        placeholder.isVisible = true
-        showMessage(getString(R.string.something_went_wrong), errorMessage)
-        placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
-        refreshButton.isVisible = false
-    }
-
     companion object {
         const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
-    fun showLoading() {
-        TODO("Not yet implemented")
+    private fun showLoading() {
+        placeholder.isVisible = false
+        recyclerView.isVisible = false
+        progressBar.isVisible = true
+
     }
 
-    fun showError(errorMessage: String) {
-        TODO("Not yet implemented")
+    private fun showError(errorMessage: String) {
+        placeholder.isVisible = true
+        showMessage(getString(R.string.something_went_wrong), errorMessage)
+        placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
+        refreshButton.isVisible = false
+        progressBar.isVisible = false
     }
 
-    fun showEmpty(emptyMessage: String) {
+    private fun showEmpty(emptyMessage: String) {
         placeholder.isVisible = true
         showMessage(emptyMessage, "")
         placeholderImage.setImageResource(R.drawable.placeholder_not_find)
         refreshButton.isVisible = false
+        progressBar.isVisible = false
     }
 
-    fun showContent(trackList: ArrayList<Track>) {
-        TODO("Not yet implemented")
+    private fun showContent(trackList: List<Track>) {
+        trackAdapter.tracks.clear()
+        trackAdapter.tracks.addAll(trackList)
+        trackAdapter.notifyDataSetChanged()
+        placeholder.isVisible = false
+        searchHistoryView.isVisible = false
+        progressBar.isVisible = false
+        recyclerView.isVisible = true
+
     }
 
-    fun showHistoryContent(trackHistoryList: ArrayList<Track>) {
-        TODO("Not yet implemented")
+    private fun showHistoryContent(trackHistoryList: List<Track>) {
+
+        trackHistoryAdapter.tracks.addAll(trackHistoryList)
+        trackAdapter.notifyDataSetChanged()
+        placeholder.isVisible = false
+        searchHistoryView.isVisible = true
+        progressBar.isVisible = false
+        recyclerView.isVisible = false
     }
 
-    override fun render(state: SearchState) {
+    private fun render(state: SearchState) {
         when (state) {
-            is SearchState.Content -> showContent(trackList)
+            is SearchState.Content -> showContent(state.trackList)
             is SearchState.Empty -> showEmpty(state.message)
             is SearchState.Error -> showError(state.errorMessage)
-            SearchState.Loading -> showLoading()
-            is SearchState.History -> showHistoryContent(trackHistoryList)
+            is SearchState.Loading -> showLoading()
+            is SearchState.History -> showHistoryContent(state.trackHistoryList)
         }
     }
 

@@ -46,7 +46,7 @@ class AudioPlayer : AppCompatActivity() {
         playingProgress = binding?.tvPlayingProgress
         progressTimer = createProgressTimer()
         backButton?.setOnClickListener { super.finish() }
-        track = Creator.provideTracksHistoryInteractor(this, this.intent).getTrack()
+        track = Creator.provideTracksHistoryInteractor(this.intent).getTrack()
         mediaPlayer.createAudioPlayer(track!!.url, object : PlayerStateListener {
             override fun onPrepared() {
                 play?.isEnabled = true

@@ -19,18 +19,24 @@ import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.practicum.playlistmaker.settings.domain.SettingsInteractor
 import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.practicum.playlistmaker.settings.domain.SettingsRepository
+import com.practicum.playlistmaker.settings.ui.SettingsActivity
 import com.practicum.playlistmaker.sharing.data.ExternalNavigator
 import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
 
 object Creator {
-    private fun getTracksRepository(context: Context): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(context))
+    private lateinit var application: App
+    private fun getTracksRepository(): TracksRepository {
+        return TracksRepositoryImpl(RetrofitNetworkClient(application))
     }
 
-    fun provideTracksInteractor(context: Context)
+    fun init(app: App) {
+        application = app
+    }
+
+    fun provideTracksInteractor()
             : TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository(context))
+        return TracksInteractorImpl(getTracksRepository())
     }
 
     private fun getTracksHistoryRepository(
@@ -40,8 +46,8 @@ object Creator {
         return TracksHistoryRepositoryImpl(context, intent)
     }
 
-    fun provideTracksHistoryInteractor(context: Context, intent: Intent): TracksHistoryInteractor {
-        return TracksHistoryInteractorImpl(getTracksHistoryRepository(context, intent))
+    fun provideTracksHistoryInteractor(intent: Intent): TracksHistoryInteractor {
+        return TracksHistoryInteractorImpl(getTracksHistoryRepository(application, intent))
     }
 
 
@@ -57,7 +63,7 @@ object Creator {
     fun provideSharingInteractor(context: Context): SharingInteractor {
         return SharingInteractorImpl(
             context,
-            ExternalNavigator()
+            ExternalNavigator(context)
         )
     }
 

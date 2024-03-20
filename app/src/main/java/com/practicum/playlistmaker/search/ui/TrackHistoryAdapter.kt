@@ -12,7 +12,7 @@ import com.practicum.playlistmaker.search.domain.Track
 class TrackHistoryAdapter(
     private val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<TrackViewHolder>() {
-    private var tracks: MutableList<Track> = mutableListOf()
+    var tracks: MutableList<Track> = mutableListOf()
     private val limit = 10
 
 
