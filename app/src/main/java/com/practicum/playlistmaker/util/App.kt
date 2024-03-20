@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.util
 
 import android.app.Application
 import android.content.Intent
+import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.search.data.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
@@ -26,6 +27,9 @@ class App : Application() {
         return TracksInteractorImpl(getRepository())
     }
 
+    fun provideAudioPlayerInteractor(): AudioPlayerInteractor {
+        return Creator.provideAudioPlayerInteractor()
+    }
     override fun onCreate() {
         super.onCreate()
         Creator.init(this)
