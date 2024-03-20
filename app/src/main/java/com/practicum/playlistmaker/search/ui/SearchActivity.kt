@@ -86,7 +86,6 @@ class SearchActivity : AppCompatActivity() {
                 launchAudioPlayer(track)
             }
         }
-
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
 
         recyclerView = binding?.searchRecyclerView!!

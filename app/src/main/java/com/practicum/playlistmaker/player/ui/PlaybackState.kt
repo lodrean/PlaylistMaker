@@ -7,8 +7,9 @@ sealed interface PlaybackState {
     object Play : PlaybackState
     object Prepared : PlaybackState
     object Pause : PlaybackState
-}
 
-data class Content(
-    val track: Track
-) : PlaybackState
+
+    data class Content(
+        val track: Track
+    ) : PlaybackState
+}

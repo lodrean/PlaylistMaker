@@ -15,7 +15,6 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.dpToPx
-import com.practicum.playlistmaker.util.Creator
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -29,12 +28,12 @@ class AudioPlayer : AppCompatActivity() {
     private var playingProgress: TextView? = null
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
-    lateinit var viewModel: ViewModel
-    private var mediaPlayer = Creator.provideAudioPlayerInteractor()
+    private lateinit var viewModel: ViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
         val view = binding?.root
         setContentView(view)
@@ -43,14 +42,17 @@ class AudioPlayer : AppCompatActivity() {
         backButton?.setOnClickListener { super.finish() }
         viewModel = ViewModelProvider(
             this,
-            AudioPlayerViewModel.getViewModelFactory()
+            AudioPlayerViewModel.getViewModelFactory(intent)
         )[AudioPlayerViewModel::class.java]
-        track = Creator.provideTracksHistoryInteractor(this.intent).getTrack()
-
 
         mainThreadHandler = Handler(Looper.getMainLooper())
+        (viewModel as AudioPlayerViewModel).getPlayStatusLiveData().observe(this) {
+            render(it)
+        }
+        (viewModel as AudioPlayerViewModel).observeProgress().observe(this) {
+            playingProgress?.text = it
 
-
+        }
         val cornerRadius = 8F
         binding?.albumImage?.let {
             Glide.with(this).load(track?.getCoverArtwork()).fitCenter()
@@ -59,32 +61,31 @@ class AudioPlayer : AppCompatActivity() {
         }
         play = binding?.ivPlayButton
         play?.setOnClickListener {
-            playbackControl()
-            playerAudioPlayerState = mediaPlayer.getPlayerState()
-            startProgressTimer()
+            (viewModel as AudioPlayerViewModel).playControl()
         }
-
+        (viewModel as AudioPlayerViewModel).createAudioPlayer()
     }
 
     override fun onPause() {
         super.onPause()
-        mediaPlayer.pause()
+        (viewModel as AudioPlayerViewModel).onPause()
     }
+
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.destroy()
-        progressTimer?.let { mainThreadHandler?.removeCallbacks(it) }
+
+        (viewModel as AudioPlayerViewModel).onDestroy()
     }
 
     private fun showTrackInfo(track: Track) {
-        binding?.tvTrackTitle?.text = track?.trackName
-        binding?.tvTrackArtist?.text = track?.artistName
-        binding?.tvDurationTime?.text = track?.trackTime?.let { formatMilliseconds(it.toLong()) }
-        binding?.tvAlbumName?.text = track?.collectionName
+        binding?.tvTrackTitle?.text = track.trackName
+        binding?.tvTrackArtist?.text = track.artistName
+        binding?.tvDurationTime?.text = track.trackTime.let { formatMilliseconds(it.toLong()) }
+        binding?.tvAlbumName?.text = track.collectionName
         binding?.tvYearValue?.text =
-            track?.releaseDate?.removeRange(4, track!!.releaseDate.lastIndex + 1)
-        binding?.tvGenreValue?.text = track?.genre
-        binding?.tvCountryValue?.text = track?.country
+            track.releaseDate.removeRange(4, track.releaseDate.lastIndex + 1)
+        binding?.tvGenreValue?.text = track.genre
+        binding?.tvCountryValue?.text = track.country
     }
 
     private fun render(state: PlaybackState) {
@@ -92,7 +93,7 @@ class AudioPlayer : AppCompatActivity() {
             is PlaybackState.Prepared -> play?.isEnabled = true
             is PlaybackState.Play -> play?.setImageResource(R.drawable.pause_button)
             is PlaybackState.Pause -> play?.setImageResource(R.drawable.play_button)
-            is Content -> showTrackInfo(state.track)
+            is PlaybackState.Content -> showTrackInfo(state.track)
         }
     }
 

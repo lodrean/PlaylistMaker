@@ -4,10 +4,12 @@ import android.app.Application
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.R
@@ -18,29 +20,35 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import com.practicum.playlistmaker.util.App
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 class AudioPlayerViewModel(
     application: Application,
+    private val track: Track,
     private val tracksHistoryInteractor: TracksHistoryInteractor,
     private val mediaPlayer: AudioPlayerInteractor
 ) : AndroidViewModel(application) {
 
+    private val playStatusLiveData = MutableLiveData<PlaybackState>()
+    private val progressLiveData = MutableLiveData<String>()
+
+
+
     companion object {
         private const val PROGRESS_DELAY_MILLIS = 400L
 
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(intent: Intent): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val tracksHistoryInteractor =
-                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App).provideTracksHistoryInteractor(
-                        Intent()
+                    (this[APPLICATION_KEY] as App).provideTracksHistoryInteractor(
+                        intent
                     )
                 val track = tracksHistoryInteractor.getTrack()
                 val mediaPlayer =
-                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App).provideAudioPlayerInteractor()
+                    (this[APPLICATION_KEY] as App).provideAudioPlayerInteractor()
                 AudioPlayerViewModel(
-                    this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App,
+                    this[APPLICATION_KEY] as App,
+                    track,
                     tracksHistoryInteractor,
                     mediaPlayer
                 )
@@ -55,21 +63,27 @@ class AudioPlayerViewModel(
     private var progressTimer: Runnable = createProgressTimer()
 
 
-    private val playStatusLiveData = MutableLiveData<PlaybackState>()
     fun getPlayStatusLiveData(): LiveData<PlaybackState> = playStatusLiveData
 
-    private val progressLiveData = MutableLiveData<String>()
 
     fun observeProgress(): LiveData<String> = progressLiveData
+
+    fun playControl() {
+        playbackControl()
+        playerAudioPlayerState = mediaPlayer.getPlayerState()
+        startProgressTimer()
+    }
+
     fun createAudioPlayer() {
-        val track = tracksHistoryInteractor.getTrack()
+
+        Log.d("myTag", "track")
         mediaPlayer.createAudioPlayer(track.url, object : PlayerStateListener {
             override fun onPrepared() {
                 renderState(PlaybackState.Prepared)
             }
 
             override fun onCompletion() {
-                renderState(PlaybackState.Pause)
+                renderState(PlaybackState.Content(track))
             }
         })
     }
