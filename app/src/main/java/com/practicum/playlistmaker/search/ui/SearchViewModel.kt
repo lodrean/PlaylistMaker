@@ -17,6 +17,7 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.util.App
+import com.practicum.playlistmaker.util.SingleLiveEvent
 
 class SearchViewModel(
     application: Application,

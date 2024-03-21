@@ -23,7 +23,6 @@ import java.util.Locale
 class AudioPlayer : AppCompatActivity() {
 
 
-    private var track: Track? = Track()
     private var play: ImageView? = null
     private var playingProgress: TextView? = null
     private var binding: ActivityAudioPlayerBinding? = null
@@ -53,12 +52,8 @@ class AudioPlayer : AppCompatActivity() {
             playingProgress?.text = it
 
         }
-        val cornerRadius = 8F
-        binding?.albumImage?.let {
-            Glide.with(this).load(track?.getCoverArtwork()).fitCenter()
-                .dontAnimate().placeholder(R.drawable.placeholder)
-                .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext))).into(it)
-        }
+
+
         play = binding?.ivPlayButton
         play?.setOnClickListener {
             (viewModel as AudioPlayerViewModel).playControl()
@@ -73,11 +68,16 @@ class AudioPlayer : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         (viewModel as AudioPlayerViewModel).onDestroy()
     }
 
     private fun showTrackInfo(track: Track) {
+        val cornerRadius = 8F
+        binding?.albumImage?.let {
+            Glide.with(this).load(track.getCoverArtwork()).fitCenter()
+                .dontAnimate().placeholder(R.drawable.placeholder)
+                .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext))).into(it)
+        }
         binding?.tvTrackTitle?.text = track.trackName
         binding?.tvTrackArtist?.text = track.artistName
         binding?.tvDurationTime?.text = track.trackTime.let { formatMilliseconds(it.toLong()) }
@@ -90,9 +90,12 @@ class AudioPlayer : AppCompatActivity() {
 
     private fun render(state: PlaybackState) {
         when (state) {
-            is PlaybackState.Prepared -> play?.isEnabled = true
-            is PlaybackState.Play -> play?.setImageResource(R.drawable.pause_button)
-            is PlaybackState.Pause -> play?.setImageResource(R.drawable.play_button)
+            is PlaybackState.Prepared -> {
+                play?.isEnabled = true
+            }
+
+            is PlaybackState.Play -> play?.setImageResource(R.drawable.play_button)
+            is PlaybackState.Pause -> play?.setImageResource(R.drawable.pause_button)
             is PlaybackState.Content -> showTrackInfo(state.track)
         }
     }

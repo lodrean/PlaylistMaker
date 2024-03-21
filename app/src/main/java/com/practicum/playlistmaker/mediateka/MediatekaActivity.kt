@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.main.ui
+package com.practicum.playlistmaker.mediateka
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

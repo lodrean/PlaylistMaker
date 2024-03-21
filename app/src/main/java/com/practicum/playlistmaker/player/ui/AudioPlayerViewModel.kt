@@ -17,7 +17,6 @@ import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerState
 import com.practicum.playlistmaker.player.domain.PlayerStateListener
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import com.practicum.playlistmaker.util.App
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -25,7 +24,6 @@ import java.util.Locale
 class AudioPlayerViewModel(
     application: Application,
     private val track: Track,
-    private val tracksHistoryInteractor: TracksHistoryInteractor,
     private val mediaPlayer: AudioPlayerInteractor
 ) : AndroidViewModel(application) {
 
@@ -49,7 +47,6 @@ class AudioPlayerViewModel(
                 AudioPlayerViewModel(
                     this[APPLICATION_KEY] as App,
                     track,
-                    tracksHistoryInteractor,
                     mediaPlayer
                 )
 
@@ -80,6 +77,7 @@ class AudioPlayerViewModel(
         mediaPlayer.createAudioPlayer(track.url, object : PlayerStateListener {
             override fun onPrepared() {
                 renderState(PlaybackState.Prepared)
+                renderState(PlaybackState.Content(track))
             }
 
             override fun onCompletion() {

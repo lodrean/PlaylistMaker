@@ -6,16 +6,21 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.mediateka.MediatekaActivity
 import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
+    lateinit var mediaButton: Button
+    lateinit var searchButton: Button
+    lateinit var settingsButton: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val searchButton = findViewById<Button>(R.id.search_button)
-        val mediaButton = findViewById<Button>(R.id.mediateka_button)
-        val settingsButton = findViewById<Button>(R.id.settings_button)
+        searchButton = findViewById<Button>(R.id.search_button)
+        mediaButton = findViewById<Button>(R.id.mediateka_button)
+        settingsButton = findViewById<Button>(R.id.settings_button)
+
 
         searchButton.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
