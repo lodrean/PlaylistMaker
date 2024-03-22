@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -27,7 +26,7 @@ class AudioPlayer : AppCompatActivity() {
     private var playingProgress: TextView? = null
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
-    private lateinit var viewModel: ViewModel
+    private lateinit var viewModel: AudioPlayerViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +44,10 @@ class AudioPlayer : AppCompatActivity() {
         )[AudioPlayerViewModel::class.java]
 
         mainThreadHandler = Handler(Looper.getMainLooper())
-        (viewModel as AudioPlayerViewModel).getPlayStatusLiveData().observe(this) {
+        viewModel.getPlayStatusLiveData().observe(this) {
             render(it)
         }
-        (viewModel as AudioPlayerViewModel).observeProgress().observe(this) {
+        viewModel.observeProgress().observe(this) {
             playingProgress?.text = it
 
         }
@@ -56,19 +55,19 @@ class AudioPlayer : AppCompatActivity() {
 
         play = binding?.ivPlayButton
         play?.setOnClickListener {
-            (viewModel as AudioPlayerViewModel).playControl()
+            viewModel.playControl()
         }
-        (viewModel as AudioPlayerViewModel).createAudioPlayer()
+        viewModel.createAudioPlayer()
     }
 
     override fun onPause() {
         super.onPause()
-        (viewModel as AudioPlayerViewModel).onPause()
+        viewModel.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        (viewModel as AudioPlayerViewModel).onDestroy()
+        viewModel.onDestroy()
     }
 
     private fun showTrackInfo(track: Track) {

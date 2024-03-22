@@ -39,9 +39,7 @@ class SearchViewModel(
                 val tracksHistoryInteractor =
                     (this[APPLICATION_KEY] as App).provideTracksHistoryInteractor(Intent())
                 SearchViewModel(
-                    this[APPLICATION_KEY] as App,
-                    tracksInteractor,
-                    tracksHistoryInteractor
+                    this[APPLICATION_KEY] as App, tracksInteractor, tracksHistoryInteractor
                 )
 
             }
@@ -85,9 +83,7 @@ class SearchViewModel(
         val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
 
         handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime
+            searchRunnable, SEARCH_REQUEST_TOKEN, postTime
         )
     }
 
@@ -95,44 +91,41 @@ class SearchViewModel(
         if (newSearchText.isNotEmpty()) {
 
             renderState(SearchState.Loading)
-            tracksInteractor.searchTracks(
-                expression = newSearchText,
-                consumer = object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: ArrayList<Track>?, errorMessage: String?) {
-                        val trackList = mutableListOf<Track>()
-                        if (foundTracks != null) {
-                            trackList.addAll(foundTracks)
-                        }
+            tracksInteractor.searchTracks(expression = newSearchText, consumer =
 
-                        when {
-                            errorMessage != null -> {
-                                renderState(
-                                    SearchState.Error(
-                                        errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
-                                    )
-                                )
-                                showToast(errorMessage)
-                            }
+            { foundTracks, errorMessage ->
+                val trackList = mutableListOf<Track>()
+                if (foundTracks != null) {
+                    trackList.addAll(foundTracks)
+                }
 
-                            trackList.isEmpty() -> {
-                                renderState(
-                                    SearchState.Empty(
-                                        message = getApplication<Application>().getString(R.string.nothing_found),
-                                    )
-                                )
-                            }
+                when {
+                    errorMessage != null -> {
+                        renderState(
+                            SearchState.Error(
+                                errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
+                            )
+                        )
+                        showToast(errorMessage)
+                    }
 
-                            else -> {
-                                renderState(
-                                    SearchState.Content(
-                                        trackList
-                                    )
-                                )
-                            }
-                        }
+                    trackList.isEmpty() -> {
+                        renderState(
+                            SearchState.Empty(
+                                message = getApplication<Application>().getString(R.string.nothing_found),
+                            )
+                        )
+                    }
+
+                    else -> {
+                        renderState(
+                            SearchState.Content(
+                                trackList
+                            )
+                        )
                     }
                 }
-            )
+            })
         }
     }
 

@@ -132,7 +132,7 @@ class SearchActivity : AppCompatActivity() {
                 if (s?.isEmpty() == true) trackAdapter.tracks.clear()
                 searchHistoryView.isVisible =
                     inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
-                viewModel.searchDebounce(changedText = s.toString() ?: "")
+                viewModel.searchDebounce(changedText = s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -263,13 +263,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistoryContent(trackHistoryList: List<Track>) {
-
-        trackHistoryAdapter.tracks.addAll(trackHistoryList)
-        trackAdapter.notifyDataSetChanged()
-        placeholder.isVisible = false
-        searchHistoryView.isVisible = true
-        progressBar.isVisible = false
-        recyclerView.isVisible = false
+        if (trackHistoryList.isNotEmpty()) {
+            trackHistoryAdapter.tracks.addAll(trackHistoryList)
+            trackAdapter.notifyDataSetChanged()
+            placeholder.isVisible = false
+            searchHistoryView.isVisible = true
+            progressBar.isVisible = false
+            recyclerView.isVisible = false
+        } else {
+            searchHistoryView.isVisible = false
+        }
     }
 
     private fun render(state: SearchState) {

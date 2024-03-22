@@ -19,10 +19,9 @@ import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.practicum.playlistmaker.settings.domain.SettingsInteractor
 import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.practicum.playlistmaker.settings.domain.SettingsRepository
-import com.practicum.playlistmaker.settings.ui.SettingsActivity
 import com.practicum.playlistmaker.sharing.data.ExternalNavigator
-import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
+import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 
 object Creator {
     private lateinit var application: App
@@ -60,10 +59,10 @@ object Creator {
         return AudioPlayerInteractorImpl(getAudioRepository())
     }
 
-    fun provideSharingInteractor(context: Context): SharingInteractor {
+    fun provideSharingInteractor(): SharingInteractor {
         return SharingInteractorImpl(
-            context,
-            ExternalNavigator(context)
+            application,
+            ExternalNavigator(application)
         )
     }
 

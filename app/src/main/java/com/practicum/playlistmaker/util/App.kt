@@ -10,7 +10,6 @@ import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.TracksInteractorImpl
 import com.practicum.playlistmaker.search.domain.TracksRepository
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
-import com.practicum.playlistmaker.settings.ui.SettingsActivity
 
 const val DARK_THEME_SHARED_PREFERENCES = "practicum_dark_theme_preferences"
 const val EDIT_THEME = "dark_theme_enabled"
@@ -18,7 +17,7 @@ const val EDIT_THEME = "dark_theme_enabled"
 class App : Application() {
 
     fun provideSettingsInteractor() = Creator.provideSettingsInteractor(this)
-    fun provideSharingInteractor() = Creator.provideSharingInteractor(this)
+    fun provideSharingInteractor() = Creator.provideSharingInteractor()
     private fun getRepository(): TracksRepository {
         return TracksRepositoryImpl(RetrofitNetworkClient(this))
     }
