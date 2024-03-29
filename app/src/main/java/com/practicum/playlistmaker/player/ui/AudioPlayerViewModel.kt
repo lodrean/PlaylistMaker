@@ -19,7 +19,6 @@ import java.util.Locale
 
 class AudioPlayerViewModel(
     application: Application,
-    intent: Intent,
     tracksHistoryInteractor: TracksHistoryInteractor,
     private val mediaPlayer: AudioPlayerInteractor
 ) : AndroidViewModel(application) {

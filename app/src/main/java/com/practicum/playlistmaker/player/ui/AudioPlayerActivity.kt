@@ -1,12 +1,15 @@
 package com.practicum.playlistmaker.player.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -22,15 +25,15 @@ import java.util.Locale
 
 
 class AudioPlayer : AppCompatActivity() {
-
+    private val viewModel by viewModel<AudioPlayerViewModel> {
+        Log.d("test", "intent2: " + intent.toString())
+        parametersOf(intent)
+    }
 
     private var play: ImageView? = null
     private var playingProgress: TextView? = null
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
-    val viewModel by viewModel<AudioPlayerViewModel>{
-        parametersOf(intent)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

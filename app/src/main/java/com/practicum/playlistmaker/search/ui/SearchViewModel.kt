@@ -31,7 +31,7 @@ class SearchViewModel(
         private val SEARCH_REQUEST_TOKEN = Any()
 
 
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+        /*fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
 
                 val tracksInteractor = (this[APPLICATION_KEY] as App).provideTracksInteractor()
@@ -43,7 +43,7 @@ class SearchViewModel(
                 )
 
             }
-        }
+        }*/
     }
 
     private val stateLiveData = MutableLiveData<SearchState>()
@@ -134,7 +134,7 @@ class SearchViewModel(
     }
 
 
-    fun showToast(message: String) {
+    private fun showToast(message: String) {
         showToast.postValue(message)
     }
 

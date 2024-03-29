@@ -25,9 +25,9 @@ import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 
 object Creator {
     private lateinit var application: App
-    private fun getTracksRepository(): TracksRepository {
+    /*private fun getTracksRepository(): TracksRepository {
         return TracksRepositoryImpl(RetrofitNetworkClient(application))
-    }
+    }*/
 
     fun init(app: App) {
         application = app
@@ -40,7 +40,6 @@ object Creator {
     ): TracksHistoryRepository {
         return TracksHistoryRepositoryImpl(context, intent)
     }
-
     fun provideTracksHistoryInteractor(intent: Intent): TracksHistoryInteractor {
         return TracksHistoryInteractorImpl(getTracksHistoryRepository(application, intent))
     }
