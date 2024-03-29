@@ -15,7 +15,10 @@ import kotlinx.serialization.json.Json
 const val TRACK_LIST_KEY = "key_for_track_list"
 const val SHARED_PREFERENCES = "playlist_search_preferences"
 
-class TracksHistoryRepositoryImpl(context: Context, private val intent: Intent) :
+class TracksHistoryRepositoryImpl(
+    context: Context,
+    private val intent: Intent,
+) :
     TracksHistoryRepository {
 
     private var tracks = mutableListOf<Track>()

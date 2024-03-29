@@ -33,10 +33,6 @@ object Creator {
         application = app
     }
 
-    fun provideTracksInteractor()
-            : TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository())
-    }
 
     private fun getTracksHistoryRepository(
         context: Context,
@@ -47,16 +43,6 @@ object Creator {
 
     fun provideTracksHistoryInteractor(intent: Intent): TracksHistoryInteractor {
         return TracksHistoryInteractorImpl(getTracksHistoryRepository(application, intent))
-    }
-
-
-    private fun getAudioRepository(): AudioPlayerRepository {
-        return AudioPlayerRepositoryImpl()
-    }
-
-    fun provideAudioPlayerInteractor()
-            : AudioPlayerInteractor {
-        return AudioPlayerInteractorImpl(getAudioRepository())
     }
 
     fun provideSharingInteractor(): SharingInteractor {

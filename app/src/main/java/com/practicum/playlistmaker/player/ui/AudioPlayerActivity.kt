@@ -14,6 +14,8 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.dpToPx
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -26,22 +28,26 @@ class AudioPlayer : AppCompatActivity() {
     private var playingProgress: TextView? = null
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
-    private lateinit var viewModel: AudioPlayerViewModel
-
+    val viewModel by viewModel<AudioPlayerViewModel>{
+        parametersOf(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
         val view = binding?.root
         setContentView(view)
+
+
         val backButton = binding?.backButton
         playingProgress = binding?.tvPlayingProgress
         backButton?.setOnClickListener { super.finish() }
-        viewModel = ViewModelProvider(
+        /*viewModel = ViewModelProvider(
             this,
             AudioPlayerViewModel.getViewModelFactory(intent)
-        )[AudioPlayerViewModel::class.java]
+        )[AudioPlayerViewModel::class.java]*/
 
         mainThreadHandler = Handler(Looper.getMainLooper())
         viewModel.getPlayStatusLiveData().observe(this) {

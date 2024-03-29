@@ -6,10 +6,10 @@ import com.practicum.playlistmaker.player.domain.AudioPlayerState
 import com.practicum.playlistmaker.player.domain.PlayerStateListener
 
 
-class AudioPlayerRepositoryImpl(var playerAudioPlayerState: AudioPlayerState = AudioPlayerState.DEFAULT) :
+class AudioPlayerRepositoryImpl(var playerAudioPlayerState: AudioPlayerState, private val mediaPlayer: MediaPlayer) :
     AudioPlayerRepository {
 
-    private val mediaPlayer = MediaPlayer()
+
 
     override fun play() {
         mediaPlayer.start()
