@@ -19,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
@@ -57,7 +56,7 @@ class SearchActivity : AppCompatActivity() {
     private var detailsRunnable: Runnable? = null
 
     /*lateinit var viewModel: SearchViewModel*/
-    private val viewModel by viewModel<SearchViewModel> {
+    private val viewModel by viewModel<SearchViewModel>() {
         parametersOf(intent)
     }
 
@@ -181,7 +180,7 @@ class SearchActivity : AppCompatActivity() {
     private fun launchAudioPlayer(track: Track) {
         val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
         intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
-        Log.d("test", "intent: " + intent.toString())
+        Log.d("test", "intent: " + Json.encodeToString(track))
         startActivity(intent)
     }
 

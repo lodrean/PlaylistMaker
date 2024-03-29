@@ -1,18 +1,13 @@
 package com.practicum.playlistmaker.util
 
 import android.app.Application
-import android.content.Intent
 import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.repositoryModule
 import com.practicum.playlistmaker.di.viewModelModule
-import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.search.data.ItunesApiService
 import com.practicum.playlistmaker.search.data.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.TracksRepositoryImpl
-import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
-import com.practicum.playlistmaker.search.domain.TracksInteractor
-import com.practicum.playlistmaker.search.domain.TracksInteractorImpl
 import com.practicum.playlistmaker.search.domain.TracksRepository
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
 import org.koin.android.ext.koin.androidContext
@@ -38,9 +33,10 @@ class App : Application() {
             )
         )
     }
-    fun provideTracksInteractor(): TracksInteractor {
+
+    /*fun provideTracksInteractor(): TracksInteractor {
         return TracksInteractorImpl(getRepository())
-    }
+    }*/
     override fun onCreate() {
         super.onCreate()
         Creator.init(this)
@@ -56,9 +52,9 @@ class App : Application() {
         provideSettingsInteractor().updateThemeSetting(themeSettings)
     }
 
-    fun provideTracksHistoryInteractor(intent: Intent): TracksHistoryInteractor {
-        return Creator.provideTracksHistoryInteractor(intent)
-    }
+    /* fun provideTracksHistoryInteractor(intent: Intent): TracksHistoryInteractor {
+         return Creator.provideTracksHistoryInteractor(intent)
+     }*/
 
 
 }

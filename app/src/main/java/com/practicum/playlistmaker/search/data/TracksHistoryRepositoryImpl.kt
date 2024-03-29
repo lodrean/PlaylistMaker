@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -55,6 +56,7 @@ class TracksHistoryRepositoryImpl(
 
         val extras: Bundle? = intent.extras
         val jsonTrack: String? = extras?.getString(Constant.CHOSEN_TRACK)
+        Log.d("Track", "track = " + jsonTrack)
         return Json.decodeFromString(jsonTrack!!)
     }
 

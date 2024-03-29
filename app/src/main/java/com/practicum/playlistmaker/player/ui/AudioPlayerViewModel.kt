@@ -1,10 +1,8 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.app.Application
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -69,7 +67,7 @@ class AudioPlayerViewModel(
 
     fun createAudioPlayer() {
 
-        Log.d("myTag", "track")
+
         mediaPlayer.createAudioPlayer(track.url, object : PlayerStateListener {
             override fun onPrepared() {
                 renderState(PlaybackState.Prepared)

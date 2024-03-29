@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.practicum.playlistmaker.search.data.ItunesApiService
 import com.practicum.playlistmaker.search.data.NetworkClient
@@ -22,13 +21,13 @@ val dataModule = module {
             .create(ItunesApiService::class.java)
     }
 
-    /* single{
+    single {
          androidContext()
              .getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
      }
 
      factory { Gson() }
-     */
+
     single<NetworkClient> {
         RetrofitNetworkClient(get(), androidContext())
     }
