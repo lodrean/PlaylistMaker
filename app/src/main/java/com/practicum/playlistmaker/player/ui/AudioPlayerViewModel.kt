@@ -28,24 +28,6 @@ class AudioPlayerViewModel(
 
     companion object {
         private const val PROGRESS_DELAY_MILLIS = 400L
-
-        /*fun getViewModelFactory(intent: Intent): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val tracksHistoryInteractor =
-                    (this[APPLICATION_KEY] as App).provideTracksHistoryInteractor(
-                        intent
-                    )
-                val track = tracksHistoryInteractor.getTrack()
-                val mediaPlayer =
-                    (this[APPLICATION_KEY] as App).provideAudioPlayerInteractor()
-                AudioPlayerViewModel(
-                    this[APPLICATION_KEY] as App,
-                    track,
-                    mediaPlayer
-                )
-
-            }
-        }*/
     }
 
     private val track: Track = tracksHistoryInteractor.getTrack()

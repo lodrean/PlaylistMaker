@@ -13,7 +13,6 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel {(intent: Intent)->
-        Log.d("rep1", "intent = " + intent.extras?.getString(Constant.CHOSEN_TRACK))
         AudioPlayerViewModel(androidApplication(), get { parametersOf(intent) }, get())
     }
 

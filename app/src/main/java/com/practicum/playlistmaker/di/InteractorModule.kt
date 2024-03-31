@@ -18,7 +18,6 @@ val interactorModule = module {
         AudioPlayerInteractorImpl(get())
     }
     factory<TracksHistoryInteractor> { (intent: Intent) ->
-        Log.d("rep2", "intent = " + intent.extras?.getString(Constant.CHOSEN_TRACK))
         TracksHistoryInteractorImpl(get { parametersOf(intent) })
     }
 

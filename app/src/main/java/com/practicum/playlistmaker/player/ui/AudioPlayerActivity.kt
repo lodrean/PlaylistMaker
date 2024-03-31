@@ -24,7 +24,6 @@ import java.util.Locale
 
 class AudioPlayer : AppCompatActivity() {
     private val viewModel by viewModel<AudioPlayerViewModel> {
-        Log.d("activity", "extra = " + this.intent.extras?.getString(Constant.CHOSEN_TRACK))
         parametersOf(intent)
     }
 

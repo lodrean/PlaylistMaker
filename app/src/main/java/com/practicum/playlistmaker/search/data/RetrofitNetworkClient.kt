@@ -5,8 +5,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.practicum.playlistmaker.search.domain.Constant.Companion.BAD_REQUEST
 import com.practicum.playlistmaker.search.domain.Constant.Companion.NO_CONNECTION
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitNetworkClient(
     private val itunesService: ItunesApiService,
@@ -34,7 +32,6 @@ class RetrofitNetworkClient(
         }
 
     }
-
 
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(

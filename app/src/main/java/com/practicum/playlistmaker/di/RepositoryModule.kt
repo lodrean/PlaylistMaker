@@ -24,8 +24,7 @@ val repositoryModule = module {
         MediaPlayer()
     }
     factory<TracksHistoryRepository> { (intent: Intent) ->
-        Log.d("rep3", "intent = " + intent.extras?.getString(Constant.CHOSEN_TRACK))
-        TracksHistoryRepositoryImpl(androidContext(), intent)
+        TracksHistoryRepositoryImpl(intent, get(), get())
     }
     factory<TracksRepository> {
         TracksRepositoryImpl(get())

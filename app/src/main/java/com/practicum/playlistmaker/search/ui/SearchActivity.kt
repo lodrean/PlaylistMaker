@@ -82,11 +82,6 @@ class SearchActivity : AppCompatActivity() {
             super.finish()
         }
 
-        /*viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]*/
-
         val onHistoryItemClickListener = OnItemClickListener { track ->
             if (clickDebounce()) {
                 launchAudioPlayer(track)
