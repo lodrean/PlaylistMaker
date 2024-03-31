@@ -1,14 +1,17 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Intent
-import android.util.Log
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractorImpl
-import com.practicum.playlistmaker.search.domain.Constant
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractorImpl
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.search.domain.TracksInteractorImpl
+import com.practicum.playlistmaker.settings.domain.SettingsInteractor
+import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
+import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
+import com.practicum.playlistmaker.sharing.domain.SharingInteractor
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
@@ -24,4 +27,11 @@ val interactorModule = module {
     factory<TracksInteractor> {
         TracksInteractorImpl(get())
     }
+    single<SettingsInteractor> {
+        SettingsInteractorImpl(get())
+    }
+    single<SharingInteractor> {
+        SharingInteractorImpl(androidContext(), get())
+    }
+
 }

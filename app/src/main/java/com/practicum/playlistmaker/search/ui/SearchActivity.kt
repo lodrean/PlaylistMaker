@@ -55,8 +55,7 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var detailsRunnable: Runnable? = null
 
-    /*lateinit var viewModel: SearchViewModel*/
-    private val viewModel by viewModel<SearchViewModel>() {
+    private val viewModel by viewModel<SearchViewModel> {
         parametersOf(intent)
     }
 

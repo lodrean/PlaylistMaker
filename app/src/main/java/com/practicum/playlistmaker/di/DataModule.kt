@@ -6,6 +6,7 @@ import com.practicum.playlistmaker.search.data.ItunesApiService
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.SHARED_PREFERENCES
+import com.practicum.playlistmaker.sharing.data.ExternalNavigator
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -22,14 +23,16 @@ val dataModule = module {
     }
 
     single {
-         androidContext()
-             .getSharedPreferences(SHARED_PREFERENCES, AppCompatActivity.MODE_PRIVATE)
-     }
+        androidContext()
+            .getSharedPreferences(SHARED_PREFERENCES, AppCompatActivity.MODE_PRIVATE)
+    }
 
-     factory { Gson() }
+    factory { Gson() }
 
     single<NetworkClient> {
         RetrofitNetworkClient(get(), androidContext())
     }
-
+    single<ExternalNavigator> {
+        ExternalNavigator(androidContext())
+    }
 }

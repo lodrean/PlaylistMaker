@@ -1,19 +1,15 @@
 package com.practicum.playlistmaker.settings.ui
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.search.ui.SearchViewModel
-import com.practicum.playlistmaker.util.Creator
-import com.practicum.playlistmaker.util.App
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModel<SettingsViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -21,11 +17,6 @@ class SettingsActivity : AppCompatActivity() {
         backButton.setOnClickListener { super.finish() }
 
         val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
-
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.getViewModelFactory()
-        )[SettingsViewModel::class.java]
 
         if (viewModel.getThemeSettings()) {
             themeSwitcher.isChecked = true
