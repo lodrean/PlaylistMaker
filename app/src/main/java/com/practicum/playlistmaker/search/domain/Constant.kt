@@ -6,7 +6,6 @@ class Constant {
 
         //result codes
         const val DEFAULT_RESULT = 0
-        const val SUCCESS_RESUlT = 200
         const val BAD_REQUEST = 400
         const val NO_CONNECTION = -1
     }

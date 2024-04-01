@@ -3,45 +3,51 @@ package com.practicum.playlistmaker.player.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.search.domain.Constant
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.dpToPx
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
 class AudioPlayer : AppCompatActivity() {
-
+    private val viewModel by viewModel<AudioPlayerViewModel> {
+        parametersOf(intent)
+    }
 
     private var play: ImageView? = null
     private var playingProgress: TextView? = null
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
-    private lateinit var viewModel: AudioPlayerViewModel
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
         val view = binding?.root
         setContentView(view)
+
+
         val backButton = binding?.backButton
         playingProgress = binding?.tvPlayingProgress
         backButton?.setOnClickListener { super.finish() }
-        viewModel = ViewModelProvider(
+        /*viewModel = ViewModelProvider(
             this,
             AudioPlayerViewModel.getViewModelFactory(intent)
-        )[AudioPlayerViewModel::class.java]
+        )[AudioPlayerViewModel::class.java]*/
 
         mainThreadHandler = Handler(Looper.getMainLooper())
         viewModel.getPlayStatusLiveData().observe(this) {
@@ -72,6 +78,7 @@ class AudioPlayer : AppCompatActivity() {
 
     private fun showTrackInfo(track: Track) {
         val cornerRadius = 8F
+        Log.d("myTag", "track" + track.toString())
         binding?.albumImage?.let {
             Glide.with(this).load(track.getCoverArtwork()).fitCenter()
                 .dontAnimate().placeholder(R.drawable.placeholder)

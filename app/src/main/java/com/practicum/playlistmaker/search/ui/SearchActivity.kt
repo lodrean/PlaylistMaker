@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -18,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
@@ -29,6 +29,8 @@ import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 
 class SearchActivity : AppCompatActivity() {
@@ -52,7 +54,10 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private var detailsRunnable: Runnable? = null
-    private lateinit var viewModel: SearchViewModel
+
+    private val viewModel by viewModel<SearchViewModel> {
+        parametersOf(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,11 +80,6 @@ class SearchActivity : AppCompatActivity() {
         backButton?.setOnClickListener {
             super.finish()
         }
-
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
 
         val onHistoryItemClickListener = OnItemClickListener { track ->
             if (clickDebounce()) {
@@ -174,6 +174,7 @@ class SearchActivity : AppCompatActivity() {
     private fun launchAudioPlayer(track: Track) {
         val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
         intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
+        Log.d("test", "intent: " + Json.encodeToString(track))
         startActivity(intent)
     }
 
