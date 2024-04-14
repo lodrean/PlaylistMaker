@@ -6,7 +6,7 @@
         <item name="background_color">@color/YP_Blue</item>
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnPrimary">@color/YP_black</item>
-        <item name="android:background">@color/YP_Blue</item>
+        <!-- <item name="android:background">@color/YP_Blue</item>-->
         <item name="android:iconTint">@color/YP_Text_Gray</item>
         <item name="main_font">@font/ys_display_regular</item>
         <item name="note_color">@color/YP_black</item>
@@ -19,7 +19,7 @@
 
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnPrimary">@color/YP_black</item>
-        <item name="android:background">@color/white</item>
+        <!-- <item name="android:background">@color/white</item>-->
         <item name="android:iconTint">@color/YP_Text_Gray</item>
         <item name="text_color_primary">@color/YP_black</item>
         <item name="text_color_secondary">@color/YP_Text_Gray</item>

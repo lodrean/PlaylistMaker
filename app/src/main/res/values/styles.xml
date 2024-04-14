@@ -74,7 +74,7 @@
         <item name="tint">@color/YP_Text_Gray</item>
     </style>
 
-    <style name="SettingsActivityStyle">
+    <style name="ActivityStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/white</item>
