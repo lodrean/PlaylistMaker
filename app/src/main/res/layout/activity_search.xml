@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="?attr/colorPrimary"
     style="@style/ActivityStyle"
     android:theme="@style/Theme.PlaylistMaker"
     app:layout_constraintDimensionRatio="1:1"

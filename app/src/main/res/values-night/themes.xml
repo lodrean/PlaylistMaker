@@ -4,19 +4,19 @@
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/YP_black</item>
         <item name="background_color">@color/YP_black</item>
-        <item name="backgroundColor">@color/YP_black</item>
         <item name="colorSecondary">@color/white</item>
         <item name="iconTint">@color/white</item>
+
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
         <item name="colorPrimary">@color/YP_black</item>
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnPrimary">@color/YP_black</item>
-        <item name="android:background">@color/YP_black</item>
+
         <item name="android:iconTint">@color/YP_black</item>
         <item name="icon_color">@color/white</item>
-
+        <item name="tab_indicator_color">@color/white</item>
         <item name="text_color_primary">@color/white</item>
         <item name="text_color_secondary">@color/white</item>
         <item name="note_color">@color/white</item>

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.util
+package com.practicum.playlistmaker.mediateka.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -189,5 +189,15 @@
         <item name="android:insetBottom">0dp</item>
     </style>
 
+    <style name="tablayout">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="tabIndicator">@drawable/tab_indicator</item>
+        <item name="tabTextColor">?attr/text_color_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="tabIndicatorColor">?attr/text_color_primary</item>
+        <item name="tabIndicatorFullWidth">true</item>
+
+    </style>
+
 
 </resources>

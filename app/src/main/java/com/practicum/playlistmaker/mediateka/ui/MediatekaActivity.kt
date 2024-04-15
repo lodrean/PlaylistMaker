@@ -15,6 +15,8 @@ class MediatekaActivity : AppCompatActivity() {
         binding = ActivityMediatekaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.back.setOnClickListener { super.finish() }
+
         binding.viewPager.adapter = MediatekaPagerAdapter(
             supportFragmentManager,
             lifecycle

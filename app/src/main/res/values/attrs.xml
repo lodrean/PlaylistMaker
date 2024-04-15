@@ -6,5 +6,6 @@
     <attr name="note_color" />
     <attr name="background_color" />
     <attr name="icon_color" />
+    <attr name="tab_indicator_color" />
 
 </resources>

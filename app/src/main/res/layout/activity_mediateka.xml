@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     style="@style/ActivityStyle"
     android:orientation="vertical"
+    android:background="?attr/colorPrimary"
     android:theme="@style/Theme.PlaylistMaker"
     tools:context=".mediateka.ui.MediatekaActivity">
 
@@ -44,10 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/section_margin"
         android:layout_marginRight="@dimen/section_margin"
-        android:background="@color/white"
-        app:tabRippleColor="@color/YP_black"
-        app:tabTextColor="@color/black"
-        app:tabIndicatorColor="@color/YP_black" />
+        style="@style/tablayout" />
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
