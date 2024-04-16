@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
-    style="@style/ActivityStyle"
-    android:theme="@style/Theme.PlaylistMaker"
     tools:context=".player.ui.AudioPlayer">
 
     <androidx.constraintlayout.widget.Guideline

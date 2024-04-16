@@ -24,7 +24,5 @@
         <item name="android:iconTint">@color/YP_Text_Gray</item>
         <item name="text_color_primary">@color/YP_black</item>
         <item name="text_color_secondary">@color/YP_Text_Gray</item>
-
-
     </style>
 </resources>
