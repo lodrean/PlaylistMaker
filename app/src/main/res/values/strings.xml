@@ -16,6 +16,7 @@
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="refresh">Обновить</string>
+    <string name="new_playlist">Новый плейлист</string>
     <string name="You_search">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
     <string name="duration">Длительность</string>
@@ -24,5 +25,11 @@
     <string name="Genre">Жанр</string>
     <string name="Country">Страна</string>
     <string name="defaultProgressTime">00:00</string>
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="empty_mediateka">Ваша медиатека пуста</string>
+    <string name="empty_playlists">Вы не создали \n ни одного плейлиста</string>
 
 </resources>

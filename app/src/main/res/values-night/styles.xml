@@ -48,6 +48,7 @@
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">22sp</item>
     </style>
 
     <style name="BackSettingsButtonStyle">
@@ -74,10 +75,10 @@
         <item name="tint">@color/white</item>
     </style>
 
-    <style name="SettingsActivityStyle">
+    <style name="ActivityStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/YP_black</item>
+        <item name="android:backgroundTint">@color/YP_black</item>
         <item name="android:orientation">vertical</item>
     </style>
 

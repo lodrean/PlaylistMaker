@@ -49,6 +49,7 @@
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:textColor">@color/YP_black</item>
+        <item name="android:textSize">22sp</item>
     </style>
 
     <style name="BackSettingsButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
@@ -74,11 +75,8 @@
         <item name="tint">@color/YP_Text_Gray</item>
     </style>
 
-    <style name="SettingsActivityStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="ActivityStyle">
         <item name="android:background">@color/white</item>
-        <item name="android:orientation">vertical</item>
     </style>
 
     <style name="BrandedSwitch">
@@ -187,6 +185,17 @@
 
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="tablayout">
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="tabIndicator">@drawable/tab_indicator</item>
+        <item name="tabTextColor">?attr/text_color_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="tabIndicatorColor">?attr/tab_indicator_color</item>
+        <item name="tabIndicatorFullWidth">true</item>
+        <item name="tabBackground">?attr/colorPrimary</item>
+
     </style>
 
 
