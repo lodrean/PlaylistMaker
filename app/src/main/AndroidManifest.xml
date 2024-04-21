@@ -18,6 +18,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".root.RootActivity"
+            android:exported="true"
+            android:theme="@style/Base.Theme.PlaylistMaker" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+        <activity
             android:name=".player.ui.AudioPlayer"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker" />
@@ -26,7 +36,7 @@
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker" />
         <activity
-            android:name=".mediateka.ui.MediatekaActivity"
+            android:name=".mediateka.ui.MediatekaFragment"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker" />
         <activity
@@ -36,11 +46,7 @@
         <activity
             android:name=".main.ui.MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

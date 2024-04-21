@@ -11,6 +11,7 @@
     <dimen name="image_margin">106dp</dimen>
     <dimen name="main_button_radius">16dp</dimen>
     <dimen name="main_button_padding">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 
 </resources>

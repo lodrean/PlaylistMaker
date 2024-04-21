@@ -1,19 +1,29 @@
 package com.practicum.playlistmaker.mediateka.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
+import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityMediatekaBinding
+import com.practicum.playlistmaker.databinding.FragmentMediatekaBinding
+import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 
-class MediatekaActivity : AppCompatActivity() {
+class MediatekaFragment : BindingFragment<FragmentMediatekaBinding>() {
 
-    private lateinit var binding: ActivityMediatekaBinding
     private lateinit var tabsMediator: TabLayoutMediator
+
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMediatekaBinding {
+        return FragmentMediatekaBinding.inflate(inflater, container, false)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMediatekaBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         binding.back.setOnClickListener { super.finish() }
 
