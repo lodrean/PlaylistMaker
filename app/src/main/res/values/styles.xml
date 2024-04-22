@@ -198,5 +198,10 @@
 
     </style>
 
+    <style name="bottom_nav">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+
+    </style>
+
 
 </resources>
