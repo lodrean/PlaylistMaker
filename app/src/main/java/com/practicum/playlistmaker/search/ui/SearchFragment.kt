@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -17,12 +18,12 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
@@ -33,9 +34,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
-    private var binding: ActivitySearchBinding? = null
+
     private lateinit var placeholderMessage: TextView
     private lateinit var inputEditText: EditText
     private lateinit var placeholderImage: ImageView
@@ -56,16 +57,19 @@ class SearchActivity : AppCompatActivity() {
     private var detailsRunnable: Runnable? = null
 
     private val viewModel by viewModel<SearchViewModel> {
-        parametersOf(intent)
+        parametersOf(requireActivity().intent)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
-        val view = binding?.root
-        setContentView(view)
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSearchBinding {
+        return FragmentSearchBinding.inflate(inflater, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val clearButton = binding?.clearIcon
-        val backButton = binding?.back
         inputEditText = binding?.inputEditText!!
         placeholder = binding?.placeholderView!!
         placeholderMessage = binding?.placeholderTV!!
@@ -77,9 +81,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistory = binding?.clearButton!!
         progressBar = binding?.progressBar!!
         inputEditText.setText(inputText)
-        backButton?.setOnClickListener {
-            super.finish()
-        }
+
 
         val onHistoryItemClickListener = OnItemClickListener { track ->
             if (clickDebounce()) {
@@ -89,8 +91,8 @@ class SearchActivity : AppCompatActivity() {
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
 
         recyclerView = binding?.searchRecyclerView!!
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
         val onItemClickListener = OnItemClickListener { track ->
@@ -111,7 +113,7 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.setText("")
             placeholder.isVisible = false
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
         }
         clearHistory.setOnClickListener {
@@ -144,11 +146,11 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = trackAdapter
 
 
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
-        viewModel.observeShowToast().observe(this) { toast ->
+        viewModel.observeShowToast().observe(viewLifecycleOwner) { toast ->
             showToast(toast)
         }
 
@@ -159,34 +161,33 @@ class SearchActivity : AppCompatActivity() {
             false
         }
         viewModel.showHistoryTrackList()
-    }
 
+    }
 
     override fun onDestroy() {
         val currentRunnable = detailsRunnable
         if (currentRunnable != null) {
             handler.removeCallbacks(currentRunnable)
         }
-
         super.onDestroy()
     }
 
     private fun launchAudioPlayer(track: Track) {
-        val intent = Intent(this@SearchActivity, AudioPlayer::class.java)
+        val intent = Intent(requireContext(), AudioPlayer::class.java)
         intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
         Log.d("test", "intent: " + Json.encodeToString(track))
         startActivity(intent)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    /*override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_AMOUNT, inputText)
-    }
+    }*/
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        inputText = savedInstanceState.getString(TEXT_AMOUNT, AMOUNT_DEF)
-    }
+    /*  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+          super.onRestoreInstanceState(savedInstanceState)
+          inputText = savedInstanceState.getString(TEXT_AMOUNT, AMOUNT_DEF)
+      }*/
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -197,7 +198,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showToast(additionalMessage: String) {
-        Toast.makeText(this, additionalMessage, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), additionalMessage, Toast.LENGTH_LONG).show()
     }
 
     private fun showMessage(text: String, additionalMessage: String) {
@@ -207,7 +208,11 @@ class SearchActivity : AppCompatActivity() {
             placeholderMessage.visibility = View.VISIBLE
             placeholderMessage.text = text
             if (additionalMessage.isNotEmpty()) {
-                Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext().applicationContext,
+                    additionalMessage,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         } else {
             placeholderMessage.visibility = View.GONE

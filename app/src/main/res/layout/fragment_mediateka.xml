@@ -17,8 +17,6 @@
         android:paddingEnd="52dp"
         android:paddingBottom="4dp">
 
-
-
         <TextView
             style="@style/TextSettingsStyle"
             android:layout_width="match_parent"

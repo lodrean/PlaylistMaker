@@ -21,11 +21,11 @@ class MediatekaFragment : BindingFragment<FragmentMediatekaBinding>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
 
 
         binding.viewPager.adapter = MediatekaPagerAdapter(
-            parentFragmentManager, lifecycle
+            childFragmentManager, lifecycle
         )
 
         tabsMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -37,8 +37,8 @@ class MediatekaFragment : BindingFragment<FragmentMediatekaBinding>() {
         tabsMediator.attach()
     }
 
-    override fun onDestroy() {
+    /*override fun onDestroy() {
         super.onDestroy()
         tabsMediator.detach()
-    }
+    }*/
 }
