@@ -121,7 +121,7 @@
     <style name="RefreshButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textColor">@color/YP_black</item>
-        <item name="android:backgroundTint">?attr/note_color</item>
+        <item name="android:backgroundTint">@color/white</item>
         <item name="android:textSize">14sp</item>
         <item name="cornerRadius">54dp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>

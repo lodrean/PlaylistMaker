@@ -181,7 +181,7 @@
         <item name="android:textSize">14sp</item>
         <item name="cornerRadius">54dp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
-        <item name="android:backgroundTint">?attr/note_color</item>
+        <item name="android:backgroundTint">@color/YP_black</item>
 
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>

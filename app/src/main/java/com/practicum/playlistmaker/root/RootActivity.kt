@@ -1,14 +1,11 @@
 package com.practicum.playlistmaker.root
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.fragment.app.commit
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityRootBinding
+import com.practicum.playlistmaker.mediateka.ui.MediatekaFragment
 
 class RootActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRootBinding
@@ -18,6 +15,13 @@ class RootActivity : AppCompatActivity() {
 
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (savedInstanceState == null) {
+            // Добавляем фрагмент в контейнер
+            supportFragmentManager.commit {
+                this.add(R.id.rootFragmentContainerView, MediatekaFragment())
+            }
+        }
     }
 
 }

@@ -2,14 +2,12 @@ package com.practicum.playlistmaker.mediateka.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivityMediatekaBinding
 import com.practicum.playlistmaker.databinding.FragmentMediatekaBinding
-import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 
 class MediatekaFragment : BindingFragment<FragmentMediatekaBinding>() {
 
@@ -22,14 +20,12 @@ class MediatekaFragment : BindingFragment<FragmentMediatekaBinding>() {
         return FragmentMediatekaBinding.inflate(inflater, container, false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding.back.setOnClickListener { super.finish() }
 
         binding.viewPager.adapter = MediatekaPagerAdapter(
-            supportFragmentManager,
-            lifecycle
+            parentFragmentManager, lifecycle
         )
 
         tabsMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
