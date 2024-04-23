@@ -69,17 +69,17 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val clearButton = binding?.clearIcon
-        inputEditText = binding?.inputEditText!!
-        placeholder = binding?.placeholderView!!
-        placeholderMessage = binding?.placeholderTV!!
-        placeholderImage = binding?.placeholderIV!!
-        refreshButton = binding?.refreshButton!!
-        searchHistoryView = binding?.searchHistoryGroupView!!
-        searchView = binding?.searchView!!
-        searchHistoryRecyclerView = binding?.searchHistoryRecyclerView!!
-        clearHistory = binding?.clearButton!!
-        progressBar = binding?.progressBar!!
+        val clearButton = binding.clearIcon
+        inputEditText = binding.inputEditText
+        placeholder = binding.placeholderView
+        placeholderMessage = binding.placeholderTV
+        placeholderImage = binding.placeholderIV
+        refreshButton = binding.refreshButton
+        searchHistoryView = binding.searchHistoryGroupView
+        searchView = binding.searchView
+        searchHistoryRecyclerView = binding.searchHistoryRecyclerView
+        clearHistory = binding.clearButton
+        progressBar = binding.progressBar
         inputEditText.setText(inputText)
 
 
@@ -90,9 +90,10 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
 
-        recyclerView = binding?.searchRecyclerView!!
+        recyclerView = binding.searchRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        searchHistoryRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext())
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
         val onItemClickListener = OnItemClickListener { track ->
@@ -145,6 +146,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
 
+        viewModel.showHistoryTrackList()
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
@@ -160,7 +162,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             }
             false
         }
-        viewModel.showHistoryTrackList()
+
 
     }
 

@@ -200,6 +200,13 @@
 
     <style name="bottom_nav">
         <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="itemIconTint">@color/bottom_menu</item>
+        <item name="itemTextColor">@color/bottom_menu</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="itemPaddingBottom">8dp</item>
+        <item name="itemPaddingTop">8dp</item>
+        <item name="itemTextAppearanceInactive">@style/FontStyle.Track.Player.Artist</item>
+        <item name="itemTextAppearanceActive">@style/FontStyle.Track.Player.Artist</item>
 
     </style>
 
