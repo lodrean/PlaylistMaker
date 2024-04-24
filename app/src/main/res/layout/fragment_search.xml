@@ -57,7 +57,9 @@
             android:singleLine="true"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textCursorDrawable="@color/YP_Blue" />
+            android:textCursorDrawable="@drawable/cursor_blue"
+
+            />
 
 
         <ImageView
