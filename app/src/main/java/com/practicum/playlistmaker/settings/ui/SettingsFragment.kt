@@ -23,30 +23,27 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val themeSwitcher = binding.themeSwitch
+
 
         if (viewModel.getThemeSettings()) {
-            themeSwitcher.isChecked = true
+            binding.themeSwitch.isChecked = true
         }
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        binding.themeSwitch.setOnCheckedChangeListener { switcher, checked ->
 
             viewModel.updateThemeSettings(checked)
         }
-        val supportButton = binding.supportButton
 
-        supportButton.setOnClickListener {
+        binding.supportButton.setOnClickListener {
             viewModel.openSupport()
         }
 
-        val shareButton = binding.shareButton
 
-        shareButton.setOnClickListener {
+        binding.shareButton.setOnClickListener {
             viewModel.shareApp()
         }
 
-        val userAgreementButton = binding.userAggreement
 
-        userAgreementButton.setOnClickListener {
+        binding.userAggreement.setOnClickListener {
             viewModel.openTerms()
         }
         viewModel.observeState().observe(viewLifecycleOwner) {

@@ -32,11 +32,6 @@ class SearchViewModel(
     private val showToast = SingleLiveEvent<String>()
     fun observeShowToast(): LiveData<String> = showToast
 
-    init {
-        if (tracksHistoryInteractor.getItems().isNotEmpty())
-            showHistoryTrackList()
-    }
-
     private var latestSearchText: String? = null
 
     private val handler = Handler(Looper.getMainLooper())

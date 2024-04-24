@@ -13,14 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
@@ -37,18 +32,8 @@ import org.koin.core.parameter.parametersOf
 class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
 
-    private lateinit var placeholderMessage: TextView
-    private lateinit var inputEditText: EditText
-    private lateinit var placeholderImage: ImageView
-    private lateinit var refreshButton: Button
-    private lateinit var placeholder: View
+
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var searchHistoryView: View
-    private lateinit var searchView: View
-    private lateinit var progressBar: View
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var searchHistoryRecyclerView: RecyclerView
-    private lateinit var clearHistory: Button
     private lateinit var trackHistoryAdapter: TrackHistoryAdapter
     private val trackHistoryList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
@@ -69,18 +54,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val clearButton = binding.clearIcon
-        inputEditText = binding.inputEditText
-        placeholder = binding.placeholderView
-        placeholderMessage = binding.placeholderTV
-        placeholderImage = binding.placeholderIV
-        refreshButton = binding.refreshButton
-        searchHistoryView = binding.searchHistoryGroupView
-        searchView = binding.searchView
-        searchHistoryRecyclerView = binding.searchHistoryRecyclerView
-        clearHistory = binding.clearButton
-        progressBar = binding.progressBar
-        inputEditText.setText(inputText)
+        binding.inputEditText.setText(inputText)
 
 
         val onHistoryItemClickListener = OnItemClickListener { track ->
@@ -90,11 +64,10 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
 
-        recyclerView = binding.searchRecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        searchHistoryRecyclerView.layoutManager =
+        binding.searchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.searchHistoryRecyclerView.layoutManager =
             LinearLayoutManager(requireContext())
-        searchHistoryRecyclerView.adapter = trackHistoryAdapter
+        binding.searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
         val onItemClickListener = OnItemClickListener { track ->
             if (clickDebounce()) {
@@ -104,37 +77,38 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
                 launchAudioPlayer(track)
             }
         }
-        searchHistoryView.isVisible =
+        binding.searchHistoryGroupView.isVisible =
             trackHistoryAdapter.itemCount > 0
         trackAdapter = TrackAdapter(onItemClickListener)
 
-        clearButton?.setOnClickListener {
+        binding.clearIcon.setOnClickListener {
             trackAdapter.tracks.clear()
             trackAdapter.notifyDataSetChanged()
-            inputEditText.setText("")
-            placeholder.isVisible = false
+            binding.inputEditText.setText("")
+            binding.placeholderView.isVisible = false
             val inputMethodManager =
                 requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(binding.clearIcon.windowToken, 0)
         }
-        clearHistory.setOnClickListener {
+        binding.clearButton.setOnClickListener {
             viewModel.clearHistory()
             trackHistoryAdapter.updateItems(trackHistoryList)
-            searchHistoryView.isVisible = false
+            binding.searchHistoryGroupView.isVisible = false
             trackHistoryAdapter.run { notifyDataSetChanged() }
         }
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                binding.inputEditText.requestFocus()
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton?.visibility = clearButtonVisibility(s)
-                searchView.isVisible =
-                    !(inputEditText.hasFocus() && s?.isEmpty() == true)
+                binding.clearIcon.visibility = clearButtonVisibility(s)
+                binding.searchView.isVisible =
+                    !(binding.inputEditText.hasFocus() && s?.isEmpty() == true)
                 if (s?.isEmpty() == true) trackAdapter.tracks.clear()
-                searchHistoryView.isVisible =
-                    inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
+                binding.searchHistoryGroupView.isVisible =
+                    binding.inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
                 viewModel.searchDebounce(changedText = s.toString())
             }
 
@@ -143,10 +117,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             }
         }
 
-        inputEditText.addTextChangedListener(simpleTextWatcher)
-        recyclerView.adapter = trackAdapter
-
-        viewModel.showHistoryTrackList()
+        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
+        binding.searchRecyclerView.adapter = trackAdapter
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
@@ -156,14 +128,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             showToast(toast)
         }
 
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewModel.searchRequest(inputEditText.text.toString())
+                viewModel.searchRequest(binding.inputEditText.text.toString())
             }
             false
         }
 
-
+        viewModel.showHistoryTrackList()
     }
 
     override fun onDestroy() {
@@ -181,15 +153,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         startActivity(intent)
     }
 
-    /*override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(TEXT_AMOUNT, inputText)
-    }*/
-
-    /*  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-          super.onRestoreInstanceState(savedInstanceState)
-          inputText = savedInstanceState.getString(TEXT_AMOUNT, AMOUNT_DEF)
-      }*/
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -207,8 +170,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         if (text.isNotEmpty()) {
             trackAdapter.tracks.clear()
             trackAdapter.notifyDataSetChanged()
-            placeholderMessage.visibility = View.VISIBLE
-            placeholderMessage.text = text
+            binding.placeholderTV.visibility = View.VISIBLE
+            binding.placeholderTV.text = text
             if (additionalMessage.isNotEmpty()) {
                 Toast.makeText(
                     requireContext().applicationContext,
@@ -217,7 +180,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
                 ).show()
             }
         } else {
-            placeholderMessage.visibility = View.GONE
+            binding.placeholderTV.visibility = View.GONE
         }
     }
 
@@ -237,36 +200,36 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun showLoading() {
-        placeholder.isVisible = false
-        recyclerView.isVisible = false
-        progressBar.isVisible = true
+        binding.placeholderView.isVisible = false
+        binding.searchRecyclerView.isVisible = false
+        binding.progressBar.isVisible = true
 
     }
 
     private fun showError(errorMessage: String) {
-        placeholder.isVisible = true
+        binding.placeholderView.isVisible = true
         showMessage(getString(R.string.something_went_wrong), errorMessage)
-        placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
-        refreshButton.isVisible = false
-        progressBar.isVisible = false
+        binding.placeholderIV.setImageResource(R.drawable.placeholder_no_internet)
+        binding.refreshButton.isVisible = false
+        binding.progressBar.isVisible = false
     }
 
     private fun showEmpty(emptyMessage: String) {
-        placeholder.isVisible = true
+        binding.placeholderView.isVisible = true
         showMessage(emptyMessage, "")
-        placeholderImage.setImageResource(R.drawable.placeholder_not_find)
-        refreshButton.isVisible = false
-        progressBar.isVisible = false
+        binding.placeholderIV.setImageResource(R.drawable.placeholder_not_find)
+        binding.refreshButton.isVisible = false
+        binding.progressBar.isVisible = false
     }
 
     private fun showContent(trackList: List<Track>) {
         trackAdapter.tracks.clear()
         trackAdapter.tracks.addAll(trackList)
         trackAdapter.notifyDataSetChanged()
-        placeholder.isVisible = false
-        searchHistoryView.isVisible = false
-        progressBar.isVisible = false
-        recyclerView.isVisible = true
+        binding.placeholderView.isVisible = false
+        binding.searchHistoryGroupView.isVisible = false
+        binding.progressBar.isVisible = false
+        binding.searchRecyclerView.isVisible = true
 
     }
 
@@ -274,12 +237,12 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         if (trackHistoryList.isNotEmpty()) {
             trackHistoryAdapter.tracks.addAll(trackHistoryList)
             trackAdapter.notifyDataSetChanged()
-            placeholder.isVisible = false
-            searchHistoryView.isVisible = true
-            progressBar.isVisible = false
-            recyclerView.isVisible = false
+            binding.placeholderView.isVisible = false
+            binding.searchHistoryGroupView.isVisible = true
+            binding.progressBar.isVisible = false
+            binding.searchRecyclerView.isVisible = false
         } else {
-            searchHistoryView.isVisible = false
+            binding.searchHistoryGroupView.isVisible = false
         }
     }
 
