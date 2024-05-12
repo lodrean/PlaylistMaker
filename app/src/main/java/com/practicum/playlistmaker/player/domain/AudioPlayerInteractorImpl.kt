@@ -5,12 +5,12 @@ class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
     AudioPlayerInteractor {
     private var playerState: AudioPlayerState = repository.playerStateReporter()
     override fun createAudioPlayer(url: String, listener: PlayerStateListener) {
-        playerState = AudioPlayerState.PREPARED
+        /*playerState = AudioPlayerState.PREPARED*/
         repository.preparePlayer(url, listener)
     }
 
     override fun play() {
-        playerState = AudioPlayerState.PLAYING
+        /*playerState = AudioPlayerState.PLAYING*/
         repository.play()
     }
 
@@ -29,6 +29,10 @@ class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
 
     override fun getCurrentPosition(): Int {
         return repository.getCurrentPosition()
+    }
+
+    override fun onPlay(): Boolean {
+        return repository.onPlay()
     }
 
 }

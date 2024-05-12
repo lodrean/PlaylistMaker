@@ -8,4 +8,6 @@ interface AudioPlayerRepository {
     fun playerStateReporter(): AudioPlayerState
     fun onDestroy()
     fun getCurrentPosition(): Int
+
+    fun onPlay(): Boolean
 }

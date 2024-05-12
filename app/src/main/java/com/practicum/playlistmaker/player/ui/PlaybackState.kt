@@ -1,24 +1,23 @@
 package com.practicum.playlistmaker.player.ui
 
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.ui.SearchState
 
-sealed class PlaybackState(val isPlayButtonEnabled: Boolean, val progress: String) {
+sealed class PlaybackState(val progress: String) {
     /*object Play : PlaybackState
     object Prepared : PlaybackState
     object Pause : PlaybackState*/
 
 
-    class Default : PlaybackState(false, "00:00")
+    class Default : PlaybackState("00:00")
 
-    class Prepared : PlaybackState(true, "00:00")
+    class Prepared : PlaybackState("00:00")
 
-    class Play(progress: String) : PlaybackState(true, progress)
+    class Play(progress: String) : PlaybackState(progress)
 
-    class Pause(progress: String) : PlaybackState(true, progress)
+    class Pause(progress: String) : PlaybackState(progress)
 
 
     data class Content(
         val track: Track
-    ) : PlaybackState(true, "00:00")
+    ) : PlaybackState("00:00")
 }

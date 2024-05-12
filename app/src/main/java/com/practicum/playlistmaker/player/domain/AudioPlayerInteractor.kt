@@ -16,4 +16,6 @@ interface AudioPlayerInteractor {
 
     fun destroy()
     fun getCurrentPosition(): Int
+
+    fun onPlay(): Boolean
 }

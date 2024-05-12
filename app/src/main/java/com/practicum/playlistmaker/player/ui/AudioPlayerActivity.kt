@@ -82,10 +82,11 @@ class AudioPlayer : AppCompatActivity() {
         when (state) {
             is PlaybackState.Prepared -> {
                 binding?.ivPlayButton?.isEnabled = true
+                binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             }
             is PlaybackState.Default -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
-            is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
-            is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(R.drawable.pause_button)
+            is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(R.drawable.pause_button)
+            is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             is PlaybackState.Content -> showTrackInfo(state.track)
         }
     }

@@ -40,11 +40,16 @@ class AudioPlayerRepositoryImpl(
     }
 
     override fun onDestroy() {
+        mediaPlayer.stop()
         mediaPlayer.release()
     }
 
     override fun getCurrentPosition(): Int {
         return mediaPlayer.currentPosition
+    }
+
+    override fun onPlay(): Boolean {
+        return mediaPlayer.isPlaying
     }
 
 }
