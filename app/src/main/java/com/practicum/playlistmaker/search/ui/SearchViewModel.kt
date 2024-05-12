@@ -1,22 +1,16 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.app.Application
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import com.practicum.playlistmaker.search.domain.TracksInteractor
-import com.practicum.playlistmaker.util.App
 import com.practicum.playlistmaker.util.SingleLiveEvent
 
 class SearchViewModel(
@@ -30,20 +24,6 @@ class SearchViewModel(
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
 
-
-        /*fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-
-                val tracksInteractor = (this[APPLICATION_KEY] as App).provideTracksInteractor()
-
-                val tracksHistoryInteractor =
-                    (this[APPLICATION_KEY] as App).provideTracksHistoryInteractor(Intent())
-                SearchViewModel(
-                    this[APPLICATION_KEY] as App, tracksInteractor, tracksHistoryInteractor
-                )
-
-            }
-        }*/
     }
 
     private val stateLiveData = MutableLiveData<SearchState>()

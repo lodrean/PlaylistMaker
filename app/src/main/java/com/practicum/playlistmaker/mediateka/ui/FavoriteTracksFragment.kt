@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel

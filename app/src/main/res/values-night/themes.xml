@@ -21,4 +21,9 @@
         <item name="text_color_secondary">@color/white</item>
         <item name="note_color">@color/white</item>
     </style>
+    <!-- Base application theme. -->
+    <style name="Base.Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
 </resources>

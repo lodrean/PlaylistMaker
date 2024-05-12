@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/colorPrimary"
+    android:theme="@style/Theme.PlaylistMaker"
     app:layout_constraintDimensionRatio="1:1"
-    tools:context=".main.ui.MainActivity">
+    tools:context=".search.ui.SearchFragment">
 
 
     <LinearLayout
@@ -19,11 +20,6 @@
         android:paddingEnd="52dp"
         android:paddingBottom="4dp">
 
-
-        <Button
-            android:id="@+id/back"
-            style="@style/BackSettingsButtonStyle"
-            app:icon="@drawable/arrow_back" />
 
         <TextView
             style="@style/TextSettingsStyle"
@@ -61,7 +57,9 @@
             android:singleLine="true"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textCursorDrawable="@color/YP_Blue" />
+            android:textCursorDrawable="@drawable/cursor_blue"
+
+            />
 
 
         <ImageView
