@@ -38,12 +38,14 @@ class AudioPlayer : AppCompatActivity() {
 
         mainThreadHandler = Handler(Looper.getMainLooper())
         viewModel.getPlayStatusLiveData().observe(this) {
+            binding?.tvPlayingProgress?.text = it.progress
             render(it)
-        }
-        viewModel.observeProgress().observe(this) {
-            binding?.tvPlayingProgress?.text = it
 
         }
+        /* viewModel.observeProgress().observe(this) {
+             binding?.tvPlayingProgress?.text = it
+
+         }*/
 
 
         binding?.ivPlayButton?.setOnClickListener {
@@ -57,10 +59,6 @@ class AudioPlayer : AppCompatActivity() {
         viewModel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.onDestroy()
-    }
 
     private fun showTrackInfo(track: Track) {
         val cornerRadius = 8F
@@ -85,7 +83,7 @@ class AudioPlayer : AppCompatActivity() {
             is PlaybackState.Prepared -> {
                 binding?.ivPlayButton?.isEnabled = true
             }
-
+            is PlaybackState.Default -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(R.drawable.pause_button)
             is PlaybackState.Content -> showTrackInfo(state.track)
