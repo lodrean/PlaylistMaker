@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
-import com.practicum.playlistmaker.player.domain.PlayerStateListener
+import com.practicum.playlistmaker.player.domain.PlayerListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import kotlinx.coroutines.Job
@@ -36,7 +36,7 @@ class AudioPlayerViewModel(
     }
 
     fun createAudioPlayer() {
-        mediaPlayer.createAudioPlayer(track.url, object : PlayerStateListener {
+        mediaPlayer.createAudioPlayer(track.url, object : PlayerListener {
             override fun onPrepared() {
                 renderState(PlaybackState.Content(track))
             }
@@ -70,7 +70,6 @@ class AudioPlayerViewModel(
             -> {
                 mediaPlayer.play()
                 startTimer()
-
             }
         }
     }

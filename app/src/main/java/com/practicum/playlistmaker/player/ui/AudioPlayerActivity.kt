@@ -62,7 +62,6 @@ class AudioPlayer : AppCompatActivity() {
 
     private fun showTrackInfo(track: Track) {
         val cornerRadius = 8F
-        Log.d("myTag", "track" + track.toString())
         binding?.albumImage?.let {
             Glide.with(this).load(track.getCoverArtwork()).fitCenter()
                 .dontAnimate().placeholder(R.drawable.placeholder)
@@ -70,7 +69,7 @@ class AudioPlayer : AppCompatActivity() {
         }
         binding?.tvTrackTitle?.text = track.trackName
         binding?.tvTrackArtist?.text = track.artistName
-        binding?.tvDurationTime?.text = track.trackTime.let { formatMilliseconds(it.toLong()) }
+        binding?.tvDurationTime?.text = formatMilliseconds(track.trackTime.toLong())
         binding?.tvAlbumName?.text = track.collectionName
         binding?.tvYearValue?.text =
             track.releaseDate.removeRange(4, track.releaseDate.lastIndex + 1)

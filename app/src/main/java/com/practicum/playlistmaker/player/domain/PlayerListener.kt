@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.player.domain
 
 
-interface PlayerStateListener {
+interface PlayerListener {
 
     fun onPrepared()
     fun onCompletion()

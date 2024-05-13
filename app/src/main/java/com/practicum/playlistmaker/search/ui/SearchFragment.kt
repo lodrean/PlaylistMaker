@@ -19,6 +19,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.BindingFragment
@@ -28,6 +29,7 @@ import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.util.debounce
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -55,6 +57,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private var detailsRunnable: Runnable? = null
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
+    private lateinit var onTrackHistoryClickDebounce: (Track) -> Unit
 
     private val viewModel by viewModel<SearchViewModel> {
         parametersOf(requireActivity().intent)
@@ -82,11 +86,27 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         progressBar = binding.progressBar
         inputEditText.setText(inputText)
 
+        onTrackClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            viewModel.addTrackToHistory(track)
+            trackHistoryAdapter.updateItems(viewModel.getHistoyItems())
+            trackHistoryAdapter.run { notifyDataSetChanged() }
+            launchAudioPlayer(track)
+        }
+
+        onTrackHistoryClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            launchAudioPlayer(track)
+        }
 
         val onHistoryItemClickListener = OnItemClickListener { track ->
-            if (clickDebounce()) {
-                launchAudioPlayer(track)
-            }
+            onTrackHistoryClickDebounce(track)
         }
         trackHistoryAdapter = TrackHistoryAdapter(onHistoryItemClickListener)
 
@@ -97,18 +117,13 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         searchHistoryRecyclerView.adapter = trackHistoryAdapter
 
         val onItemClickListener = OnItemClickListener { track ->
-            if (clickDebounce()) {
-                viewModel.addTrackToHistory(track)
-                trackHistoryAdapter.updateItems(viewModel.getHistoyItems())
-                trackHistoryAdapter.run { notifyDataSetChanged() }
-                launchAudioPlayer(track)
-            }
+            onTrackClickDebounce(track)
         }
         searchHistoryView.isVisible =
             trackHistoryAdapter.itemCount > 0
         trackAdapter = TrackAdapter(onItemClickListener)
 
-        clearButton?.setOnClickListener {
+        clearButton.setOnClickListener {
             trackAdapter.tracks.clear()
             trackAdapter.notifyDataSetChanged()
             inputEditText.setText("")
@@ -129,7 +144,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton?.visibility = clearButtonVisibility(s)
+                clearButton.visibility = clearButtonVisibility(s)
                 searchView.isVisible =
                     !(inputEditText.hasFocus() && s?.isEmpty() == true)
                 if (s?.isEmpty() == true) trackAdapter.tracks.clear()
@@ -181,15 +196,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         startActivity(intent)
     }
 
-    /*override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(TEXT_AMOUNT, inputText)
-    }*/
-
-    /*  override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-          super.onRestoreInstanceState(savedInstanceState)
-          inputText = savedInstanceState.getString(TEXT_AMOUNT, AMOUNT_DEF)
-      }*/
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -221,19 +227,11 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
+
 
     companion object {
-        const val TEXT_AMOUNT = "TEXT_AMOUNT"
         const val AMOUNT_DEF = ""
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val CLICK_DEBOUNCE_DELAY = 300L
     }
 
     private fun showLoading() {

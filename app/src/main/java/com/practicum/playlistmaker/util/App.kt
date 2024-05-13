@@ -24,7 +24,7 @@ class App : Application() {
         }
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
+    private fun switchTheme(darkThemeEnabled: Boolean) {
         val themeSettings = ThemeSettings(darkThemeEnabled)
         SettingsRepositoryImpl(this).updateThemeSetting(themeSettings)
     }

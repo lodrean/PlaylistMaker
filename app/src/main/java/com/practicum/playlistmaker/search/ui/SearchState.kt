@@ -4,7 +4,7 @@ import com.practicum.playlistmaker.search.domain.Track
 
 sealed interface SearchState {
 
-    object Loading : SearchState
+    data object Loading : SearchState
 
     data class Content(
         val trackList: List<Track>

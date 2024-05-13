@@ -3,8 +3,7 @@ package com.practicum.playlistmaker.player.domain
 
 class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
     AudioPlayerInteractor {
-    private var playerState: AudioPlayerState = repository.playerStateReporter()
-    override fun createAudioPlayer(url: String, listener: PlayerStateListener) {
+    override fun createAudioPlayer(url: String, listener: PlayerListener) {
         /*playerState = AudioPlayerState.PREPARED*/
         repository.preparePlayer(url, listener)
     }
@@ -15,12 +14,7 @@ class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
     }
 
     override fun pause() {
-        playerState = AudioPlayerState.PAUSED
         repository.pause()
-    }
-
-    override fun getPlayerState(): AudioPlayerState {
-        return playerState
     }
 
     override fun destroy() {
