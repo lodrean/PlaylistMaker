@@ -37,16 +37,11 @@ class TracksHistoryRepositoryImpl(
 
     override fun addTrackToHistory(track: Track) {
         tracks = getItemsFromCache()
-        Log.d("TrackID", "track = " + track.trackId)
         if (track.trackId in tracks.map { it.trackId }) {
-            Log.d("TrackID", "tracktoremove = " + tracks.size)
             tracks.remove(track)
-            Log.d("TrackID", "trackafterremove = " + tracks.size)
             tracks.add(0, track)
             saveTracklist(prefs, tracks)
-            Log.d("TrackID", "trackafteradding = " + tracks.size)
         } else {
-            Log.d("TrackID", "tracknotremove = " + tracks)
             tracks.add(0, track)
             saveTracklist(prefs, tracks)
         }
@@ -56,7 +51,6 @@ class TracksHistoryRepositoryImpl(
 
         val extras: Bundle? = intent.extras
         val jsonTrack: String? = extras?.getString(Constant.CHOSEN_TRACK)
-        Log.d("Track", "track = " + jsonTrack)
         return Json.decodeFromString(jsonTrack!!)
     }
 

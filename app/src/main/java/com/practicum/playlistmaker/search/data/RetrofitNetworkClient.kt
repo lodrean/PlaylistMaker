@@ -5,33 +5,33 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.practicum.playlistmaker.search.domain.Constant.Companion.BAD_REQUEST
 import com.practicum.playlistmaker.search.domain.Constant.Companion.NO_CONNECTION
+import com.practicum.playlistmaker.search.domain.Constant.Companion.SUCCESS
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(
     private val itunesService: ItunesApiService,
     private val context: Context
 ) : NetworkClient {
 
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
 
-        if (isConnected() == false) {
+        if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION }
         }
         if (dto !is TracksSearchRequest) {
             return Response().apply { resultCode = BAD_REQUEST }
         }
-
-        val resp = itunesService.searchTracks(dto.expression).execute()
-
-        val body = resp.body() ?: Response()
-
-        return if (body != null) {
-            body.apply { resultCode = resp.code() }
-        } else {
-
-            Response().apply { resultCode = BAD_REQUEST }
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = itunesService.searchTracks(dto.expression)
+                response.apply { resultCode = SUCCESS }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = BAD_REQUEST }
+            }
         }
-
     }
+
 
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(

@@ -4,8 +4,9 @@ interface AudioPlayerRepository {
 
     fun play()
     fun pause()
-    fun preparePlayer(url: String, listener: PlayerStateListener)
-    fun playerStateReporter(): AudioPlayerState
+    fun preparePlayer(url: String, listener: PlayerListener)
     fun onDestroy()
     fun getCurrentPosition(): Int
+
+    fun onPlay(): Boolean
 }

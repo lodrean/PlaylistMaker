@@ -38,12 +38,14 @@ class AudioPlayer : AppCompatActivity() {
 
         mainThreadHandler = Handler(Looper.getMainLooper())
         viewModel.getPlayStatusLiveData().observe(this) {
+            binding?.tvPlayingProgress?.text = it.progress
             render(it)
-        }
-        viewModel.observeProgress().observe(this) {
-            binding?.tvPlayingProgress?.text = it
 
         }
+        /* viewModel.observeProgress().observe(this) {
+             binding?.tvPlayingProgress?.text = it
+
+         }*/
 
 
         binding?.ivPlayButton?.setOnClickListener {
@@ -57,14 +59,9 @@ class AudioPlayer : AppCompatActivity() {
         viewModel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.onDestroy()
-    }
 
     private fun showTrackInfo(track: Track) {
         val cornerRadius = 8F
-        Log.d("myTag", "track" + track.toString())
         binding?.albumImage?.let {
             Glide.with(this).load(track.getCoverArtwork()).fitCenter()
                 .dontAnimate().placeholder(R.drawable.placeholder)
@@ -72,7 +69,7 @@ class AudioPlayer : AppCompatActivity() {
         }
         binding?.tvTrackTitle?.text = track.trackName
         binding?.tvTrackArtist?.text = track.artistName
-        binding?.tvDurationTime?.text = track.trackTime.let { formatMilliseconds(it.toLong()) }
+        binding?.tvDurationTime?.text = formatMilliseconds(track.trackTime.toLong())
         binding?.tvAlbumName?.text = track.collectionName
         binding?.tvYearValue?.text =
             track.releaseDate.removeRange(4, track.releaseDate.lastIndex + 1)
@@ -84,10 +81,11 @@ class AudioPlayer : AppCompatActivity() {
         when (state) {
             is PlaybackState.Prepared -> {
                 binding?.ivPlayButton?.isEnabled = true
+                binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             }
-
-            is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
-            is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(R.drawable.pause_button)
+            is PlaybackState.Default -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
+            is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(R.drawable.pause_button)
+            is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             is PlaybackState.Content -> showTrackInfo(state.track)
         }
     }
