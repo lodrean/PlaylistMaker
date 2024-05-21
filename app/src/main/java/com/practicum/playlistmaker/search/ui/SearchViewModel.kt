@@ -11,7 +11,9 @@ import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.util.SingleLiveEvent
 import com.practicum.playlistmaker.util.debounce
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchViewModel(
     application: Application,
@@ -39,7 +41,11 @@ class SearchViewModel(
     fun observeShowToast(): LiveData<String> = showToast
 
     fun addTrackToHistory(track: Track) {
-        tracksHistoryInteractor.addTrackToHistory(track)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                tracksHistoryInteractor.addTrackToHistory(track)
+            }
+        }
     }
 
     fun getHistoyItems(): MutableList<Track> {

@@ -192,7 +192,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun launchAudioPlayer(track: Track) {
         val intent = Intent(requireContext(), AudioPlayer::class.java)
         intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
-        Log.d("test", "intent: " + Json.encodeToString(track))
         startActivity(intent)
     }
 

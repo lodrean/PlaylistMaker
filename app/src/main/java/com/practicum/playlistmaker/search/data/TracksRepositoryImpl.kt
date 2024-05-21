@@ -4,8 +4,10 @@ import com.practicum.playlistmaker.mediateka.data.db.AppDatabase
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksRepository
 import com.practicum.playlistmaker.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
@@ -35,8 +37,11 @@ class TracksRepositoryImpl(
                             it.country
                         )
                     })
-                    val allIds = appDatabase.trackDao().getAllIds()
-                    data.map { if (it.trackId in allIds) it.isFavorite = true }
+                    withContext(Dispatchers.IO) {
+                        val allIds = appDatabase.trackDao().getAllIds()
+
+                        data.map { if (it.trackId in allIds) it.isFavorite = true }
+                    }
                     emit(Resource.Success(data))
                 }
 

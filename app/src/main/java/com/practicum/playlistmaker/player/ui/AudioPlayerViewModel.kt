@@ -5,14 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker.mediateka.domain.MediatekaInteractor
+import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.PlayerListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -20,7 +22,7 @@ class AudioPlayerViewModel(
     application: Application,
     tracksHistoryInteractor: TracksHistoryInteractor,
     private val mediaPlayer: AudioPlayerInteractor,
-    private val mediatekaInteractor: MediatekaInteractor
+    private val favoriteInteractor: FavoriteInteractor
 ) : AndroidViewModel(application) {
 
     private val playStatusLiveData = MutableLiveData<PlaybackState>(PlaybackState.Default())
@@ -40,9 +42,9 @@ class AudioPlayerViewModel(
     fun onFavoriteClicked() {
         viewModelScope.launch {
             if (!track.isFavorite) {
-                mediatekaInteractor.addToFavorite(track)
+                withContext(Dispatchers.IO) { favoriteInteractor.addToFavorite(track) }
             } else {
-                mediatekaInteractor.deleteFromFavorite(track)
+                withContext(Dispatchers.IO) { favoriteInteractor.deleteFromFavorite(track) }
             }
         }
         track.isFavorite = !track.isFavorite
