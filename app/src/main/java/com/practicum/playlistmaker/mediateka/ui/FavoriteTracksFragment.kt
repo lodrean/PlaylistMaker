@@ -77,7 +77,8 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
         binding.favoriteList.isVisible = true
         binding.placeholderIV.isVisible = false
         binding.placeholderTV.isVisible = false
-
+        adapter?.tracks?.addAll(tracks)
+        adapter?.notifyDataSetChanged()
     }
 
     private fun showEmpty() {
