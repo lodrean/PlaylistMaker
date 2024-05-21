@@ -13,6 +13,7 @@ data class Track(
     val releaseDate: String = "",
     val genre: String = "",
     val country: String = "",
+    var isFavorite: Boolean = false
 ) {
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 }

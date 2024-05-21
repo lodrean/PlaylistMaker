@@ -3,9 +3,9 @@ package com.practicum.playlistmaker.search.data
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.mediateka.data.db.AppDatabase
 import com.practicum.playlistmaker.search.domain.Constant
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryRepository
@@ -17,7 +17,8 @@ const val SHARED_PREFERENCES = "playlist_search_preferences"
 class TracksHistoryRepositoryImpl(
     private val intent: Intent,
     private val prefs: SharedPreferences,
-    private val gson: Gson
+    private val gson: Gson,
+    private val appDatabase: AppDatabase
 ) :
     TracksHistoryRepository {
 
@@ -36,6 +37,7 @@ class TracksHistoryRepositoryImpl(
     }
 
     override fun addTrackToHistory(track: Track) {
+        val allIds = appDatabase.trackDao().getAllIds()
         tracks = getItemsFromCache()
         if (track.trackId in tracks.map { it.trackId }) {
             tracks.remove(track)
@@ -45,6 +47,7 @@ class TracksHistoryRepositoryImpl(
             tracks.add(0, track)
             saveTracklist(prefs, tracks)
         }
+        tracks.map { if (it.trackId in allIds) it.isFavorite = true }
     }
 
     override fun getTrackFromIntent(): Track {

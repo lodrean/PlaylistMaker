@@ -26,10 +26,10 @@ val repositoryModule = module {
         MediaPlayer()
     }
     factory<TracksHistoryRepository> { (intent: Intent) ->
-        TracksHistoryRepositoryImpl(intent, get(), get())
+        TracksHistoryRepositoryImpl(intent, get(), get(), get())
     }
     factory<TracksRepository> {
-        TracksRepositoryImpl(get())
+        TracksRepositoryImpl(get(), get())
     }
     factory<SettingsRepository> {
         SettingsRepositoryImpl(androidContext())

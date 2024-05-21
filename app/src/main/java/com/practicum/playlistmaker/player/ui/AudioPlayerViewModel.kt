@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.mediateka.domain.MediatekaInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.PlayerListener
 import com.practicum.playlistmaker.search.domain.Track
@@ -18,7 +19,8 @@ import java.util.Locale
 class AudioPlayerViewModel(
     application: Application,
     tracksHistoryInteractor: TracksHistoryInteractor,
-    private val mediaPlayer: AudioPlayerInteractor
+    private val mediaPlayer: AudioPlayerInteractor,
+    private val mediatekaInteractor: MediatekaInteractor
 ) : AndroidViewModel(application) {
 
     private val playStatusLiveData = MutableLiveData<PlaybackState>(PlaybackState.Default())
@@ -35,6 +37,16 @@ class AudioPlayerViewModel(
         playbackControl()
     }
 
+    fun onFavoriteClicked() {
+        viewModelScope.launch {
+            if (!track.isFavorite) {
+                mediatekaInteractor.addToFavorite(track)
+            } else {
+                mediatekaInteractor.deleteFromFavorite(track)
+            }
+        }
+        track.isFavorite = !track.isFavorite
+    }
     fun createAudioPlayer() {
         mediaPlayer.createAudioPlayer(track.url, object : PlayerListener {
             override fun onPrepared() {

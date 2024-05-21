@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.player.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -19,7 +18,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class AudioPlayer : AppCompatActivity() {
+class AudioPlayer() : AppCompatActivity() {
     private val viewModel by viewModel<AudioPlayerViewModel> {
         parametersOf(intent)
     }

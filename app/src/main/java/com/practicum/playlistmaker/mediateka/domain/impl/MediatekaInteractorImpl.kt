@@ -20,8 +20,7 @@ class MediatekaInteractorImpl(private val mediatekaRepository: MediatekaReposito
         return mediatekaRepository
             .mediatekaTracks()
             .map { tracks ->
-                val track = tracks.last()
-
+                tracks.reversed()
+            }
             }
     }
-}
