@@ -25,7 +25,7 @@ class TracksRepositoryImpl(
                 with(response as TracksSearchResponse) {
                     val data = ArrayList(results.map {
                         Track(
-                            it.trackId,
+                            it.trackId.toString(),
                             it.trackName,
                             it.artistName,
                             it.url,

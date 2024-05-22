@@ -3,7 +3,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Track(
-    val trackId: Int = 0,
+    val trackId: String = "",
     val trackName: String = "",
     val artistName: String = "",
     val url: String = "",

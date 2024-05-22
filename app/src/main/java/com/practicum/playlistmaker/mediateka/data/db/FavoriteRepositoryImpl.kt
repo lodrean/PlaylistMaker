@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.mediateka.data.db
 
+import android.util.Log
 import com.practicum.playlistmaker.mediateka.domain.FavoriteRepository
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.Dispatchers
@@ -8,8 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 class FavoriteRepositoryImpl(
-    private val appDatabase: AppDatabase,
-    private val trackDbConvertor: TrackDbConvertor
+    private val appDatabase: AppDatabase, private val trackDbConvertor: TrackDbConvertor
 ) : FavoriteRepository {
 
     override fun addToFavorite(track: Track) {
@@ -21,11 +21,16 @@ class FavoriteRepositoryImpl(
     }
 
     override fun favoriteTracks(): Flow<List<Track>> = flow {
-        var tracks: List<TrackEntity>
+        var tracks: List<Track>
         withContext(Dispatchers.IO) {
-            tracks = appDatabase.trackDao().getTracksAll()
+            val tracksEntity = appDatabase.trackDao().getTracksAll()
+            tracks = convertFromTrackEntity(tracksEntity)
+            tracks.forEach {
+                it.isFavorite = true
+            }
         }
-        emit(convertFromTrackEntity(tracks))
+        Log.d("tracks", "tracksfavorite size :${tracks.size}")
+        emit(tracks)
     }
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {

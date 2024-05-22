@@ -21,11 +21,6 @@ class FavoriteInteractorImpl(private val favoriteRepository: FavoriteRepository)
     override fun favoriteTracks(): Flow<List<Track>> {
         return favoriteRepository
             .favoriteTracks()
-            .map { tracks ->
-                tracks.forEach { track: Track ->
-                    track.isFavorite = true
-                }
-                tracks.reversed()
-            }
-            }
+            .map { tracks -> tracks.reversed() }
     }
+}

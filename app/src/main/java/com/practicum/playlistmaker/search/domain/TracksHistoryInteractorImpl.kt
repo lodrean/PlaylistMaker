@@ -1,9 +1,11 @@
 package com.practicum.playlistmaker.search.domain
 
+import kotlinx.coroutines.flow.Flow
+
 
 class TracksHistoryInteractorImpl(private val repository: TracksHistoryRepository) :
     TracksHistoryInteractor {
-    override fun getItems(): MutableList<Track> {
+    override fun getItems(): Flow<MutableList<Track>> {
         return repository.getItems()
     }
 

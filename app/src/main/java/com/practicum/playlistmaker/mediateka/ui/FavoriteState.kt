@@ -9,5 +9,5 @@ sealed interface FavoriteState {
         val tracks: List<Track>
     ) : FavoriteState
 
-    object Empty : FavoriteState
+    data object Empty : FavoriteState
 }

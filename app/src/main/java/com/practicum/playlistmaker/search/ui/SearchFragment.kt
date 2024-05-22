@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,7 +53,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private lateinit var trackHistoryAdapter: TrackHistoryAdapter
     private val trackHistoryList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
-    private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private var detailsRunnable: Runnable? = null
     private lateinit var onTrackClickDebounce: (Track) -> Unit
@@ -86,7 +84,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         progressBar = binding.progressBar
         inputEditText.setText(inputText)
 
-        onTrackClickDebounce = debounce<Track>(
+        onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
@@ -97,7 +95,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             launchAudioPlayer(track)
         }
 
-        onTrackHistoryClickDebounce = debounce<Track>(
+        onTrackHistoryClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
@@ -145,6 +143,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
                 clearButton.visibility = clearButtonVisibility(s)
                 searchView.isVisible =
                     !(inputEditText.hasFocus() && s?.isEmpty() == true)
@@ -152,10 +151,13 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
                 searchHistoryView.isVisible =
                     inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
                 viewModel.searchDebounce(changedText = s.toString())
+                trackHistoryAdapter.notifyDataSetChanged()
+                inputEditText.requestFocus()
             }
 
             override fun afterTextChanged(s: Editable?) {
                 inputText.plus(s)
+
             }
         }
 

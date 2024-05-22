@@ -18,7 +18,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class AudioPlayer() : AppCompatActivity() {
+class AudioPlayer : AppCompatActivity() {
     private val viewModel by viewModel<AudioPlayerViewModel> {
         parametersOf(intent)
     }

@@ -2,14 +2,11 @@ package com.practicum.playlistmaker.mediateka.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.BindingFragment
@@ -19,7 +16,6 @@ import com.practicum.playlistmaker.player.ui.AudioPlayer
 import com.practicum.playlistmaker.search.domain.Constant
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.ui.SearchFragment
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.util.debounce
 import kotlinx.serialization.encodeToString
@@ -43,7 +39,7 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        onTrackClickDebounce = debounce<Track>(
+        onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
@@ -63,7 +59,12 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
+        adapter?.notifyDataSetChanged()
+        viewModel.fillData()
+
+
     }
+
 
     private fun render(state: FavoriteState) {
         when (state) {
@@ -73,19 +74,21 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
     }
 
     private fun showContent(tracks: List<Track>) {
+        adapter?.tracks?.clear()
+        adapter?.tracks?.addAll(tracks)
+        adapter?.notifyDataSetChanged()
         binding.favoriteList.isVisible = true
         binding.placeholderIV.isVisible = false
         binding.placeholderTV.isVisible = false
-        adapter?.tracks?.addAll(tracks)
-        adapter?.notifyDataSetChanged()
     }
 
     private fun showEmpty() {
+
+        binding.placeholderIV.setImageResource(R.drawable.placeholder_not_find)
+        binding.placeholderTV.text = getText(R.string.empty_mediateka)
         binding.favoriteList.isVisible = false
         binding.placeholderIV.isVisible = true
         binding.placeholderTV.isVisible = true
-        binding.placeholderIV.setImageResource(R.drawable.placeholder_not_find)
-        binding.placeholderTV.text = getText(R.string.empty_mediateka)
     }
     companion object {
         @JvmStatic

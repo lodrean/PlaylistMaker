@@ -10,7 +10,6 @@ import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.SHARED_PREFERENCES
 import com.practicum.playlistmaker.sharing.data.ExternalNavigator
-import com.practicum.playlistmaker.util.App
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
