@@ -47,7 +47,13 @@ class TracksHistoryRepositoryImpl(
             tracks.add(0, track)
             saveTracklist(prefs, tracks)
         }
-        tracks.map { if (it.trackId in allIds) it.isFavorite = true }
+        val result = mutableListOf<Track>()
+        tracks.map() {
+            if (it.trackId in allIds)
+                it.isFavorite = true
+            result.add(it)
+        }
+        saveTracklist(prefs, result)
     }
 
     override fun getTrackFromIntent(): Track {

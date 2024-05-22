@@ -40,7 +40,11 @@ class TracksRepositoryImpl(
                     withContext(Dispatchers.IO) {
                         val allIds = appDatabase.trackDao().getAllIds()
 
-                        data.map { if (it.trackId in allIds) it.isFavorite = true }
+                        data.map {
+                            if (it.trackId in allIds) {
+                                it.isFavorite = true
+                            }
+                        }
                     }
                     emit(Resource.Success(data))
                 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
 import com.practicum.playlistmaker.search.domain.Track
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class FavoriteTracksViewModel(
@@ -32,6 +33,7 @@ class FavoriteTracksViewModel(
         } else {
             renderState(FavoriteState.Content(tracks))
         }
+
     }
 
     private fun renderState(state: FavoriteState) {

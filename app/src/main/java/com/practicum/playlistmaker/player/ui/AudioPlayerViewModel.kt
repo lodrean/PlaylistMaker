@@ -42,18 +42,29 @@ class AudioPlayerViewModel(
     fun onFavoriteClicked() {
         viewModelScope.launch {
             if (!track.isFavorite) {
-                withContext(Dispatchers.IO) { favoriteInteractor.addToFavorite(track) }
+                withContext(Dispatchers.IO) {
+                    favoriteInteractor.addToFavorite(track)
+                    track.isFavorite = true
+                    renderState(
+                        PlaybackState.Content(track)
+                    )
+                }
             } else {
-                withContext(Dispatchers.IO) { favoriteInteractor.deleteFromFavorite(track) }
+                withContext(Dispatchers.IO) {
+                    favoriteInteractor.deleteFromFavorite(track)
+                    track.isFavorite = false
+                    renderState(PlaybackState.Content(track))
+                }
             }
         }
-        track.isFavorite = !track.isFavorite
     }
+
     fun createAudioPlayer() {
         mediaPlayer.createAudioPlayer(track.url, object : PlayerListener {
             override fun onPrepared() {
                 renderState(PlaybackState.Content(track))
             }
+
             override fun onCompletion() {
                 renderState(PlaybackState.Content(track))
             }
@@ -70,6 +81,7 @@ class AudioPlayerViewModel(
             renderState(PlaybackState.Prepared())
         }
     }
+
     fun onPause() {
         pausePlayer()
     }

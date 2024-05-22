@@ -69,7 +69,6 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
         when (state) {
             is FavoriteState.Content -> showContent(state.tracks)
             is FavoriteState.Empty -> showEmpty()
-
         }
     }
 
