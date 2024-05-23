@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 class FavoriteRepositoryImpl(
-    private val appDatabase: AppDatabase, private val trackDbConvertor: TrackDbConvertor
+    private val appDatabase: AppDatabase, 
+    private val trackDbConvertor: TrackDbConvertor
 ) : FavoriteRepository {
 
     override fun addToFavorite(track: Track) {
