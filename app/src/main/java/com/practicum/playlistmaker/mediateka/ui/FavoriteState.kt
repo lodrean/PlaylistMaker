@@ -5,9 +5,7 @@ import com.practicum.playlistmaker.search.domain.Track
 
 sealed interface FavoriteState {
 
-    data class Content(
-        val tracks: List<Track>
-    ) : FavoriteState
+    data class Content(val tracks: List<Track>) : FavoriteState
 
     data object Empty : FavoriteState
 }
