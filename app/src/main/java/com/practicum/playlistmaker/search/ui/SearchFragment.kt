@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -120,17 +119,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         searchHistoryView.isVisible =
             trackHistoryAdapter.itemCount > 0
         trackAdapter = TrackAdapter(onItemClickListener)
-        binding.refreshButton.setOnClickListener {
-            viewModel.searchDebounce(inputEditText.text.toString())
-            Log.d("inputrefresh", "${inputEditText.text.toString()}")
-        }
+
 
         clearButton.setOnClickListener {
             trackAdapter.tracks.clear()
             inputEditText.setText("")
+            trackHistoryAdapter.notifyDataSetChanged()
             viewModel.showHistoryTrackList()
             placeholder.isVisible = false
-            trackHistoryAdapter.notifyDataSetChanged()
             val inputMethodManager =
                 requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
@@ -140,11 +136,12 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             searchHistoryView.isVisible = false
             trackHistoryAdapter.run { notifyDataSetChanged() }
         }
-
+        binding.refreshButton.setOnClickListener {
+            viewModel.searchDebounce(inputEditText.text.toString())
+        }
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-
+                inputEditText.requestFocus()
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
