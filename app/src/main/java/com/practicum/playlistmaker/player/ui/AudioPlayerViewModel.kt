@@ -41,23 +41,21 @@ class AudioPlayerViewModel(
 
     fun onFavoriteClicked() {
         viewModelScope.launch {
-            if (!track.isFavorite) {
-                withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
+                val isTrackFavorite = track.isFavorite
+                if (!track.isFavorite) {
                     favoriteInteractor.addToFavorite(track)
-                    track.isFavorite = true
-                    renderState(
-                        PlaybackState.Content(track)
-                    )
-                }
-            } else {
-                withContext(Dispatchers.IO) {
+                } else {
                     favoriteInteractor.deleteFromFavorite(track)
-                    track.isFavorite = false
-                    renderState(PlaybackState.Content(track))
                 }
+                track.isFavorite = !isTrackFavorite
+                renderState(
+                    PlaybackState.Content(track)
+                )
             }
         }
     }
+
 
     fun createAudioPlayer() {
         mediaPlayer.createAudioPlayer(track.url, object : PlayerListener {

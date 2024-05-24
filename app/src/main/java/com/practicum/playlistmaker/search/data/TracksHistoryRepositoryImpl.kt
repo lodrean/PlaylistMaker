@@ -13,6 +13,7 @@ import com.practicum.playlistmaker.search.domain.TracksHistoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
@@ -32,8 +33,8 @@ class TracksHistoryRepositoryImpl(
     override fun getItems(): Flow<MutableList<Track>> = flow {
         val itemsFromCache = getItemsFromCache()
         withContext(Dispatchers.IO) {
-            val allIds = appDatabase.trackDao().getAllIds()
             tracks = itemsFromCache
+            val allIds = appDatabase.trackDao().getAllIds()
             tracks.forEach {
                 if (it.trackId in allIds) {
                     it.isFavorite = true
@@ -49,14 +50,24 @@ class TracksHistoryRepositoryImpl(
     }
 
     override fun addTrackToHistory(track: Track) {
-        tracks = getItemsFromCache()
-        if (track.trackId in tracks.map { it.trackId }) {
-            tracks.remove(track)
-            tracks.add(0, track)
-            saveTracklist(prefs, tracks)
-        } else {
-            tracks.add(0, track)
-            saveTracklist(prefs, tracks)
+        val tracks = mutableListOf<Track>()
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                tracks.clear()
+                getItems()
+                    .collect { tracklist ->
+                        tracks.addAll(tracklist)
+                    }
+            }
+            if (track.trackId in tracks.map { it.trackId }) {
+                tracks.remove(track)
+                tracks.add(0, track)
+                saveTracklist(prefs, tracks)
+            } else {
+                tracks.remove(track)
+                tracks.add(0, track)
+                saveTracklist(prefs, tracks)
+            }
         }
     }
 
@@ -78,6 +89,7 @@ class TracksHistoryRepositoryImpl(
 
     private fun saveTracklist(sharedPrefs: SharedPreferences, tracks: MutableList<Track>?) {
         sharedPrefs.edit()
+            .clear()
             .putString(TRACK_LIST_KEY, createJsonFromTracksList(tracks))
             .apply()
     }

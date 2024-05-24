@@ -48,18 +48,19 @@ class SearchViewModel(
         }
     }
 
-    fun getHistoyItems(): MutableList<Track> {
-        val trackList = mutableListOf<Track>()
-        viewModelScope.launch {
-            tracksHistoryInteractor.getItems()
-                .collect { tracks -> trackList.addAll(tracks) }
-        }
-        return trackList
-    }
+
 
     fun showHistoryTrackList() {
-        val trackList = getHistoyItems()
-        renderState(SearchState.History(trackList))
+        val trackList = mutableListOf<Track>()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                tracksHistoryInteractor.getItems()
+                    .collect { tracks ->
+                        trackList.addAll(tracks)
+                    }
+            }
+            renderState(SearchState.History(trackList))
+        }
     }
 
     fun clearHistory() {

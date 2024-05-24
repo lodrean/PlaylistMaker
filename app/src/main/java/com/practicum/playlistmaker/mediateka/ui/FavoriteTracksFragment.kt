@@ -90,15 +90,7 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
         binding.placeholderIV.isVisible = true
         binding.placeholderTV.isVisible = true
     }
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            FavoriteTracksFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
-        private const val CLICK_DEBOUNCE_DELAY = 300L
-    }
+
 
     private fun launchAudioPlayer(track: Track) {
         val intent = Intent(requireContext(), AudioPlayer::class.java)
@@ -106,4 +98,14 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
         startActivity(intent)
     }
 
+    companion object {
+        @JvmStatic
+        fun newInstance() =
+            FavoriteTracksFragment().apply {
+                arguments = Bundle().apply {
+                }
+            }
+
+        private const val CLICK_DEBOUNCE_DELAY = 300L
+    }
 }
