@@ -11,9 +11,10 @@ import com.practicum.playlistmaker.search.domain.Constant
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
@@ -41,7 +42,7 @@ class TracksHistoryRepositoryImpl(
                 }
             }
         }
-        Log.d("tracks", "${tracks.size}")
+        Log.d("tracks1", "${tracks.size}")
         emit(tracks)
     }
 
@@ -50,26 +51,24 @@ class TracksHistoryRepositoryImpl(
     }
 
     override fun addTrackToHistory(track: Track) {
-        val tracks = mutableListOf<Track>()
-        runBlocking {
+        val tracklist = mutableListOf<Track>()
+        GlobalScope.launch {
             withContext(Dispatchers.IO) {
-                tracks.clear()
                 getItems()
-                    .collect { tracklist ->
-                        tracks.addAll(tracklist)
+                    .collect { tracks ->
+                        tracklist.addAll(tracks)
                     }
             }
-            if (track.trackId in tracks.map { it.trackId }) {
-                tracks.remove(track)
-                tracks.add(0, track)
-                saveTracklist(prefs, tracks)
-            } else {
-                tracks.remove(track)
-                tracks.add(0, track)
-                saveTracklist(prefs, tracks)
-            }
+
+            Log.d("tracks2", "${tracks.size}")
+            Log.d("trackslist1", "${tracklist.size}")
+            tracklist.remove(track)
+            tracklist.add(0, track)
+            Log.d("tracklist2", "${tracklist.size}")
+            saveTracklist(prefs, tracklist)
         }
     }
+
 
     override fun getTrackFromIntent(): Track {
 
@@ -89,7 +88,6 @@ class TracksHistoryRepositoryImpl(
 
     private fun saveTracklist(sharedPrefs: SharedPreferences, tracks: MutableList<Track>?) {
         sharedPrefs.edit()
-            .clear()
             .putString(TRACK_LIST_KEY, createJsonFromTracksList(tracks))
             .apply()
     }
