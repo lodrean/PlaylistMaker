@@ -61,9 +61,14 @@ class FavoriteTracksFragment : BindingFragment<FragmentFavoriteTracksBinding>() 
         }
         adapter?.notifyDataSetChanged()
         viewModel.fillData()
-
-
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fillData()
+        adapter?.notifyDataSetChanged()
+    }
+
 
 
     private fun render(state: FavoriteState) {
