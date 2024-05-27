@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.search.data
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.mediateka.data.db.AppDatabase
@@ -36,13 +35,14 @@ class TracksHistoryRepositoryImpl(
         withContext(Dispatchers.IO) {
             tracks = itemsFromCache
             val allIds = appDatabase.trackDao().getAllIds()
-            tracks.forEach {
+            tracks.map {
                 if (it.trackId in allIds) {
                     it.isFavorite = true
+                } else {
+                    it.isFavorite = false
                 }
             }
         }
-        Log.d("tracks1", "${tracks.size}")
         emit(tracks)
     }
 
@@ -57,14 +57,12 @@ class TracksHistoryRepositoryImpl(
                 getItems()
                     .collect { tracks ->
                         tracklist.addAll(tracks)
+                        if (track in tracklist) {
+                            tracklist.remove(track)
+                        }
                     }
             }
-
-            Log.d("tracks2", "${tracks.size}")
-            Log.d("trackslist1", "${tracklist.size}")
-            tracklist.remove(track)
             tracklist.add(0, track)
-            Log.d("tracklist2", "${tracklist.size}")
             saveTracklist(prefs, tracklist)
         }
     }
