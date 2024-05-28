@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,10 +22,6 @@ class SearchViewModel(
 ) : AndroidViewModel(application) {
 
 
-
-
-
-
     private val showToast = SingleLiveEvent<String>()
     private var latestSearchText: String? = null
     private val trackSearchDebounce =
@@ -34,9 +29,8 @@ class SearchViewModel(
             searchRequest(changedText)
         }
 
-
-    private val tracklistLiveData = MutableLiveData<List<Track>>()
-    fun observeTrackList(): LiveData<List<Track>> = tracklistLiveData
+    /* private val tracklistLiveData = MutableLiveData<List<Track>>()
+     fun observeTrackList(): LiveData<List<Track>> = tracklistLiveData*/
 
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
@@ -51,7 +45,6 @@ class SearchViewModel(
             }
         }
     }
-
 
 
     fun showHistoryTrackList() {
@@ -96,9 +89,8 @@ class SearchViewModel(
         val trackList = mutableListOf<Track>()
         if (foundTracks != null) {
             trackList.addAll(foundTracks)
-            renderList(foundTracks)
+            /*renderList(foundTracks)*/
         }
-        Log.d("tracklistLivedata2", "size ${trackList.size}")
         when {
             errorMessage != null -> {
                 renderState(
@@ -127,9 +119,9 @@ class SearchViewModel(
         }
     }
 
-    private fun renderList(tracklist: List<Track>) {
+    /*private fun renderList(tracklist: List<Track>) {
         tracklistLiveData.postValue(tracklist)
-    }
+    }*/
     private fun showToast(message: String) {
         showToast.postValue(message)
     }

@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -90,7 +89,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             false
         ) { track ->
             viewModel.addTrackToHistory(track)
-            viewModel.showHistoryTrackList()
             trackHistoryAdapter.run { notifyDataSetChanged() }
             launchAudioPlayer(track)
         }
@@ -146,15 +144,16 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
                 inputEditText.requestFocus()
-                viewModel.searchDebounce(changedText = s.toString())
                 clearButton.visibility = clearButtonVisibility(s)
+                viewModel.searchDebounce(changedText = s.toString())
                 searchView.isVisible = s?.isEmpty() != true
                 recyclerView.isVisible = s?.isNotEmpty() == true
-                if (s?.isEmpty() == true) trackAdapter.tracks.clear()
                 if (inputEditText.hasFocus() && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)) {
                     viewModel.showHistoryTrackList()
                 }
+                if (s?.isEmpty() == true) trackAdapter.tracks.clear()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -168,13 +167,12 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
-            Log.d("tracadapter4", "trackadapter - ${trackAdapter.tracks.size}")
         }
-        viewModel.observeTrackList().observe(viewLifecycleOwner) {
+        /*viewModel.observeTrackList().observe(viewLifecycleOwner) {
             inputEditText.requestFocus()
             if (it.isNotEmpty()) showContent(it)
             Log.d("tracadapter61", "trackadapter - ${trackAdapter.tracks.size}")
-        }
+        }*/
 
         viewModel.observeShowToast().observe(viewLifecycleOwner) { toast ->
             showToast(toast)
@@ -200,7 +198,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             searchView.isVisible = false
             viewModel.showHistoryTrackList()
             trackHistoryAdapter.notifyDataSetChanged()
-            Log.d("trachistoryadapter", "trackadapter - ${trackHistoryAdapter.tracks.size}")
         }
 
 
@@ -219,7 +216,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     private fun showSearchView() {
         searchView.isVisible = true
-        Log.d("tracadapter3", "trackadapter - ${trackAdapter.tracks.size}")
         placeholder.isVisible = false
         searchHistoryView.isVisible = false
         progressBar.isVisible = false
@@ -310,7 +306,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             searchView.isVisible = false
         }
         trackAdapter.notifyDataSetChanged()
-        Log.d("tracadapter6", "trackadapter - ${trackAdapter.tracks.size}")
     }
 
     private fun showHistoryContent(trackHistoryList: List<Track>) {
@@ -332,7 +327,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         when (state) {
             is SearchState.Content -> {
                 showContent(state.trackList)
-                Log.d("tracadapter63", "trackadapter - ${trackAdapter.tracks.size}")
             }
 
             is SearchState.Empty -> showEmpty(state.message)
