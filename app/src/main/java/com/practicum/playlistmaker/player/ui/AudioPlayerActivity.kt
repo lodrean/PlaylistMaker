@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.player.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -46,7 +45,9 @@ class AudioPlayer : AppCompatActivity() {
              binding?.tvPlayingProgress?.text = it
 
          }*/
-
+        binding?.ivAddFavoriteButton?.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
 
         binding?.ivPlayButton?.setOnClickListener {
             viewModel.playControl()
@@ -75,6 +76,7 @@ class AudioPlayer : AppCompatActivity() {
             track.releaseDate.removeRange(4, track.releaseDate.lastIndex + 1)
         binding?.tvGenreValue?.text = track.genre
         binding?.tvCountryValue?.text = track.country
+        setFavoriteImage(track)
     }
 
     private fun render(state: PlaybackState) {
@@ -93,6 +95,13 @@ class AudioPlayer : AppCompatActivity() {
     private fun formatMilliseconds(milliseconds: Long): String {
         val format = SimpleDateFormat("mm:ss", Locale.getDefault())
         return format.format(Date(milliseconds))
+    }
+    private fun setFavoriteImage(track: Track) {
+        if (track.isFavorite) {
+            binding?.ivAddFavoriteButton?.setImageResource(R.drawable.is_favorite)
+        } else {
+            binding?.ivAddFavoriteButton?.setImageResource(R.drawable.heart_button)
+        }
     }
 }
 

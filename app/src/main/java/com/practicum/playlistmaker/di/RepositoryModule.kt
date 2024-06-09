@@ -2,6 +2,9 @@ package com.practicum.playlistmaker.di
 
 import android.content.Intent
 import android.media.MediaPlayer
+import com.practicum.playlistmaker.mediateka.data.db.FavoriteRepositoryImpl
+import com.practicum.playlistmaker.mediateka.data.db.TrackDbConvertor
+import com.practicum.playlistmaker.mediateka.domain.FavoriteRepository
 import com.practicum.playlistmaker.player.data.AudioPlayerRepositoryImpl
 import com.practicum.playlistmaker.player.domain.AudioPlayerRepository
 import com.practicum.playlistmaker.search.data.TracksHistoryRepositoryImpl
@@ -23,12 +26,18 @@ val repositoryModule = module {
         MediaPlayer()
     }
     factory<TracksHistoryRepository> { (intent: Intent) ->
-        TracksHistoryRepositoryImpl(intent, get(), get())
+        TracksHistoryRepositoryImpl(intent, get(), get(), get())
     }
     factory<TracksRepository> {
-        TracksRepositoryImpl(get())
+        TracksRepositoryImpl(get(), get())
     }
     factory<SettingsRepository> {
         SettingsRepositoryImpl(androidContext())
+    }
+    factory<TrackDbConvertor> {
+        TrackDbConvertor()
+    }
+    single<FavoriteRepository> {
+        FavoriteRepositoryImpl(get(), get())
     }
 }

@@ -3,12 +3,18 @@ package com.practicum.playlistmaker.search.data
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.mediateka.data.db.AppDatabase
 import com.practicum.playlistmaker.search.domain.Constant
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
 const val TRACK_LIST_KEY = "key_for_track_list"
@@ -17,18 +23,27 @@ const val SHARED_PREFERENCES = "playlist_search_preferences"
 class TracksHistoryRepositoryImpl(
     private val intent: Intent,
     private val prefs: SharedPreferences,
-    private val gson: Gson
+    private val gson: Gson,
+    private val appDatabase: AppDatabase
 ) :
     TracksHistoryRepository {
 
     private var tracks = mutableListOf<Track>()
 
-
-    override fun getItems(): MutableList<Track> {
-
+    override fun getItems(): Flow<MutableList<Track>> = flow {
         val itemsFromCache = getItemsFromCache()
-        tracks = itemsFromCache
-        return tracks
+        withContext(Dispatchers.IO) {
+            tracks = itemsFromCache
+            val allIds = appDatabase.trackDao().getAllIds()
+            tracks.map {
+                if (it.trackId in allIds) {
+                    it.isFavorite = true
+                } else {
+                    it.isFavorite = false
+                }
+            }
+        }
+        emit(tracks)
     }
 
     override fun clearHistory() {
@@ -36,16 +51,22 @@ class TracksHistoryRepositoryImpl(
     }
 
     override fun addTrackToHistory(track: Track) {
-        tracks = getItemsFromCache()
-        if (track.trackId in tracks.map { it.trackId }) {
-            tracks.remove(track)
-            tracks.add(0, track)
-            saveTracklist(prefs, tracks)
-        } else {
-            tracks.add(0, track)
-            saveTracklist(prefs, tracks)
+        val tracklist = mutableListOf<Track>()
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                getItems()
+                    .collect { tracks ->
+                        tracklist.addAll(tracks)
+                        if (track in tracklist) {
+                            tracklist.remove(track)
+                        }
+                    }
+            }
+            tracklist.add(0, track)
+            saveTracklist(prefs, tracklist)
         }
     }
+
 
     override fun getTrackFromIntent(): Track {
 
@@ -70,7 +91,7 @@ class TracksHistoryRepositoryImpl(
     }
 
     private fun createTracksListFromJson(json: String): MutableList<Track> {
-        return gson.fromJson<MutableList<Track>>(
+        return gson.fromJson(
             json, object : TypeToken<MutableList<Track>>() {}.type
         )
     }

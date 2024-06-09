@@ -11,7 +11,9 @@ import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
 import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.util.SingleLiveEvent
 import com.practicum.playlistmaker.util.debounce
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchViewModel(
     application: Application,
@@ -20,17 +22,15 @@ class SearchViewModel(
 ) : AndroidViewModel(application) {
 
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-
-    }
-
     private val showToast = SingleLiveEvent<String>()
     private var latestSearchText: String? = null
     private val trackSearchDebounce =
         debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
             searchRequest(changedText)
         }
+
+    /* private val tracklistLiveData = MutableLiveData<List<Track>>()
+     fun observeTrackList(): LiveData<List<Track>> = tracklistLiveData*/
 
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
@@ -39,16 +39,25 @@ class SearchViewModel(
     fun observeShowToast(): LiveData<String> = showToast
 
     fun addTrackToHistory(track: Track) {
-        tracksHistoryInteractor.addTrackToHistory(track)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                tracksHistoryInteractor.addTrackToHistory(track)
+            }
+        }
     }
 
-    fun getHistoyItems(): MutableList<Track> {
-        return tracksHistoryInteractor.getItems()
-    }
 
     fun showHistoryTrackList() {
-        val trackList = tracksHistoryInteractor.getItems()
-        renderState(SearchState.History(trackList))
+        val trackList = mutableListOf<Track>()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                tracksHistoryInteractor.getItems()
+                    .collect { tracks ->
+                        trackList.addAll(tracks)
+                    }
+            }
+            renderState(SearchState.History(trackList))
+        }
     }
 
     fun clearHistory() {
@@ -80,8 +89,8 @@ class SearchViewModel(
         val trackList = mutableListOf<Track>()
         if (foundTracks != null) {
             trackList.addAll(foundTracks)
+            /*renderList(foundTracks)*/
         }
-
         when {
             errorMessage != null -> {
                 renderState(
@@ -110,6 +119,9 @@ class SearchViewModel(
         }
     }
 
+    /*private fun renderList(tracklist: List<Track>) {
+        tracklistLiveData.postValue(tracklist)
+    }*/
     private fun showToast(message: String) {
         showToast.postValue(message)
     }
@@ -118,4 +130,8 @@ class SearchViewModel(
         stateLiveData.postValue(state)
     }
 
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+
+    }
 }

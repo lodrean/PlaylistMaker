@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.search.domain
 import com.practicum.playlistmaker.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.concurrent.Executors
 
 class TracksInteractorImpl(
     private val repository: TracksRepository

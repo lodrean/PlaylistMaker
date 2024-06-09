@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,9 +51,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var clearHistory: Button
     private lateinit var trackHistoryAdapter: TrackHistoryAdapter
-    private val trackHistoryList: ArrayList<Track> = arrayListOf()
     var inputText: String = AMOUNT_DEF
-    private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private var detailsRunnable: Runnable? = null
     private lateinit var onTrackClickDebounce: (Track) -> Unit
@@ -86,18 +83,17 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         progressBar = binding.progressBar
         inputEditText.setText(inputText)
 
-        onTrackClickDebounce = debounce<Track>(
+        onTrackClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
         ) { track ->
             viewModel.addTrackToHistory(track)
-            trackHistoryAdapter.updateItems(viewModel.getHistoyItems())
             trackHistoryAdapter.run { notifyDataSetChanged() }
             launchAudioPlayer(track)
         }
 
-        onTrackHistoryClickDebounce = debounce<Track>(
+        onTrackHistoryClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
@@ -125,8 +121,9 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         clearButton.setOnClickListener {
             trackAdapter.tracks.clear()
-            trackAdapter.notifyDataSetChanged()
             inputEditText.setText("")
+            trackHistoryAdapter.notifyDataSetChanged()
+            viewModel.showHistoryTrackList()
             placeholder.isVisible = false
             val inputMethodManager =
                 requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -134,38 +131,48 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
         clearHistory.setOnClickListener {
             viewModel.clearHistory()
-            trackHistoryAdapter.updateItems(trackHistoryList)
             searchHistoryView.isVisible = false
             trackHistoryAdapter.run { notifyDataSetChanged() }
+        }
+        binding.refreshButton.setOnClickListener {
+            viewModel.searchRequest(inputEditText.text.toString())
         }
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                inputEditText.requestFocus()
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                inputEditText.requestFocus()
                 clearButton.visibility = clearButtonVisibility(s)
-                searchView.isVisible =
-                    !(inputEditText.hasFocus() && s?.isEmpty() == true)
-                if (s?.isEmpty() == true) trackAdapter.tracks.clear()
-                searchHistoryView.isVisible =
-                    inputEditText.hasFocus() == true && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)
                 viewModel.searchDebounce(changedText = s.toString())
+                searchView.isVisible = s?.isEmpty() != true
+                recyclerView.isVisible = s?.isNotEmpty() == true
+                if (inputEditText.hasFocus() && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)) {
+                    viewModel.showHistoryTrackList()
+                }
+                if (s?.isEmpty() == true) trackAdapter.tracks.clear()
             }
 
             override fun afterTextChanged(s: Editable?) {
                 inputText.plus(s)
+
             }
         }
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
 
-        viewModel.showHistoryTrackList()
-
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
+        /*viewModel.observeTrackList().observe(viewLifecycleOwner) {
+            inputEditText.requestFocus()
+            if (it.isNotEmpty()) showContent(it)
+            Log.d("tracadapter61", "trackadapter - ${trackAdapter.tracks.size}")
+        }*/
 
         viewModel.observeShowToast().observe(viewLifecycleOwner) { toast ->
             showToast(toast)
@@ -177,8 +184,42 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             }
             false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        inputEditText.requestFocus()
+        if (trackAdapter.tracks.isNotEmpty() && inputEditText.text.isNotEmpty()) {
+            val request = inputEditText.text.toString()
+            showSearchView()
+            viewModel.searchRequest(request)
+            trackAdapter.notifyDataSetChanged()
+        } else {
+            searchView.isVisible = false
+            viewModel.showHistoryTrackList()
+            trackHistoryAdapter.notifyDataSetChanged()
+        }
 
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        inputEditText.requestFocus()
+        trackAdapter.notifyDataSetChanged()
+        if (trackAdapter.tracks.isNotEmpty() && inputEditText.text.isNotEmpty()) {
+            showSearchView()
+        } else {
+            viewModel.showHistoryTrackList()
+        }
+    }
+
+    private fun showSearchView() {
+        searchView.isVisible = true
+        placeholder.isVisible = false
+        searchHistoryView.isVisible = false
+        progressBar.isVisible = false
+        recyclerView.isVisible = true
     }
 
     override fun onDestroy() {
@@ -192,7 +233,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun launchAudioPlayer(track: Track) {
         val intent = Intent(requireContext(), AudioPlayer::class.java)
         intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
-        Log.d("test", "intent: " + Json.encodeToString(track))
         startActivity(intent)
     }
 
@@ -228,12 +268,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
 
-
-    companion object {
-        const val AMOUNT_DEF = ""
-        private const val CLICK_DEBOUNCE_DELAY = 300L
-    }
-
     private fun showLoading() {
         placeholder.isVisible = false
         recyclerView.isVisible = false
@@ -242,14 +276,20 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun showError(errorMessage: String) {
+        searchView.isVisible = true
+        recyclerView.isVisible = false
+        searchHistoryView.isVisible = false
         placeholder.isVisible = true
         showMessage(getString(R.string.something_went_wrong), errorMessage)
         placeholderImage.setImageResource(R.drawable.placeholder_no_internet)
-        refreshButton.isVisible = false
+        refreshButton.isVisible = true
         progressBar.isVisible = false
     }
 
     private fun showEmpty(emptyMessage: String) {
+        searchView.isVisible = true
+        recyclerView.isVisible = false
+        searchHistoryView.isVisible = false
         placeholder.isVisible = true
         showMessage(emptyMessage, "")
         placeholderImage.setImageResource(R.drawable.placeholder_not_find)
@@ -260,30 +300,35 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun showContent(trackList: List<Track>) {
         trackAdapter.tracks.clear()
         trackAdapter.tracks.addAll(trackList)
+        if (trackList.isNotEmpty()) {
+            showSearchView()
+        } else {
+            searchView.isVisible = false
+        }
         trackAdapter.notifyDataSetChanged()
-        placeholder.isVisible = false
-        searchHistoryView.isVisible = false
-        progressBar.isVisible = false
-        recyclerView.isVisible = true
-
     }
 
     private fun showHistoryContent(trackHistoryList: List<Track>) {
-        if (trackHistoryList.isNotEmpty()) {
+        if (trackHistoryList.isEmpty()) {
+            searchHistoryView.isVisible = false
+        } else {
+            searchView.isVisible = false
+            trackHistoryAdapter.tracks.clear()
             trackHistoryAdapter.tracks.addAll(trackHistoryList)
-            trackAdapter.notifyDataSetChanged()
+            trackHistoryAdapter.notifyDataSetChanged()
             placeholder.isVisible = false
             searchHistoryView.isVisible = true
             progressBar.isVisible = false
             recyclerView.isVisible = false
-        } else {
-            searchHistoryView.isVisible = false
         }
     }
 
     private fun render(state: SearchState) {
         when (state) {
-            is SearchState.Content -> showContent(state.trackList)
+            is SearchState.Content -> {
+                showContent(state.trackList)
+            }
+
             is SearchState.Empty -> showEmpty(state.message)
             is SearchState.Error -> showError(state.errorMessage)
             is SearchState.Loading -> showLoading()
@@ -291,4 +336,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
     }
 
+    companion object {
+        const val AMOUNT_DEF = ""
+        private const val CLICK_DEBOUNCE_DELAY = 300L
+    }
 }

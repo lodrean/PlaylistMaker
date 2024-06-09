@@ -2,7 +2,9 @@ package com.practicum.playlistmaker.di
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
 import com.google.gson.Gson
+import com.practicum.playlistmaker.mediateka.data.db.AppDatabase
 import com.practicum.playlistmaker.search.data.ItunesApiService
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.RetrofitNetworkClient
@@ -35,5 +37,10 @@ val dataModule = module {
     }
     single<ExternalNavigator> {
         ExternalNavigator(androidContext())
+    }
+
+    single<AppDatabase> {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 }

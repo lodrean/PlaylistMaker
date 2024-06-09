@@ -30,5 +30,11 @@
         android:gravity="center_horizontal"
         tools:text="Ваша медиатека пуста" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoriteList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_track" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

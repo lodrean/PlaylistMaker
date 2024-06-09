@@ -5,20 +5,24 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.PlayerListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerViewModel(
     application: Application,
     tracksHistoryInteractor: TracksHistoryInteractor,
-    private val mediaPlayer: AudioPlayerInteractor
+    private val mediaPlayer: AudioPlayerInteractor,
+    private val favoriteInteractor: FavoriteInteractor
 ) : AndroidViewModel(application) {
 
     private val playStatusLiveData = MutableLiveData<PlaybackState>(PlaybackState.Default())
@@ -35,11 +39,30 @@ class AudioPlayerViewModel(
         playbackControl()
     }
 
+    fun onFavoriteClicked() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val isTrackFavorite = track.isFavorite
+                if (!track.isFavorite) {
+                    favoriteInteractor.addToFavorite(track)
+                } else {
+                    favoriteInteractor.deleteFromFavorite(track)
+                }
+                track.isFavorite = !isTrackFavorite
+                renderState(
+                    PlaybackState.Content(track)
+                )
+            }
+        }
+    }
+
+
     fun createAudioPlayer() {
         mediaPlayer.createAudioPlayer(track.url, object : PlayerListener {
             override fun onPrepared() {
                 renderState(PlaybackState.Content(track))
             }
+
             override fun onCompletion() {
                 renderState(PlaybackState.Content(track))
             }
@@ -56,6 +79,7 @@ class AudioPlayerViewModel(
             renderState(PlaybackState.Prepared())
         }
     }
+
     fun onPause() {
         pausePlayer()
     }

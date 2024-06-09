@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TrackDto(
     @SerializedName("trackId") val trackId: Int = 0,
-    @SerializedName("trackName") val trackName: String? = "",
+    @SerializedName("trackName") val trackName: String = "",
     @SerializedName("artistName") val artistName: String = "",
     @SerializedName("previewUrl") val url: String = "",
     @SerializedName("trackTimeMillis") val trackTime: Int = 0,

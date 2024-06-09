@@ -14,7 +14,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel { (intent: Intent) ->
-        AudioPlayerViewModel(androidApplication(), get { parametersOf(intent) }, get())
+        AudioPlayerViewModel(androidApplication(), get { parametersOf(intent) }, get(), get())
     }
 
     viewModel { (intent: Intent) ->
@@ -26,7 +26,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        FavoriteTracksViewModel()
+        FavoriteTracksViewModel(get())
     }
 
     viewModel {
