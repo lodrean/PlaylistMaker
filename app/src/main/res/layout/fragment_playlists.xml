@@ -13,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/refreshButton"
+        android:id="@+id/newPlaylist"
         style="@style/RefreshButton"
         android:layout_width="wrap_content"
         android:layout_height="36dp"

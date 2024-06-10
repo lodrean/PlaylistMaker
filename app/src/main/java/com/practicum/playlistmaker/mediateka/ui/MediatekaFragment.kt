@@ -35,7 +35,10 @@ class MediatekaFragment : BindingFragment<FragmentMediatekaBinding>() {
             }
         }
         tabsMediator.attach()
+
+
     }
+
 
     /*override fun onDestroy() {
         super.onDestroy()

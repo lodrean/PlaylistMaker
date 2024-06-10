@@ -7,7 +7,7 @@
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnPrimary">@color/YP_black</item>
         <!-- <item name="android:background">@color/YP_Blue</item>-->
-        <item name="android:iconTint">@color/YP_Text_Gray</item>
+        <item name="android:iconTint">@color/YP_Gray</item>
         <item name="main_font">@font/ys_display_regular</item>
         <item name="note_color">@color/YP_black</item>
 
@@ -21,9 +21,9 @@
         <item name="colorOnPrimary">@color/YP_black</item>
         <item name="tab_indicator_color">@color/YP_black</item>
         <!-- <item name="android:background">@color/white</item>-->
-        <item name="android:iconTint">@color/YP_Text_Gray</item>
+        <item name="android:iconTint">@color/YP_Gray</item>
         <item name="text_color_primary">@color/YP_black</item>
-        <item name="text_color_secondary">@color/YP_Text_Gray</item>
+        <item name="text_color_secondary">@color/YP_Gray</item>
         <item name="note_color">@color/YP_black</item>
     </style>
     <!-- Base application theme. -->
