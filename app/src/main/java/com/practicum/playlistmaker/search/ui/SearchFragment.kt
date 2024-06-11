@@ -170,11 +170,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-        /*viewModel.observeTrackList().observe(viewLifecycleOwner) {
-            inputEditText.requestFocus()
-            if (it.isNotEmpty()) showContent(it)
-            Log.d("tracadapter61", "trackadapter - ${trackAdapter.tracks.size}")
-        }*/
 
         viewModel.observeShowToast().observe(viewLifecycleOwner) { toast ->
             showToast(toast)

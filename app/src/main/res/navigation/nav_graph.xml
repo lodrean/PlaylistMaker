@@ -35,6 +35,6 @@
         tools:layout="@layout/fragment_favorite_tracks" />
     <fragment
         android:id="@+id/newPlaylistFragment"
-        android:name="com.practicum.playlistmaker.new_playlist.NewPlaylistFragment"
+        android:name="com.practicum.playlistmaker.new_playlist.ui.NewPlaylistFragment"
         android:label="NewPlaylistFragment" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.new_playlist
+package com.practicum.playlistmaker.new_playlist.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,10 +9,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
@@ -103,5 +103,20 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+    }
+
+    private fun render(state: NewPlaylistState) {
+        when (state) {
+            is NewPlaylistState.Creation -> binding.createButton.isEnabled = true
+            is NewPlaylistState.IsCreate -> showIsCreateMessage(state.message)
+        }
+    }
+
+    private fun showIsCreateMessage(message: String) {
+        Toast.makeText(
+            requireContext().applicationContext,
+            message,
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
