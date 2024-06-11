@@ -141,6 +141,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 inputEditText.requestFocus()
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -164,6 +165,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
+
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)

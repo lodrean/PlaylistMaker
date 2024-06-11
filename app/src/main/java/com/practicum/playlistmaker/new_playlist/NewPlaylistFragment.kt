@@ -46,7 +46,11 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
         // обработка кнопки сохранения ОК
         binding.backButton.setOnClickListener {
-            confirmDialog.show()
+            if (binding.createButton.isEnabled) {
+                confirmDialog.show()
+            } else{
+                parentFragmentManager.popBackStack()
+            }
         }
 
         // добавление слушателя для обработки нажатия на кнопку Back
@@ -55,6 +59,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 confirmDialog.show()
             }
         })
+
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 //обрабатываем событие выбора пользователем фотографии
