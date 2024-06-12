@@ -5,6 +5,8 @@ import android.media.MediaPlayer
 import com.practicum.playlistmaker.mediateka.data.db.FavoriteRepositoryImpl
 import com.practicum.playlistmaker.mediateka.data.db.TrackDbConvertor
 import com.practicum.playlistmaker.mediateka.domain.FavoriteRepository
+import com.practicum.playlistmaker.new_playlist.data.NewPlayListRepositoryImpl
+import com.practicum.playlistmaker.new_playlist.domain.NewPlayListRepository
 import com.practicum.playlistmaker.player.data.AudioPlayerRepositoryImpl
 import com.practicum.playlistmaker.player.domain.AudioPlayerRepository
 import com.practicum.playlistmaker.search.data.TracksHistoryRepositoryImpl
@@ -39,5 +41,9 @@ val repositoryModule = module {
     }
     single<FavoriteRepository> {
         FavoriteRepositoryImpl(get(), get())
+    }
+
+    single<NewPlayListRepository> {
+        NewPlayListRepositoryImpl()
     }
 }

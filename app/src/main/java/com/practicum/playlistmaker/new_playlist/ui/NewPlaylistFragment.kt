@@ -1,10 +1,13 @@
 package com.practicum.playlistmaker.new_playlist.ui
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +16,16 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
 class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
+    private val viewModel by viewModel<NewPlayLIstViewModel>()
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
     override fun createBinding(
@@ -42,29 +48,44 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 save()
                 parentFragmentManager.popBackStack()
             }
+        binding.createButton.isEnabled = false
 
 
-        // обработка кнопки сохранения ОК
         binding.backButton.setOnClickListener {
-            if (binding.createButton.isEnabled) {
+            if ((binding.textInputName.text?.isNotEmpty() == true) or (binding.textInputDescription.text?.isNotEmpty() == true) or binding.imageView.isVisible) {
                 confirmDialog.show()
-            } else{
+            } else {
                 parentFragmentManager.popBackStack()
             }
         }
 
+
         // добавление слушателя для обработки нажатия на кнопку Back
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                confirmDialog.show()
+                Log.d("PhotoPicker", "${binding.textInputName.text?.isNotEmpty()}")
+                if ((binding.textInputName.text?.isNotEmpty() == true) or (binding.textInputDescription.text?.isNotEmpty() == true) or binding.imageView.isVisible) {
+
+                    confirmDialog.show()
+                } else {
+                    parentFragmentManager.popBackStack()
+                }
             }
         })
 
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+
                 //обрабатываем событие выбора пользователем фотографии
                 if (uri != null) {
+
+
+                    val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    context?.contentResolver?.takePersistableUriPermission(uri, flag)
+
                     binding.imageView.setImageURI(uri)
+                    binding.imageView.isVisible = true
+                    binding.placeHolder.isVisible = false
                     saveImageToPrivateStorage(uri)
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -80,17 +101,47 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             val file = File(filePath, "first_cover.jpg")
             binding.storageImage.setImageURI(file.toUri())
         }*/
+        val simpleTextWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                binding.textInputName.requestFocus()
+                if (s?.isEmpty() == true) viewModel.banCreation()
+            }
 
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                binding.textInputName.requestFocus()
+                /*viewModel.searchDebounce(changedText = s.toString())
+                searchView.isVisible = s?.isEmpty() != true
+                recyclerView.isVisible = s?.isNotEmpty() == true
+                if (inputEditText.hasFocus() && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)) {
+                    viewModel.showHistoryTrackList()
+                }*/
+                if (s?.isEmpty() == true) viewModel.banCreation() else viewModel.allowCreation()
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                /*  inputText.plus(s)*/
+
+            }
+        }
+
+        binding.textInputName.addTextChangedListener(simpleTextWatcher)
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            render(it)
+        }
     }
 
     private fun save() {
 
     }
+
     private fun saveImageToPrivateStorage(uri: Uri) {
         //создаём экземпляр класса File, который указывает на нужный каталог
-        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
+        val filePath =
+            File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
         //создаем каталог, если он не создан
-        if (!filePath.exists()){
+        if (!filePath.exists()) {
             filePath.mkdirs()
         }
         //создаём экземпляр класса File, который указывает на файл внутри каталога
@@ -107,7 +158,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
     private fun render(state: NewPlaylistState) {
         when (state) {
-            is NewPlaylistState.Creation -> binding.createButton.isEnabled = true
+            is NewPlaylistState.Creation -> binding.createButton.isEnabled = state.creation
             is NewPlaylistState.IsCreate -> showIsCreateMessage(state.message)
         }
     }
@@ -119,4 +170,12 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             Toast.LENGTH_LONG
         ).show()
     }
+
+    override fun onPause() {
+
+        super.onPause()
+
+    }
 }
+
+

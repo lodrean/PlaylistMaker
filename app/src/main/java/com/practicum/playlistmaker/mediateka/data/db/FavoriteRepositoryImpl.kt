@@ -2,13 +2,14 @@ package com.practicum.playlistmaker.mediateka.data.db
 
 import com.practicum.playlistmaker.mediateka.domain.FavoriteRepository
 import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.util.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 class FavoriteRepositoryImpl(
-    private val appDatabase: AppDatabase, 
+    private val appDatabase: AppDatabase,
     private val trackDbConvertor: TrackDbConvertor
 ) : FavoriteRepository {
 
