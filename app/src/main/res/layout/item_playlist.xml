@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
@@ -9,38 +11,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
-        android:paddingHorizontal="13dp">
+        android:paddingHorizontal="13dp"
+        >
+
+
+
+        <ImageView
+            android:id="@+id/ivPlaylistCover"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/placeholder"
+            android:background="@drawable/playlist_stroke"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
+            android:id="@+id/playlistName"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/title_color"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            style="@style/FontStyle.Playlist"
             tools:text="ЗАГОЛОВОК ЗАГОЛОВОК ЗАГОЛОВОК ЗАГОЛОВОК" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black" />
-
         <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
+            android:id="@+id/playlistCount"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
-            android:ellipsize="end"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:textStyle="normal"
+            style="@style/FontStyle.Playlist"
             tools:text="ОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписаниеОписание" />
     </LinearLayout>
 
