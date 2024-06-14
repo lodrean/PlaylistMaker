@@ -6,8 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.practicum.playlistmaker.mediateka.data.db.TrackEntity
-import com.practicum.playlistmaker.new_playlist.domain.Playlist
 
 @Dao
 interface PlaylistDao {
@@ -25,5 +23,5 @@ interface PlaylistDao {
     fun getAllIds(): List<String>
 
     @Update(entity = PlaylistEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    fun updatePlaylist(plalist: PlaylistEntity)
+    fun updatePlaylist(playlist: PlaylistEntity)
 }

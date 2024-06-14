@@ -123,10 +123,15 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 binding.textInputName.text.toString(),
                 binding.textInputDescription.text.toString()
             )
+            viewModel.deleteImage()
+            parentFragmentManager.popBackStack()
         }
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
+        }
+        viewModel.observeShowToast().observe(viewLifecycleOwner) { toast ->
+            showToast(toast)
         }
     }
 
@@ -139,7 +144,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         when (state) {
             is NewPlaylistState.Creation -> {
                 if (binding.textInputName.text?.isNotEmpty() == true) {
-
+                    binding.createButton.isEnabled
                 }
                 binding.imageView.setImageURI(state.uri)
                 if (state.uri.toString() != "") {
@@ -165,10 +170,17 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         super.onPause()
 
     }
-
+    private fun showToast(additionalMessage: String) {
+        Toast.makeText(requireContext(), additionalMessage, Toast.LENGTH_LONG).show()
+    }
     override fun onResume() {
         super.onResume()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
 }
 
 
