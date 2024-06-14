@@ -5,13 +5,14 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.practicum.playlistmaker.mediateka.data.db.TrackEntity
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 
 @Dao
 interface PlaylistDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(entity = PlaylistEntity::class, onConflict = OnConflictStrategy.REPLACE)
     fun insert(playlist: PlaylistEntity)
 
     @Delete
@@ -22,4 +23,7 @@ interface PlaylistDao {
 
     @Query("SELECT idList FROM playlist_table")
     fun getAllIds(): List<String>
+
+    @Update(entity = PlaylistEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    fun updatePlaylist(plalist: PlaylistEntity)
 }

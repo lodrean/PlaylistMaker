@@ -6,12 +6,18 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import androidx.core.net.toUri
+import com.practicum.playlistmaker.mediateka.data.db.TrackEntity
+import com.practicum.playlistmaker.new_playlist.data.db.PlaylistEntity
 import com.practicum.playlistmaker.new_playlist.domain.NewPlayListRepository
+import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.util.AppDatabase
 import java.io.File
 import java.io.FileOutputStream
 
-class NewPlayListRepositoryImpl(private val context: Context) : NewPlayListRepository {
+class NewPlayListRepositoryImpl(private val context: Context,
+   private val appDatabase: AppDatabase) : NewPlayListRepository {
     override fun createPlaylist(imageUri: String, playlistName: String, description: String) {
+        appDatabase.playlistDao().insert(PlaylistEntity( 0, playlistName, description, imageUri, ""))
     }
 
     override fun getImage(): Uri {
@@ -47,4 +53,6 @@ class NewPlayListRepositoryImpl(private val context: Context) : NewPlayListRepos
         val file = File(filePath, "first_cover.jpg")
         return file.toUri()
     }
+
+
 }

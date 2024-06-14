@@ -1,17 +1,15 @@
 package com.practicum.playlistmaker.new_playlist.ui
 
-import android.app.Application
 import android.net.Uri
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.new_playlist.domain.NewPlaylistInteractor
 import com.practicum.playlistmaker.util.SingleLiveEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NewPlayLIstViewModel(
     private val newPlaylistInteractor: NewPlaylistInteractor
@@ -28,12 +26,22 @@ class NewPlayLIstViewModel(
 
     fun allowCreation() {
         val creationIsAllowed = true
-        stateLiveData.postValue(NewPlaylistState.Creation(creationIsAllowed,  newPlaylistInteractor.getImage()))
+        stateLiveData.postValue(
+            NewPlaylistState.Creation(
+                creationIsAllowed,
+                newPlaylistInteractor.getImage()
+            )
+        )
     }
 
     fun banCreation() {
         val creationIsAllowed = false
-        stateLiveData.postValue(NewPlaylistState.Creation(creationIsAllowed,  newPlaylistInteractor.getImage()))
+        stateLiveData.postValue(
+            NewPlaylistState.Creation(
+                creationIsAllowed,
+                newPlaylistInteractor.getImage()
+            )
+        )
     }
 
     fun setImage(uri: Uri) {
@@ -41,8 +49,13 @@ class NewPlayLIstViewModel(
         newPlaylistInteractor.saveImage(uri.toString())
         stateLiveData.postValue(NewPlaylistState.Creation(true, newPlaylistInteractor.getImage()))
     }
-    fun createPlaylist( playlistName: String, description: String){
-        newPlaylistInteractor.createPlaylist(imageUri.toString(), playlistName, description )
+
+    fun createPlaylist(playlistName: String, description: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                newPlaylistInteractor.createPlaylist(imageUri.toString(), playlistName, description)
+            }
+        }
     }
 
 }
