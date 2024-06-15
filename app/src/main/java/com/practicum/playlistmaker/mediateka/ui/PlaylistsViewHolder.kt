@@ -17,6 +17,7 @@ class PlaylistsViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
     fun bind(playlist: Playlist){
         playlistName.text = playlist.playlistName
+        playlistCount.text = playlist.tracksCount.toString()
         Glide.with(this.itemView.context)
             .load(playlist.imageUri)
             .fitCenter()

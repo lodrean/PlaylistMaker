@@ -40,7 +40,6 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 // ничего не делаем
             }.setPositiveButton("Завершить") { dialog, which ->
                 // сохраняем изменения и выходим
-                save()
                 parentFragmentManager.popBackStack()
             }
         binding.createButton.isEnabled = false
@@ -134,12 +133,6 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             showToast(toast)
         }
     }
-
-    private fun save() {
-
-    }
-
-
     private fun render(state: NewPlaylistState) {
         when (state) {
             is NewPlaylistState.Creation -> {

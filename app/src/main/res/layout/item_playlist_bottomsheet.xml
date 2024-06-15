@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="64dp"
+    android:theme="@style/Theme.PlaylistMaker">
+
+    <ImageView
+        android:id="@+id/playlistCover"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="13dp"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="14dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_playlistName"
+            style="@style/FontStyle.Track"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:minHeight="20dp"
+            tools:text="Long text to demonstrate problemLong text to demonstrate problem" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|start"
+            android:minHeight="13dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_artistName"
+                style="@style/FontStyle.Track.ArtistName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="13dp"
+                tools:text="Long text to demonstrate problem with TextView in GridLayout taking up too much space desp" />
+
+            <TextView
+                android:id="@+id/tv_tracksCount"
+                style="@style/FontStyle.Track.ArtistName"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                tools:text="Long text to demonstrate problem with TextView in GridLayout taking up too much space despite ellipsis" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
