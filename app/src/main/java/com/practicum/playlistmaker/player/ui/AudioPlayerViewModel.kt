@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
+import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.PlayerListener
@@ -121,6 +122,10 @@ class AudioPlayerViewModel(
         mediaPlayer.pause()
         timerJob?.cancel()
         renderState(PlaybackState.Pause(getCurrentPlayerPosition()))
+    }
+
+    fun addToPlaylist(playlist: Playlist) {
+
     }
 
 }

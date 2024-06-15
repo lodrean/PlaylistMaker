@@ -14,7 +14,7 @@ import com.practicum.playlistmaker.new_playlist.domain.Playlist
 class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val tvPlaylistName: TextView = itemView.findViewById(R.id.tv_playlistName)
-    private val tvPlaylistCount: TextView = itemView.findViewById(R.id.tv_playlistCount)
+    private val tvPlaylistCount: TextView = itemView.findViewById(R.id.tv_tracksCount)
     private val playlistCover: ImageView = itemView.findViewById(R.id.playlistCover)
     fun bind(model: Playlist) {
         tvPlaylistName.text = model.playlistName

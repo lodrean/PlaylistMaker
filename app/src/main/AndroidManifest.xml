@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".player.ui.AudioPlayer"
+            android:name=".player.ui.AudioPlayerActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker" />
 

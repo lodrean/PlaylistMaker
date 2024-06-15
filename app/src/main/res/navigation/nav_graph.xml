@@ -25,9 +25,19 @@
         tools:layout="@layout/fragment_settings" />
     <activity
         android:id="@+id/audioPlayer"
-        android:name="com.practicum.playlistmaker.player.ui.AudioPlayer"
+        android:name="com.practicum.playlistmaker.player.ui.AudioPlayerActivity"
         android:label="activity_audio_player"
-        tools:layout="@layout/activity_audio_player" />
+       tools:layout="@layout/activity_audio_player">
+
+    </activity>
+    <fragment
+        android:id="@+id/audioPlayerFragmentContainerView"
+        android:label="activity_audio_player"
+        tools:layout="@layout/activity_audio_player">
+        <action
+            android:id="@+id/action_audioPlayerFragmentContainerView_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteTracksFragment"
         android:name="com.practicum.playlistmaker.mediateka.ui.FavoriteTracksFragment"
@@ -37,4 +47,5 @@
         android:id="@+id/newPlaylistFragment"
         android:name="com.practicum.playlistmaker.new_playlist.ui.NewPlaylistFragment"
         android:label="NewPlaylistFragment" />
+
 </navigation>

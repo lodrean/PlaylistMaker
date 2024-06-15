@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.practicum.playlistmaker.mediateka.ui.PlaylistsFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
@@ -172,6 +173,15 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() =
+            NewPlaylistFragment().apply {
+                arguments = Bundle().apply {
+                }
+            }
     }
 
 }

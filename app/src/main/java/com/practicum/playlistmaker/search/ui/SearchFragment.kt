@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
-import com.practicum.playlistmaker.player.ui.AudioPlayer
+import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.Track
@@ -228,7 +228,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun launchAudioPlayer(track: Track) {
-        val intent = Intent(requireContext(), AudioPlayer::class.java)
+        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
         intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
         startActivity(intent)
     }
