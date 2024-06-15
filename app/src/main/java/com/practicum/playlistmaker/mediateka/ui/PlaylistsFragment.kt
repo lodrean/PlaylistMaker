@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
@@ -29,6 +31,10 @@ class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
                 R.id.action_mediatekaFragment_to_newPlaylistFragment
             )
         }
+
+
+        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), /*Количество столбцов*/ 2) //ориентация по умолчанию — вертикальная
+        binding.recyclerView.adapter = PlaylistsAdapter(viewModel.getItems())
     }
 
     companion object {

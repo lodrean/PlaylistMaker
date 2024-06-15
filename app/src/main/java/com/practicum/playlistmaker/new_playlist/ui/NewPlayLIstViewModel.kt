@@ -6,14 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker.new_playlist.domain.NewPlaylistInteractor
+import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NewPlayLIstViewModel(
-    private val newPlaylistInteractor: NewPlaylistInteractor
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
 
@@ -47,7 +47,7 @@ class NewPlayLIstViewModel(
 
     fun setImage(uri: Uri) {
         imageUri = uri.toString()
-        newPlaylistInteractor.saveImage(uri.toString())
+        playlistInteractor.saveImage(uri.toString())
         stateLiveData.postValue(NewPlaylistState.Creation(true, uri))
     }
 
@@ -58,8 +58,8 @@ class NewPlayLIstViewModel(
     fun createPlaylist(playlistName: String, description: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                newPlaylistInteractor.createPlaylist(
-                    newPlaylistInteractor.getImage().toString(),
+                playlistInteractor.createPlaylist(
+                    playlistInteractor.getImage().toString(),
                     playlistName,
                     description
                 )

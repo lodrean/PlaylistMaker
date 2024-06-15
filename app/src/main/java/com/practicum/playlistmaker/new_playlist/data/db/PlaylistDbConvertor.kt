@@ -2,11 +2,12 @@ package com.practicum.playlistmaker.new_playlist.data.db
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.new_playlist.data.PlaylistDto
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 
 class PlaylistDbConvertor(private val gson: Gson) {
 
-    fun map(playlisyst: Playlist): PlaylistEntity =
+    fun map(playlisyst: PlaylistDto): PlaylistEntity =
         PlaylistEntity(
             playlisyst.playlistId.toInt(),
             playlisyst.playlistName,
