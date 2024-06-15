@@ -59,7 +59,7 @@ class NewPlayLIstViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 playlistInteractor.createPlaylist(
-                    playlistInteractor.getImage().toString(),
+                    imageUri,
                     playlistName,
                     description
                 )

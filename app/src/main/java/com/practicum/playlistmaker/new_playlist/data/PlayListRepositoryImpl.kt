@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.new_playlist.data
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Movie
 import android.net.Uri
 import android.os.Environment
 import androidx.core.net.toUri
@@ -12,16 +11,20 @@ import com.practicum.playlistmaker.new_playlist.data.db.PlaylistEntity
 import com.practicum.playlistmaker.new_playlist.domain.PlayListRepository
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.util.AppDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
-class PlayListRepositoryImpl(private val context: Context,
-                             private val appDatabase: AppDatabase,
-    private val playlistDbConvertor: PlaylistDbConvertor) : PlayListRepository {
+class PlayListRepositoryImpl(
+    private val context: Context,
+    private val appDatabase: AppDatabase,
+    private val playlistDbConvertor: PlaylistDbConvertor
+) : PlayListRepository {
     override fun createPlaylist(imageUri: String, playlistName: String, description: String) {
-        appDatabase.playlistDao().insert(PlaylistEntity( 0, playlistName, description, imageUri, ""))
+        appDatabase.playlistDao().insert(PlaylistEntity(0, playlistName, description, imageUri, ""))
     }
 
     override fun getImage(): Uri {
@@ -33,8 +36,12 @@ class PlayListRepositoryImpl(private val context: Context,
     }
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
-        val playlists = appDatabase.playlistDao().getPlaylists()
-        emit(convertFromPlaylistsEntity(playlists))
+
+        val playlists = withContext(Dispatchers.IO) {
+            appDatabase.playlistDao().getPlaylists()
+        }
+            emit(convertFromPlaylistsEntity(playlists))
+
     }
 
     fun saveImageToPrivateStorage(uri: Uri) {
@@ -57,11 +64,12 @@ class PlayListRepositoryImpl(private val context: Context,
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 
-    fun getImageFromPrivateStorage(): Uri{
+    fun getImageFromPrivateStorage(): Uri {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
         val file = File(filePath, "first_cover.jpg")
         return file.toUri()
     }
+
     private fun convertFromPlaylistsEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }

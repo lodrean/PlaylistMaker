@@ -4,6 +4,7 @@ import android.net.Uri
 import com.practicum.playlistmaker.new_playlist.domain.PlayListRepository
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
+import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(
     private val playlistRepositrory: PlayListRepository
@@ -20,9 +21,10 @@ class PlaylistInteractorImpl(
        return playlistRepositrory.getImage()
     }
 
-    override fun getListOfPlaylists(): List<Playlist> {
-      return playlistRepositrory.getItems()
+    override fun getPlaylists(): Flow<List<Playlist>> {
+        return playlistRepositrory.getPlaylists()
     }
+
 
 
 }
