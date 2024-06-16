@@ -30,13 +30,14 @@ class AudioPlayerViewModel(
 
     private val playStatusLiveData = MutableLiveData<PlaybackState>(PlaybackState.Default())
     private var timerJob: Job? = null
-
+    private val bottomSheetLiveData = MutableLiveData<BottomSheetState>()
     companion object {
         private const val PROGRESS_DELAY_MILLIS = 300L
     }
 
     private val track: Track = tracksHistoryInteractor.getTrack()
     fun getPlayStatusLiveData(): LiveData<PlaybackState> = playStatusLiveData
+    fun getBottomSheetLiveData(): LiveData<BottomSheetState> = bottomSheetLiveData
 
     fun playControl() {
         playbackControl()
@@ -59,6 +60,32 @@ class AudioPlayerViewModel(
         }
     }
 
+    fun fillData() {
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                playlistInteractor
+                    .getPlaylists()
+                    .collect { playlists ->
+                        processResult(playlists)
+
+                    }
+            }
+
+        }
+    }
+
+    private fun processResult(playlists: List<Playlist>) {
+        if (playlists.isEmpty()) {
+            renderList(BottomSheetState.Empty)
+        } else {
+            renderList(BottomSheetState.Content(playlists))
+        }
+    }
+
+    private fun renderList(state: BottomSheetState) {
+        bottomSheetLiveData.postValue(state)
+    }
 
     fun createAudioPlayer() {
         mediaPlayer.createAudioPlayer(track.url, object : PlayerListener {

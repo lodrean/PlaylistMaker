@@ -7,23 +7,23 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.player.domain.OnPlaylistClickListener
 
-class PlaylistAdapter(
+class BottomSheetAdapter(
     private val onPlaylistClickListener: OnPlaylistClickListener
-) : RecyclerView.Adapter<PlaylistViewHolder>() {
-    val playlists: ArrayList<Playlist> = arrayListOf()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
+) : RecyclerView.Adapter<BottomSheetViewHolder>() {
+
+    var playlists = ArrayList<Playlist>()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BottomSheetViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_playlist_bottomsheet, parent, false)
-        return PlaylistViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        holder.bind(playlists[position])
-        holder.itemView.setOnClickListener { onPlaylistClickListener.onItemClick(playlists[holder.adapterPosition]) }
+        return BottomSheetViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return playlists.size
     }
-}
 
+    override fun onBindViewHolder(holder: BottomSheetViewHolder, position: Int) {
+        holder.bind(playlists[position])
+        holder.itemView.setOnClickListener { onPlaylistClickListener.onItemClick(playlists[holder.adapterPosition]) }
+    }
+}

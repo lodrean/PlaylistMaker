@@ -3,11 +3,10 @@ package com.practicum.playlistmaker.player.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -29,10 +28,9 @@ class AudioPlayerActivity : AppCompatActivity() {
     private val viewModel by viewModel<AudioPlayerViewModel> {
         parametersOf(intent)
     }
-
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
-
+    private lateinit var adapter: BottomSheetAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,14 +45,23 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding?.tvPlayingProgress?.text = it.progress
             render(it)
         }
+
+        viewModel.getBottomSheetLiveData().observe(this) {
+            renderBottomSheet(it)
+        }
+
+
         //BottomSheet
 
-        
 
         binding?.newPlaylist?.setOnClickListener {
             val transaction = supportFragmentManager.beginTransaction()
             transaction
-                .add(R.id.audioPlayerFragmentContainerView, NewPlaylistFragment.newInstance(), "NewPlaylistFragment")
+                .add(
+                    R.id.audioPlayerFragmentContainerView,
+                    NewPlaylistFragment.newInstance(),
+                    "NewPlaylistFragment"
+                )
                 .commit()
         }
 
@@ -66,8 +73,9 @@ class AudioPlayerActivity : AppCompatActivity() {
         val onPlaylistClickListener = OnPlaylistClickListener { playlist ->
             viewModel.addToPlaylist(playlist)
         }
+        adapter = BottomSheetAdapter(onPlaylistClickListener)
         binding?.bottomSheetRecyclerView?.layoutManager = LinearLayoutManager(this)
-        binding?.bottomSheetRecyclerView?.adapter = PlaylistAdapter(onPlaylistClickListener)
+        binding?.bottomSheetRecyclerView?.adapter = BottomSheetAdapter(onPlaylistClickListener)
         binding?.ivAddToPlaylistButton?.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -112,6 +120,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             viewModel.playControl()
         }
         viewModel.createAudioPlayer()
+        viewModel.fillData()
     }
 
     override fun onPause() {
@@ -149,6 +158,20 @@ class AudioPlayerActivity : AppCompatActivity() {
             is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(com.practicum.playlistmaker.R.drawable.pause_button)
             is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(com.practicum.playlistmaker.R.drawable.play_button)
             is PlaybackState.Content -> showTrackInfo(state.track)
+        }
+    }
+
+    private fun renderBottomSheet(state: BottomSheetState) {
+        when (state) {
+            is BottomSheetState.Content -> {
+                adapter?.playlists?.clear()
+                adapter?.playlists?.addAll(state.playlists)
+                adapter?.notifyDataSetChanged()
+                Log.d("playlists", "${state.playlists.size}")
+                binding?.bottomSheetRecyclerView?.isVisible = true
+            }
+
+            is BottomSheetState.Empty -> {}
         }
     }
 
