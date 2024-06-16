@@ -6,11 +6,13 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.player.domain.OnPlaylistClickListener
 import com.practicum.playlistmaker.search.domain.Track
@@ -33,7 +35,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityAudioPlayerBinding.inflate(LayoutInflater.from(this))
+        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         val view = binding?.root
         setContentView(view)
 
@@ -47,11 +49,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         //BottomSheet
 
         val navHostFragment =
-            supportFragmentManager.findFragmentById(com.practicum.playlistmaker.R.id.audioPlayerFragmentContainerView) as NavHostFragment
+            supportFragmentManager.findFragmentById(R.id.audioPlayerFragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
 
         binding?.newPlaylist?.setOnClickListener {
-            navController.navigate(com.practicum.playlistmaker.R.id.action_audioPlayerFragmentContainerView_to_newPlaylistFragment)
+            findNavController(R.id.audioPlayerFragmentContainerView).navigate(R.id.action_audioPlayerFragmentContainerView_to_newPlaylistFragment)
         }
 
         val bottomSheetContainer = binding?.playlistsBottomSheet
