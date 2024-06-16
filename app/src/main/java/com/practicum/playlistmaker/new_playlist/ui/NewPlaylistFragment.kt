@@ -174,6 +174,9 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
     override fun onDestroy() {
         super.onDestroy()
     }
+fun NewPlaylistFragmentInstance(): NewPlaylistFragment{
+    return NewPlaylistFragment()
+}
 
     companion object {
         @JvmStatic

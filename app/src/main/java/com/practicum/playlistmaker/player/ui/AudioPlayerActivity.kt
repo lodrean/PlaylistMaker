@@ -14,6 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.new_playlist.ui.NewPlaylistFragment
 import com.practicum.playlistmaker.player.domain.OnPlaylistClickListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.dpToPx
@@ -48,12 +49,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         //BottomSheet
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.audioPlayerFragmentContainerView) as NavHostFragment
-        val navController = navHostFragment.navController
+        
 
         binding?.newPlaylist?.setOnClickListener {
-            findNavController(R.id.audioPlayerFragmentContainerView).navigate(R.id.action_audioPlayerFragmentContainerView_to_newPlaylistFragment)
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction
+                .add(R.id.audioPlayerFragmentContainerView, NewPlaylistFragment.newInstance(), "NewPlaylistFragment")
+                .commit()
         }
 
         val bottomSheetContainer = binding?.playlistsBottomSheet
