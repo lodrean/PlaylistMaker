@@ -9,7 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 
-class BottomSheetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class BottomSheetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val playlistCount: TextView = itemView.findViewById(R.id.tv_tracksCount)
     private val playlistName: TextView = itemView.findViewById(R.id.tv_playlistName)
@@ -27,7 +27,7 @@ class BottomSheetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 RoundedCorners(
                     com.practicum.playlistmaker.search.ui.dpToPx(
                         8F,
-                        itemView.context
+                        this.itemView.context
                     )
                 )
             )

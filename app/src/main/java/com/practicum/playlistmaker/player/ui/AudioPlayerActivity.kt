@@ -1,12 +1,16 @@
 package com.practicum.playlistmaker.player.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isVisible
+import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -48,8 +52,12 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         viewModel.getBottomSheetLiveData().observe(this) {
             renderBottomSheet(it)
+            Log.d("playlists", "${binding?.bottomSheetRecyclerView?.adapter?.itemCount}")
         }
 
+        viewModel.observeShowToast().observe(this) { toast ->
+            showToast(toast)
+        }
 
         //BottomSheet
 
@@ -75,7 +83,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         adapter = BottomSheetAdapter(onPlaylistClickListener)
         binding?.bottomSheetRecyclerView?.layoutManager = LinearLayoutManager(this)
-        binding?.bottomSheetRecyclerView?.adapter = BottomSheetAdapter(onPlaylistClickListener)
+        binding?.bottomSheetRecyclerView?.adapter = adapter
+
         binding?.ivAddToPlaylistButton?.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -121,6 +130,12 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         viewModel.createAudioPlayer()
         viewModel.fillData()
+        adapter.notifyDataSetChanged()
+        Log.d("playlists", "${binding?.bottomSheetRecyclerView?.adapter?.itemCount}")
+    }
+
+    private fun showToast(additionalMessage: String) {
+        Toast.makeText(this, additionalMessage, Toast.LENGTH_LONG).show()
     }
 
     override fun onPause() {
@@ -161,14 +176,16 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun renderBottomSheet(state: BottomSheetState) {
         when (state) {
             is BottomSheetState.Content -> {
-                adapter?.playlists?.clear()
-                adapter?.playlists?.addAll(state.playlists)
-                adapter?.notifyDataSetChanged()
-                Log.d("playlists", "${state.playlists.size}")
+                adapter.playlists.clear()
+                adapter.playlists.addAll(state.playlists)
+                adapter.notifyDataSetChanged()
+                Log.d("playlists", "${binding?.bottomSheetRecyclerView?.adapter?.itemCount}")
                 binding?.bottomSheetRecyclerView?.isVisible = true
+                Log.d("visibility", "${binding?.bottomSheetRecyclerView?.isVisible}")
             }
 
             is BottomSheetState.Empty -> {}
@@ -186,6 +203,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         } else {
             binding?.ivAddFavoriteButton?.setImageResource(com.practicum.playlistmaker.R.drawable.heart_button)
         }
+    }
+
+    override fun onResume() {
+
+        super.onResume()
     }
 }
 

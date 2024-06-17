@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/audioPlayerFragmentContainerView"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -20,6 +15,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?attr/colorPrimary"
@@ -297,7 +293,7 @@
         <View
             android:id="@+id/overlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="#99000000"
             android:visibility="gone" />
 
@@ -305,7 +301,7 @@
         <LinearLayout
             android:id="@+id/playlists_bottom_sheet"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/bottom_sheet_bg"
             android:gravity="center_horizontal"
             android:orientation="vertical"
@@ -336,16 +332,23 @@
                 android:layout_height="36dp"
                 android:layout_marginTop="@dimen/section_margin"
                 android:text="@string/new_playlist" />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/bottomSheetRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_playlist_bottomsheet" />
+
 
             <!-- Вёрстка Bottom Sheet с кнопкой и списком -->
 
         </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/audioPlayerFragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

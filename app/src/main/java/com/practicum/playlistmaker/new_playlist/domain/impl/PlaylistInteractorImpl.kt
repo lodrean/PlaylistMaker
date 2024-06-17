@@ -4,6 +4,7 @@ import android.net.Uri
 import com.practicum.playlistmaker.new_playlist.domain.PlayListRepository
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
+import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(
@@ -25,6 +26,8 @@ class PlaylistInteractorImpl(
         return playlistRepositrory.getPlaylists()
     }
 
-
+    override fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        playlistRepositrory.addTrackToPlaylist(track, playlist)
+    }
 
 }

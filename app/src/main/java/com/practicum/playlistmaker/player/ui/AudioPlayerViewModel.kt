@@ -12,6 +12,7 @@ import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.PlayerListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
+import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,10 +28,11 @@ class AudioPlayerViewModel(
     private val favoriteInteractor: FavoriteInteractor,
     private val playlistInteractor: PlaylistInteractor
 ) : AndroidViewModel(application) {
-
+    private val showToast = SingleLiveEvent<String>()
     private val playStatusLiveData = MutableLiveData<PlaybackState>(PlaybackState.Default())
     private var timerJob: Job? = null
     private val bottomSheetLiveData = MutableLiveData<BottomSheetState>()
+
     companion object {
         private const val PROGRESS_DELAY_MILLIS = 300L
     }
@@ -38,7 +40,7 @@ class AudioPlayerViewModel(
     private val track: Track = tracksHistoryInteractor.getTrack()
     fun getPlayStatusLiveData(): LiveData<PlaybackState> = playStatusLiveData
     fun getBottomSheetLiveData(): LiveData<BottomSheetState> = bottomSheetLiveData
-
+    fun observeShowToast(): LiveData<String> = showToast
     fun playControl() {
         playbackControl()
     }
@@ -61,17 +63,14 @@ class AudioPlayerViewModel(
     }
 
     fun fillData() {
-
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 playlistInteractor
                     .getPlaylists()
                     .collect { playlists ->
                         processResult(playlists)
-
                     }
             }
-
         }
     }
 
@@ -151,7 +150,16 @@ class AudioPlayerViewModel(
         renderState(PlaybackState.Pause(getCurrentPlayerPosition()))
     }
 
+    private fun showToast(message: String) {
+        showToast.postValue(message)
+    }
+
     fun addToPlaylist(playlist: Playlist) {
+        if (track.trackId in playlist.idList) {
+            showToast("Трек уже добавлен в плейлист ${playlist.playlistName}")
+        } else {
+            playlistInteractor.addTrackToPlaylist(track, playlist)
+        }
 
     }
 

@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.new_playlist.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.system.Os.remove
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -13,10 +14,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.mediateka.ui.PlaylistsFragment
+import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
@@ -40,7 +43,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             .setNeutralButton("Отмена") { dialog, which ->
                 // ничего не делаем
             }.setPositiveButton("Завершить") { dialog, which ->
-                // сохраняем изменения и выходим
+requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
                 parentFragmentManager.popBackStack()
             }
         binding.createButton.isEnabled = false
@@ -125,6 +128,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             )
             viewModel.deleteImage()
             parentFragmentManager.popBackStack()
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
         }
 
         viewModel.observeState().observe(viewLifecycleOwner) {
@@ -159,24 +163,10 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         ).show()
     }
 
-    override fun onPause() {
-
-        super.onPause()
-
-    }
     private fun showToast(additionalMessage: String) {
         Toast.makeText(requireContext(), additionalMessage, Toast.LENGTH_LONG).show()
     }
-    override fun onResume() {
-        super.onResume()
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-fun NewPlaylistFragmentInstance(): NewPlaylistFragment{
-    return NewPlaylistFragment()
-}
 
     companion object {
         @JvmStatic
@@ -185,6 +175,11 @@ fun NewPlaylistFragmentInstance(): NewPlaylistFragment{
                 arguments = Bundle().apply {
                 }
             }
+    }
+
+    override fun onDestroyView() {
+        requireActivity().viewModel<AudioPlayerViewModel>().value.fillData()
+        super.onDestroyView()
     }
 
 }
