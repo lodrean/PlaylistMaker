@@ -18,14 +18,14 @@ class PlaylistDbConvertor(private val gson: Gson) {
         )
 
 
-    fun map(playlisyst: PlaylistEntity): Playlist =
+    fun map(playlist: PlaylistEntity): Playlist =
         Playlist(
-            playlisyst.playlistId.toString(),
-            playlisyst.playlistName,
-            playlisyst.description,
-            playlisyst.imageUri,
-            createIdListFromJson(playlisyst.idList),
-            playlisyst.tracksCount,
+            playlist.playlistId.toString(),
+            playlist.playlistName,
+            playlist.description,
+            playlist.imageUri,
+            createIdListFromJson(playlist.idList),
+            playlist.tracksCount,
         )
 
     private fun createJsonFromIdList(playlistIds: List<String>): String{
@@ -34,7 +34,7 @@ class PlaylistDbConvertor(private val gson: Gson) {
     private fun createIdListFromJson(json: String): List<String>{
         if (json != "") {
             return gson.fromJson(
-                json, object : TypeToken<String>() {}.type
+                json, object : TypeToken<List<String>>() {}.type
             )
         } else return listOf()
     }

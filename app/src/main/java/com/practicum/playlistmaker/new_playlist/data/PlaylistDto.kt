@@ -15,10 +15,24 @@ data class PlaylistDto(
 )
 {
     fun map(playlist: Playlist):PlaylistDto {
-        return PlaylistDto(playlistId, playlistName, description, imageUri, idList, tracksCount)
+        return PlaylistDto(
+            playlist.playlistId,
+            playlist.playlistName,
+            playlist.description,
+            playlist.imageUri,
+            playlist.idList,
+            playlist.tracksCount
+        )
     }
     fun map(playlist: PlaylistDto):Playlist {
-        return Playlist(playlistId, playlistName, description, imageUri, idList, tracksCount)
+        return Playlist(
+            playlist.playlistId,
+            playlist.playlistName,
+            playlist.description,
+            playlist.imageUri,
+            playlist.idList,
+            playlist.tracksCount
+        )
     }
 
 }

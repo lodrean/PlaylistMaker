@@ -158,9 +158,15 @@ class AudioPlayerViewModel(
         if (track.trackId in playlist.idList) {
             showToast("Трек уже добавлен в плейлист ${playlist.playlistName}")
         } else {
-            playlistInteractor.addTrackToPlaylist(track, playlist)
+            viewModelScope.launch {
+                playlistInteractor
+                    .addTrackToPlaylist(track, playlist)
+                    .collect { message ->
+                        showToast(message)
+                    }
+            }
         }
-
+        fillData()
     }
 
 }

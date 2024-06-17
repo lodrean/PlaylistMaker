@@ -9,5 +9,5 @@ interface PlaylistInteractor {
     fun saveImage(imageUri: String)
     fun getImage(): Uri
     fun getPlaylists(): Flow<List<Playlist>>
-    fun addTrackToPlaylist(track: Track, playlist: Playlist)
+    fun addTrackToPlaylist(track: Track, playlist: Playlist): Flow<String>
 }

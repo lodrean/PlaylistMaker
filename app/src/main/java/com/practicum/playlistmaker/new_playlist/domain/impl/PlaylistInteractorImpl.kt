@@ -6,6 +6,7 @@ import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class PlaylistInteractorImpl(
     private val playlistRepositrory: PlayListRepository
@@ -26,8 +27,10 @@ class PlaylistInteractorImpl(
         return playlistRepositrory.getPlaylists()
     }
 
-    override fun addTrackToPlaylist(track: Track, playlist: Playlist) {
-        playlistRepositrory.addTrackToPlaylist(track, playlist)
+    override fun addTrackToPlaylist(track: Track, playlist: Playlist): Flow<String> {
+        return playlistRepositrory.addTrackToPlaylist(track, playlist).map { value ->
+            value
+        }
     }
 
 }
