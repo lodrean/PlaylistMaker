@@ -11,7 +11,7 @@ sealed interface BottomSheetState {
         val playlists: List<Playlist>
     ) : BottomSheetState
 
-    data object InPlaylist
+    data object InPlaylist: BottomSheetState
 
-    data object AddToPlaylist
+    data object AddToPlaylist: BottomSheetState
 }

@@ -157,6 +157,7 @@ class AudioPlayerViewModel(
     fun addToPlaylist(playlist: Playlist) {
         if (track.trackId in playlist.idList) {
             showToast("Трек уже добавлен в плейлист ${playlist.playlistName}")
+            renderList(BottomSheetState.InPlaylist)
         } else {
             viewModelScope.launch {
                 playlistInteractor
@@ -165,6 +166,7 @@ class AudioPlayerViewModel(
                         showToast(message)
                     }
             }
+            renderList(BottomSheetState.AddToPlaylist)
         }
         fillData()
     }

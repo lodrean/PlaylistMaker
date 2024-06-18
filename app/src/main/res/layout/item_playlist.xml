@@ -27,6 +27,7 @@
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
+            android:layout_marginTop="4dp"
             android:id="@+id/playlistName"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
@@ -34,6 +35,7 @@
             tools:text="ЗАГОЛОВОК ЗАГОЛОВОК ЗАГОЛОВОК ЗАГОЛОВОК" />
 
         <TextView
+            android:layout_marginTop="4dp"
             android:id="@+id/playlistCount"
             android:layout_width="160dp"
             android:layout_height="wrap_content"

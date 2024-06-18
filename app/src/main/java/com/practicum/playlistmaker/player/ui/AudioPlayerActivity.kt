@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -32,6 +33,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
+    private lateinit var bottomSheetBehavior :BottomSheetBehavior<LinearLayout>
     private lateinit var adapter: BottomSheetAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +75,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         val bottomSheetContainer = binding?.playlistsBottomSheet
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer!!).apply {
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer!!).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
@@ -115,7 +117,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding?.overlay?.alpha = slideOffset
+
             }
         })
 
@@ -186,7 +188,8 @@ class AudioPlayerActivity : AppCompatActivity() {
                 binding?.bottomSheetRecyclerView?.isVisible = true
                 Log.d("visibility", "${binding?.bottomSheetRecyclerView?.isVisible}")
             }
-
+            is BottomSheetState.AddToPlaylist -> {bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN}
+            is BottomSheetState.InPlaylist -> { }
             is BottomSheetState.Empty -> {}
         }
     }
@@ -198,9 +201,9 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun setFavoriteImage(track: Track) {
         if (track.isFavorite) {
-            binding?.ivAddFavoriteButton?.setImageResource(com.practicum.playlistmaker.R.drawable.is_favorite)
+            binding?.ivAddFavoriteButton?.setImageResource(R.drawable.is_favorite)
         } else {
-            binding?.ivAddFavoriteButton?.setImageResource(com.practicum.playlistmaker.R.drawable.heart_button)
+            binding?.ivAddFavoriteButton?.setImageResource(R.drawable.heart_button)
         }
     }
 
