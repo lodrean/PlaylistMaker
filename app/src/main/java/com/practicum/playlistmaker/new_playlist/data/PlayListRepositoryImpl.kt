@@ -71,7 +71,7 @@ class PlayListRepositoryImpl(
     }
 
 
-    fun saveImageToPrivateStorage(uri: Uri) {
+    private fun saveImageToPrivateStorage(uri: Uri) {
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath =
             File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
@@ -91,7 +91,7 @@ class PlayListRepositoryImpl(
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 
-    fun getImageFromPrivateStorage(): Uri {
+    private fun getImageFromPrivateStorage(): Uri {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
         val file = File(filePath, "first_cover.jpg")
         return file.toUri()

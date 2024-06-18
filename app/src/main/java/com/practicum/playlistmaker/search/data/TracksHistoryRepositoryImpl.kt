@@ -36,11 +36,7 @@ class TracksHistoryRepositoryImpl(
             tracks = itemsFromCache
             val allIds = appDatabase.trackDao().getAllIds()
             tracks.map {
-                if (it.trackId in allIds) {
-                    it.isFavorite = true
-                } else {
-                    it.isFavorite = false
-                }
+                it.isFavorite = it.trackId in allIds
             }
         }
         emit(tracks)

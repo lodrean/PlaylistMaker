@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.new_playlist.data.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.practicum.playlistmaker.search.domain.Track
 
 @Entity(tableName = "playlist_track_table")
 data class PlaylistTrackEntity(

@@ -52,12 +52,7 @@ class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
         viewModel.fillData()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     companion object {
-
         @JvmStatic
         fun newInstance() =
             PlaylistsFragment().apply {

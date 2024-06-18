@@ -32,10 +32,10 @@ class PlaylistDbConvertor(private val gson: Gson) {
         return gson.toJson(playlistIds)
     }
     private fun createIdListFromJson(json: String): List<String>{
-        if (json != "") {
-            return gson.fromJson(
+        return if (json != "") {
+            gson.fromJson(
                 json, object : TypeToken<List<String>>() {}.type
             )
-        } else return listOf()
+        } else listOf()
     }
 }

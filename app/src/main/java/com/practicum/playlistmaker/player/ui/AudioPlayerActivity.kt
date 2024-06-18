@@ -149,7 +149,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         val cornerRadius = 8F
         binding?.albumImage?.let {
             Glide.with(this).load(track.getCoverArtwork()).fitCenter()
-                .dontAnimate().placeholder(com.practicum.playlistmaker.R.drawable.placeholder)
+                .dontAnimate().placeholder(R.drawable.placeholder)
                 .transform(RoundedCorners(dpToPx(cornerRadius, applicationContext))).into(it)
         }
         binding?.tvTrackTitle?.text = track.trackName
@@ -167,12 +167,12 @@ class AudioPlayerActivity : AppCompatActivity() {
         when (state) {
             is PlaybackState.Prepared -> {
                 binding?.ivPlayButton?.isEnabled = true
-                binding?.ivPlayButton?.setImageResource(com.practicum.playlistmaker.R.drawable.play_button)
+                binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             }
 
-            is PlaybackState.Default -> binding?.ivPlayButton?.setImageResource(com.practicum.playlistmaker.R.drawable.play_button)
-            is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(com.practicum.playlistmaker.R.drawable.pause_button)
-            is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(com.practicum.playlistmaker.R.drawable.play_button)
+            is PlaybackState.Default -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
+            is PlaybackState.Play -> binding?.ivPlayButton?.setImageResource(R.drawable.pause_button)
+            is PlaybackState.Pause -> binding?.ivPlayButton?.setImageResource(R.drawable.play_button)
             is PlaybackState.Content -> showTrackInfo(state.track)
         }
     }
