@@ -33,7 +33,7 @@ class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
                 R.id.action_mediatekaFragment_to_newPlaylistFragment
             )
         }
-        adapter = PlaylistsAdapter()
+        adapter = PlaylistsAdapter(requireContext())
 
 
         binding.recyclerView.layoutManager = GridLayoutManager(

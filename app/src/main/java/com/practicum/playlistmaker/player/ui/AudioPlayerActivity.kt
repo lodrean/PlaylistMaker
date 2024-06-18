@@ -80,7 +80,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         val onPlaylistClickListener = OnPlaylistClickListener { playlist ->
             viewModel.addToPlaylist(playlist)
         }
-        adapter = BottomSheetAdapter(onPlaylistClickListener)
+        adapter = BottomSheetAdapter(onPlaylistClickListener, this)
         binding?.bottomSheetRecyclerView?.layoutManager = LinearLayoutManager(this)
         binding?.bottomSheetRecyclerView?.adapter = adapter
 
