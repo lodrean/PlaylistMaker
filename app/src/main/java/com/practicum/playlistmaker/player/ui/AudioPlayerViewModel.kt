@@ -163,12 +163,12 @@ class AudioPlayerViewModel(
                 playlistInteractor
                     .addTrackToPlaylist(track, playlist)
                     .collect { message ->
+                        fillData()
                         showToast(message)
                     }
             }
             renderList(BottomSheetState.AddToPlaylist)
         }
-        fillData()
     }
 
 }
