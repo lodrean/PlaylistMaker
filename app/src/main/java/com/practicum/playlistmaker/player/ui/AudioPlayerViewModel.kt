@@ -49,18 +49,17 @@ class AudioPlayerViewModel(
 
     fun onFavoriteClicked() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val isTrackFavorite = track.isFavorite
-                if (!track.isFavorite) {
-                    favoriteInteractor.addToFavorite(track)
-                } else {
-                    favoriteInteractor.deleteFromFavorite(track)
-                }
-                track.isFavorite = !isTrackFavorite
-                renderState(
-                    PlaybackState.Content(track)
-                )
+            val isTrackFavorite = track.isFavorite
+            if (!track.isFavorite) {
+                favoriteInteractor.addToFavorite(track)
+            } else {
+                favoriteInteractor.deleteFromFavorite(track)
             }
+            track.isFavorite = !isTrackFavorite
+            renderState(
+                PlaybackState.Content(track)
+            )
+
         }
     }
 
@@ -158,7 +157,12 @@ class AudioPlayerViewModel(
 
     fun addToPlaylist(playlist: Playlist) {
         if (track.trackId in playlist.idList) {
-            showToast(getApplication<App>().getString(R.string.track_in_playlist_already, playlist.playlistName))
+            showToast(
+                getApplication<App>().getString(
+                    R.string.track_in_playlist_already,
+                    playlist.playlistName
+                )
+            )
             renderList(BottomSheetState.InPlaylist)
         } else {
             viewModelScope.launch {

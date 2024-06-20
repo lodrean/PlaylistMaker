@@ -73,8 +73,8 @@ class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
         binding.placeholderIV.isVisible = false
         binding.placeholderTV.isVisible = false
 
-        adapter?.playlists?.clear()
-        adapter?.playlists?.addAll(playlists)
+        adapter?.clear()
+        adapter?.setPlaylists(playlists)
         adapter?.notifyDataSetChanged()
     }
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -52,7 +51,6 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         viewModel.getBottomSheetLiveData().observe(this) {
             renderBottomSheet(it)
-            Log.d("playlists", "${binding?.bottomSheetRecyclerView?.adapter?.itemCount}")
         }
 
         viewModel.observeShowToast().observe(this) { toast ->
@@ -73,6 +71,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                 )
                 .commit()
             viewModel.fillData()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         val bottomSheetContainer = binding?.playlistsBottomSheet
@@ -127,7 +126,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         viewModel.createAudioPlayer()
         viewModel.fillData()
-        Log.d("playlists", "${binding?.bottomSheetRecyclerView?.adapter?.itemCount}")
     }
 
     private fun showToast(additionalMessage: String) {
@@ -180,8 +178,8 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun renderBottomSheet(state: BottomSheetState) {
         when (state) {
             is BottomSheetState.Content -> {
-                adapter.playlists.clear()
-                adapter.playlists.addAll(state.playlists)
+                adapter.clear()
+                adapter.setPlaylists(state.playlists)
                 adapter.notifyDataSetChanged()
                 binding?.bottomSheetRecyclerView?.isVisible = true
             }

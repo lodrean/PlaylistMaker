@@ -11,9 +11,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.util.App
 import com.practicum.playlistmaker.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class NewPlayLIstViewModel(
     application: Application,
@@ -39,10 +37,9 @@ class NewPlayLIstViewModel(
     }
 
     fun disableCreation() {
-        val creationIsAllowed = false
         stateLiveData.postValue(
             NewPlaylistState.Creation(
-                creationIsAllowed,
+                false,
                 imageUri
             )
         )
@@ -60,13 +57,12 @@ class NewPlayLIstViewModel(
     fun createPlaylist(playlistName: String, description: String) {
         viewModelScope.launch {
             playlistInteractor
-            withContext(Dispatchers.IO) {
-                playlistInteractor.createPlaylist(
-                    playlistName,
-                    description,
-                    imageUri
-                )
-            }
+            playlistInteractor.createPlaylist(
+                playlistName,
+                description,
+                imageUri
+            )
+
         }
         showToast(getApplication<App>().getString(R.string.playlist_is_creates, playlistName))
     }

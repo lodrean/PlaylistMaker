@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.new_playlist.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +21,7 @@ import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
 import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel
 import com.practicum.playlistmaker.search.ui.dpToPx
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
@@ -38,7 +38,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(getString(R.string.complete_playlist_creation))
             .setNeutralButton(getString(R.string.cancel)) { dialog, which ->
                 // ничего не делаем
@@ -92,8 +92,6 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 //обрабатываем событие выбора пользователем фотографии
                 if (uri != null) {
                     viewModel.setImage(uri)
-                } else {
-                    Log.d("PhotoPicker", "No media selected")
                 }
             }
         //по нажатию на кнопку pickImage запускаем photo picker
@@ -133,6 +131,8 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             if (requireActivity() is AudioPlayerActivity) {
                 requireActivity().supportFragmentManager.beginTransaction().remove(this)
                     .commit()
+                requireActivity().getViewModel<AudioPlayerViewModel>().fillData()
+
 
             } else {
                 parentFragmentManager.popBackStack()

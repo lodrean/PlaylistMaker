@@ -13,7 +13,7 @@ class BottomSheetAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<BottomSheetViewHolder>() {
 
-    var playlists = ArrayList<Playlist>()
+    private val playlists = mutableListOf<Playlist>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BottomSheetViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_playlist_bottomsheet, parent, false)
@@ -28,4 +28,13 @@ class BottomSheetAdapter(
         holder.bind(playlists[position])
         holder.itemView.setOnClickListener { onPlaylistClickListener.onItemClick(playlists[holder.adapterPosition]) }
     }
+
+    fun setPlaylists(list: List<Playlist>){
+        playlists.addAll(list)
+    }
+
+    fun clear() {
+        playlists.clear()
+    }
+
 }

@@ -5,8 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import androidx.core.net.toUri
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistDbConvertor
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistEntity
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistTrackEntity
@@ -34,13 +34,14 @@ class PlayListRepositoryImpl(
     private var filename = ""
 
     override fun createPlaylist(playlistName: String, description: String, imageUri: Uri) {
-        if (imageUri.toString() != "") {
+        GlobalScope.launch { withContext(Dispatchers.IO){if (imageUri.toString() != "") {
             saveImage(imageUri)
             appDatabase.playlistDao()
                 .insert(PlaylistEntity(0, playlistName, description, getImage().toString(), ""))
         } else {
             appDatabase.playlistDao().insert(PlaylistEntity(0, playlistName, description, "", ""))
-        }
+        }} }
+
     }
 
     override fun getImage(): Uri {
@@ -81,12 +82,11 @@ class PlayListRepositoryImpl(
                 )
             )
         }
-        emit("Добавлено в плейлист ${playlist.playlistName}")
+        emit(context.getString(R.string.adding_to_playlist, playlist.playlistName))
     }
 
 private fun getDbId(): Int{
    val size = appDatabase.playlistDao().getPlaylists().lastIndex
-    Log.d("size", "$size")
     return size
 
 }

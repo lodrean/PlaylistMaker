@@ -9,7 +9,8 @@ import com.practicum.playlistmaker.new_playlist.domain.Playlist
 
 class PlaylistsAdapter(val context: Context) : RecyclerView.Adapter<PlaylistsViewHolder>() {
 
-    var playlists = ArrayList<Playlist>()
+   private val playlists = mutableListOf<Playlist>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
@@ -22,6 +23,14 @@ class PlaylistsAdapter(val context: Context) : RecyclerView.Adapter<PlaylistsVie
 
     override fun onBindViewHolder(holder: PlaylistsViewHolder, position: Int) {
         holder.bind(playlists[position])
+    }
+
+    fun setPlaylists(list: List<Playlist>){
+        playlists.addAll(list)
+    }
+
+    fun clear() {
+        playlists.clear()
     }
 
 }

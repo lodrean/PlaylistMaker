@@ -4,8 +4,10 @@ import com.practicum.playlistmaker.mediateka.domain.FavoriteRepository
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.util.AppDatabase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FavoriteRepositoryImpl(
@@ -13,13 +15,19 @@ class FavoriteRepositoryImpl(
     private val trackDbConvertor: TrackDbConvertor
 ) : FavoriteRepository {
 
-    override fun addToFavorite(track: Track) =
-        appDatabase.trackDao().insert(trackDbConvertor.map(track))
+    override fun addToFavorite(track: Track) {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                appDatabase.trackDao().insert(trackDbConvertor.map(track))
+            }
+        }
+    }
 
-
-    override fun deleteFromFavorite(track: Track) =
-        appDatabase.trackDao().delete(trackDbConvertor.map(track))
-
+    override fun deleteFromFavorite(track: Track) {
+        GlobalScope.launch {
+            appDatabase.trackDao().delete(trackDbConvertor.map(track))
+        }
+    }
 
     override fun favoriteTracks(): Flow<List<Track>> = flow {
         var tracks: List<Track>

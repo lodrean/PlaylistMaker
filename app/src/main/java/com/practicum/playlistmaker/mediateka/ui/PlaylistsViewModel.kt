@@ -6,9 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PlaylistsViewModel(
     private val playlistInteractor: PlaylistInteractor
@@ -21,13 +19,13 @@ class PlaylistsViewModel(
     fun fillData() {
 
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                playlistInteractor
-                    .getPlaylists()
-                    .collect { playlists ->
-                        processResult(playlists)
-                    }
-            }
+
+            playlistInteractor
+                .getPlaylists()
+                .collect { playlists ->
+                    processResult(playlists)
+                }
+
 
         }
     }
