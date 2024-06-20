@@ -33,7 +33,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null
-    private lateinit var bottomSheetBehavior :BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var adapter: BottomSheetAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +63,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 
         binding?.newPlaylist?.setOnClickListener {
+
             val transaction = supportFragmentManager.beginTransaction()
             transaction
                 .add(
@@ -87,6 +88,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding?.bottomSheetRecyclerView?.adapter = adapter
 
         binding?.ivAddToPlaylistButton?.setOnClickListener {
+            viewModel.fillData()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         bottomSheetBehavior.addBottomSheetCallback(object :
@@ -95,15 +97,9 @@ class AudioPlayerActivity : AppCompatActivity() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
 
                 when (newState) {
-
-                    /*BottomSheetBehavior.STATE_EXPANDED -> {
-                        // загружаем рекламный баннер
-                        viewModel.onPause()
-                    }*/
-
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-                        // останавливаем трейлер
                         viewModel.onPause()
+                        viewModel.fillData()
                     }
 
                     BottomSheetBehavior.STATE_HIDDEN -> {
@@ -131,7 +127,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         viewModel.createAudioPlayer()
         viewModel.fillData()
-        adapter.notifyDataSetChanged()
         Log.d("playlists", "${binding?.bottomSheetRecyclerView?.adapter?.itemCount}")
     }
 
@@ -144,6 +139,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.onPause()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.fillData()
+    }
 
     private fun showTrackInfo(track: Track) {
         val cornerRadius = 8F
@@ -184,12 +183,14 @@ class AudioPlayerActivity : AppCompatActivity() {
                 adapter.playlists.clear()
                 adapter.playlists.addAll(state.playlists)
                 adapter.notifyDataSetChanged()
-                Log.d("playlists", "${binding?.bottomSheetRecyclerView?.adapter?.itemCount}")
                 binding?.bottomSheetRecyclerView?.isVisible = true
-                Log.d("visibility", "${binding?.bottomSheetRecyclerView?.isVisible}")
             }
-            is BottomSheetState.AddToPlaylist -> {bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN}
-            is BottomSheetState.InPlaylist -> { }
+
+            is BottomSheetState.AddToPlaylist -> {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+
+            is BottomSheetState.InPlaylist -> {}
             is BottomSheetState.Empty -> {}
         }
     }
@@ -207,5 +208,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
+
 }
+
 

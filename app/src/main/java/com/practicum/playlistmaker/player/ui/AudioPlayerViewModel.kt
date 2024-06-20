@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
@@ -12,6 +13,7 @@ import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.PlayerListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
+import com.practicum.playlistmaker.util.App
 import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -156,7 +158,7 @@ class AudioPlayerViewModel(
 
     fun addToPlaylist(playlist: Playlist) {
         if (track.trackId in playlist.idList) {
-            showToast("Трек уже добавлен в плейлист ${playlist.playlistName}")
+            showToast(getApplication<App>().getString(R.string.track_in_playlist_already, playlist.playlistName))
             renderList(BottomSheetState.InPlaylist)
         } else {
             viewModelScope.launch {

@@ -1,20 +1,24 @@
 package com.practicum.playlistmaker.new_playlist.ui
 
+import android.app.Application
 import android.net.Uri
 import androidx.core.net.toUri
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
+import com.practicum.playlistmaker.util.App
 import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NewPlayLIstViewModel(
+    application: Application,
     private val playlistInteractor: PlaylistInteractor
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
 
     private var imageUri: Uri = "".toUri()
@@ -25,7 +29,7 @@ class NewPlayLIstViewModel(
     fun observeShowToast(): LiveData<String> = showToast
 
 
-    fun allowCreation() {
+    fun enableCreation() {
         stateLiveData.postValue(
             NewPlaylistState.Creation(
                 true,
@@ -34,7 +38,7 @@ class NewPlayLIstViewModel(
         )
     }
 
-    fun banCreation() {
+    fun disableCreation() {
         val creationIsAllowed = false
         stateLiveData.postValue(
             NewPlaylistState.Creation(
@@ -64,7 +68,7 @@ class NewPlayLIstViewModel(
                 )
             }
         }
-        showToast("«Плейлист $playlistName создан")
+        showToast(getApplication<App>().getString(R.string.playlist_is_creates, playlistName))
     }
 
     private fun showToast(message: String) {

@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.new_playlist.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,6 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.BindingFragment
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
 import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel
@@ -39,10 +39,10 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Завершить создание плейлиста?")
-            .setNeutralButton("Отмена") { dialog, which ->
+            .setTitle(getString(R.string.complete_playlist_creation))
+            .setNeutralButton(getString(R.string.cancel)) { dialog, which ->
                 // ничего не делаем
-            }.setPositiveButton("Завершить") { dialog, which ->
+            }.setPositiveButton(getString(R.string.complete)) { dialog, which ->
                 if (requireActivity() is AudioPlayerActivity) {
                     requireActivity().supportFragmentManager.beginTransaction().remove(this)
                         .commit()
@@ -89,11 +89,8 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-
                 //обрабатываем событие выбора пользователем фотографии
                 if (uri != null) {
-                    /*val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    context?.contentResolver?.takePersistableUriPermission(uri, flag)*/
                     viewModel.setImage(uri)
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -104,36 +101,24 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        //по нажатию на кнопку loadImageFromStorage пытаемся загрузить фотографию из нашего хранилища
-        /*binding.loadImageFromStorage.setOnClickListener {
-            val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
-            val file = File(filePath, "first_cover.jpg")
-            binding.storageImage.setImageURI(file.toUri())
-        }*/
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 binding.textInputName.requestFocus()
-                if (!checkCreationFlag()) viewModel.banCreation()
+                if (!checkCreationFlag()) viewModel.disableCreation()
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                 binding.textInputName.requestFocus()
-                /*viewModel.searchDebounce(changedText = s.toString())
-                searchView.isVisible = s?.isEmpty() != true
-                recyclerView.isVisible = s?.isNotEmpty() == true
-                if (inputEditText.hasFocus() && s?.isEmpty() == true && (trackHistoryAdapter.itemCount > 0)) {
-                    viewModel.showHistoryTrackList()
-                }*/
-                if (!checkCreationFlag()) viewModel.banCreation()
+
+                if (!checkCreationFlag()) viewModel.disableCreation()
                 if (s?.isNotEmpty() == true) {
-                    viewModel.allowCreation()
+                    viewModel.enableCreation()
                     binding.createButton.isEnabled = true
                 } else binding.createButton.isEnabled = false
             }
 
             override fun afterTextChanged(s: Editable?) {
-                /*  inputText.plus(s)*/
 
             }
         }
@@ -148,6 +133,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             if (requireActivity() is AudioPlayerActivity) {
                 requireActivity().supportFragmentManager.beginTransaction().remove(this)
                     .commit()
+
             } else {
                 parentFragmentManager.popBackStack()
             }
@@ -175,8 +161,12 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 binding.imageView.let {
                     Glide.with(this).load(state.uri)
                         .fitCenter()
-                        .dontAnimate().placeholder(com.practicum.playlistmaker.R.drawable.placeholder)
-                        .transform(CenterCrop(),RoundedCorners(dpToPx(cornerRadius, requireContext()))).into(it)
+                        .dontAnimate()
+                        .placeholder(R.drawable.placeholder)
+                        .transform(
+                            CenterCrop(),
+                            RoundedCorners(dpToPx(cornerRadius, requireContext()))
+                        ).into(it)
                 }
                 if (state.uri.toString() != "") {
                     binding.imageView.isVisible = true
@@ -210,12 +200,6 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             }
     }
 
-    override fun onDestroyView() {
-        if (requireActivity() is AudioPlayerActivity) {
-            requireActivity().viewModel<AudioPlayerViewModel>().value.fillData()
-        }
-        super.onDestroyView()
-    }
 
     fun checkCreationFlag(): Boolean {
         return (binding.textInputName.text?.isNotEmpty() == true) or (binding.textInputDescription.text?.isNotEmpty() == true) or binding.imageView.isVisible

@@ -41,6 +41,6 @@ val viewModelModule = module {
     }
 
     viewModel {
-        NewPlayLIstViewModel(get())
+        NewPlayLIstViewModel(androidApplication(), get())
     }
 }

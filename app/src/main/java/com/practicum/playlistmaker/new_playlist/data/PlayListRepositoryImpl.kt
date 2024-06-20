@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import androidx.core.net.toUri
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistDbConvertor
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistEntity
@@ -14,8 +15,10 @@ import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.util.AppDatabase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -26,14 +29,18 @@ class PlayListRepositoryImpl(
     private val playlistDbConvertor: PlaylistDbConvertor
 ) : PlayListRepository {
 
-    private var count: Int = 0
+
+
     private var filename = ""
 
     override fun createPlaylist(playlistName: String, description: String, imageUri: Uri) {
-        if (imageUri.toString() != ""){
+        if (imageUri.toString() != "") {
             saveImage(imageUri)
+            appDatabase.playlistDao()
+                .insert(PlaylistEntity(0, playlistName, description, getImage().toString(), ""))
+        } else {
+            appDatabase.playlistDao().insert(PlaylistEntity(0, playlistName, description, "", ""))
         }
-        appDatabase.playlistDao().insert(PlaylistEntity(0, playlistName, description, getImage().toString(), ""))
     }
 
     override fun getImage(): Uri {
@@ -77,7 +84,12 @@ class PlayListRepositoryImpl(
         emit("Добавлено в плейлист ${playlist.playlistName}")
     }
 
+private fun getDbId(): Int{
+   val size = appDatabase.playlistDao().getPlaylists().lastIndex
+    Log.d("size", "$size")
+    return size
 
+}
     private fun saveImageToPrivateStorage(uri: Uri) {
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath =
@@ -87,8 +99,7 @@ class PlayListRepositoryImpl(
             filePath.mkdirs()
         }
         //создаём экземпляр класса File, который указывает на файл внутри каталога
-        count+=1
-        filename = "cover(%d).jpg".format(count)
+        filename = "cover(%d).jpg".format(getDbId()+1)
         val file = File(filePath, filename)
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = context.contentResolver.openInputStream(uri)

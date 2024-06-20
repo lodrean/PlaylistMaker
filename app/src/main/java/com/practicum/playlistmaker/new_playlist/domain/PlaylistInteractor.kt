@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaylistInteractor {
     fun createPlaylist(playlistName: String, description: String, imageUri: Uri)
-    fun saveImage(imageUri: String)
+    fun saveImage(imageUri: Uri)
     fun getImage(): Uri
     fun getPlaylists(): Flow<List<Playlist>>
     fun addTrackToPlaylist(track: Track, playlist: Playlist): Flow<String>

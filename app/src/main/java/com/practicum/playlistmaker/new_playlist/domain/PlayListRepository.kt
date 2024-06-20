@@ -8,7 +8,7 @@ interface PlayListRepository {
     fun createPlaylist(playlistName: String, description: String, imageUri: Uri)
 
     fun getImage(): Uri
-    fun saveImage(imageUri: String)
+    fun saveImage(imageUri: Uri)
     fun getPlaylists(): Flow<List<Playlist>>
     fun addTrackToPlaylist(track: Track, playlist: Playlist): Flow<String>
 }

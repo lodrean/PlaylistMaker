@@ -15,7 +15,7 @@ class PlaylistInteractorImpl(
         playlistRepositrory.createPlaylist(playlistName, description, imageUri)
     }
 
-    override fun saveImage(imageUri: String) {
+    override fun saveImage(imageUri: Uri) {
         playlistRepositrory.saveImage(imageUri)
     }
 
