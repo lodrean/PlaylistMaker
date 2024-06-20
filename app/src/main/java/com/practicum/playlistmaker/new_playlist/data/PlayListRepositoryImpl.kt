@@ -25,16 +25,23 @@ class PlayListRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val playlistDbConvertor: PlaylistDbConvertor
 ) : PlayListRepository {
-    override fun createPlaylist(imageUri: String, playlistName: String, description: String) {
-        appDatabase.playlistDao().insert(PlaylistEntity(0, playlistName, description, imageUri, ""))
+
+    private var count: Int = 0
+    private var filename = ""
+
+    override fun createPlaylist(playlistName: String, description: String, imageUri: Uri) {
+        if (imageUri.toString() != ""){
+            saveImage(imageUri)
+        }
+        appDatabase.playlistDao().insert(PlaylistEntity(0, playlistName, description, getImage().toString(), ""))
     }
 
     override fun getImage(): Uri {
         return getImageFromPrivateStorage()
     }
 
-    override fun saveImage(imageUri: String) {
-        saveImageToPrivateStorage(imageUri.toUri())
+    override fun saveImage(imageUri: Uri) {
+        saveImageToPrivateStorage(imageUri)
     }
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
@@ -80,7 +87,9 @@ class PlayListRepositoryImpl(
             filePath.mkdirs()
         }
         //создаём экземпляр класса File, который указывает на файл внутри каталога
-        val file = File(filePath, "first_cover.jpg")
+        count+=1
+        filename = "cover(%d).jpg".format(count)
+        val file = File(filePath, filename)
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = context.contentResolver.openInputStream(uri)
         // создаём исходящий поток байтов в созданный выше файл
@@ -93,7 +102,7 @@ class PlayListRepositoryImpl(
 
     private fun getImageFromPrivateStorage(): Uri {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
-        val file = File(filePath, "first_cover.jpg")
+        val file = File(filePath, filename)
         return file.toUri()
     }
 

@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
 interface PlayListRepository {
-    fun createPlaylist(imageUri: String, playlistName: String, description: String)
+    fun createPlaylist(playlistName: String, description: String, imageUri: Uri)
 
     fun getImage(): Uri
     fun saveImage(imageUri: String)

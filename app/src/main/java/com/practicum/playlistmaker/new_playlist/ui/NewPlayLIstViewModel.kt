@@ -45,9 +45,8 @@ class NewPlayLIstViewModel(
     }
 
     fun setImage(uri: Uri) {
-        playlistInteractor.saveImage(uri.toString())
-        imageUri = playlistInteractor.getImage()
-        stateLiveData.postValue(NewPlaylistState.Creation(true, imageUri))
+        imageUri = uri
+        stateLiveData.postValue(NewPlaylistState.Creation(true, uri))
     }
 
     fun deleteImage() {
@@ -56,11 +55,12 @@ class NewPlayLIstViewModel(
 
     fun createPlaylist(playlistName: String, description: String) {
         viewModelScope.launch {
+            playlistInteractor
             withContext(Dispatchers.IO) {
                 playlistInteractor.createPlaylist(
-                    imageUri.toString(),
                     playlistName,
-                    description
+                    description,
+                    imageUri
                 )
             }
         }

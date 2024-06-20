@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.map
 class PlaylistInteractorImpl(
     private val playlistRepositrory: PlayListRepository
 ) : PlaylistInteractor {
-      override fun createPlaylist(imageUri: String, playlistName: String, description: String) {
-        playlistRepositrory.createPlaylist(imageUri, playlistName, description)
+      override fun createPlaylist(playlistName: String, description: String, imageUri: Uri) {
+        playlistRepositrory.createPlaylist(playlistName, description, imageUri)
     }
 
     override fun saveImage(imageUri: String) {
