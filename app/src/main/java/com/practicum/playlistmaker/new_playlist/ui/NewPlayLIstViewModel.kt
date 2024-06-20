@@ -17,7 +17,7 @@ class NewPlayLIstViewModel(
 ) : ViewModel() {
 
 
-    private var imageUri: String = ""
+    private var imageUri: Uri = "".toUri()
 
     private val showToast = SingleLiveEvent<String>()
     private val stateLiveData = MutableLiveData<NewPlaylistState>()
@@ -26,11 +26,10 @@ class NewPlayLIstViewModel(
 
 
     fun allowCreation() {
-        val creationIsAllowed = true
         stateLiveData.postValue(
             NewPlaylistState.Creation(
-                creationIsAllowed,
-                imageUri.toUri()
+                true,
+                imageUri
             )
         )
     }
@@ -40,15 +39,15 @@ class NewPlayLIstViewModel(
         stateLiveData.postValue(
             NewPlaylistState.Creation(
                 creationIsAllowed,
-                imageUri.toUri()
+                imageUri
             )
         )
     }
 
     fun setImage(uri: Uri) {
-        imageUri = uri.toString()
         playlistInteractor.saveImage(uri.toString())
-        stateLiveData.postValue(NewPlaylistState.Creation(true, uri))
+        imageUri = playlistInteractor.getImage()
+        stateLiveData.postValue(NewPlaylistState.Creation(true, imageUri))
     }
 
     fun deleteImage() {
@@ -59,7 +58,7 @@ class NewPlayLIstViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 playlistInteractor.createPlaylist(
-                    imageUri,
+                    imageUri.toString(),
                     playlistName,
                     description
                 )

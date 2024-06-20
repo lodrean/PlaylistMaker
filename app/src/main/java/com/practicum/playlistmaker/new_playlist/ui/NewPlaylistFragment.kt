@@ -92,8 +92,8 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
                 //обрабатываем событие выбора пользователем фотографии
                 if (uri != null) {
-                    val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    context?.contentResolver?.takePersistableUriPermission(uri, flag)
+                    /*val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    context?.contentResolver?.takePersistableUriPermission(uri, flag)*/
                     viewModel.setImage(uri)
                 } else {
                     Log.d("PhotoPicker", "No media selected")
