@@ -8,7 +8,11 @@
         android:id="@+id/mediatekaFragment"
         android:name="com.practicum.playlistmaker.mediateka.ui.MediatekaFragment"
         android:label="fragment_mediateka"
-        tools:layout="@layout/fragment_mediateka" />
+        tools:layout="@layout/fragment_mediateka">
+        <action
+            android:id="@+id/action_mediatekaFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.practicum.playlistmaker.search.ui.SearchFragment"
@@ -21,12 +25,19 @@
         tools:layout="@layout/fragment_settings" />
     <activity
         android:id="@+id/audioPlayer"
-        android:name="com.practicum.playlistmaker.player.ui.AudioPlayer"
+        android:name="com.practicum.playlistmaker.player.ui.AudioPlayerActivity"
         android:label="activity_audio_player"
-        tools:layout="@layout/activity_audio_player" />
+       tools:layout="@layout/activity_audio_player">
+    </activity>
+
     <fragment
         android:id="@+id/favoriteTracksFragment"
         android:name="com.practicum.playlistmaker.mediateka.ui.FavoriteTracksFragment"
         android:label="FavoriteTracksFragment"
         tools:layout="@layout/fragment_favorite_tracks" />
+    <fragment
+        android:id="@+id/newPlaylistFragment"
+        android:name="com.practicum.playlistmaker.new_playlist.ui.NewPlaylistFragment"
+        android:label="NewPlaylistFragment" />
+
 </navigation>

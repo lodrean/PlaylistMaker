@@ -21,7 +21,7 @@
             android:name=".root.RootActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.PlaylistMaker"
-            android:windowSoftInputMode="adjustNothing">
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".player.ui.AudioPlayer"
+            android:name=".player.ui.AudioPlayerActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker" />
 

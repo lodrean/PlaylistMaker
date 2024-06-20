@@ -5,11 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
+import com.practicum.playlistmaker.new_playlist.domain.Playlist
+import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.PlayerListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
+import com.practicum.playlistmaker.util.App
+import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -22,11 +27,13 @@ class AudioPlayerViewModel(
     application: Application,
     tracksHistoryInteractor: TracksHistoryInteractor,
     private val mediaPlayer: AudioPlayerInteractor,
-    private val favoriteInteractor: FavoriteInteractor
+    private val favoriteInteractor: FavoriteInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : AndroidViewModel(application) {
-
+    private val showToast = SingleLiveEvent<String>()
     private val playStatusLiveData = MutableLiveData<PlaybackState>(PlaybackState.Default())
     private var timerJob: Job? = null
+    private val bottomSheetLiveData = MutableLiveData<BottomSheetState>()
 
     companion object {
         private const val PROGRESS_DELAY_MILLIS = 300L
@@ -34,28 +41,51 @@ class AudioPlayerViewModel(
 
     private val track: Track = tracksHistoryInteractor.getTrack()
     fun getPlayStatusLiveData(): LiveData<PlaybackState> = playStatusLiveData
-
+    fun getBottomSheetLiveData(): LiveData<BottomSheetState> = bottomSheetLiveData
+    fun observeShowToast(): LiveData<String> = showToast
     fun playControl() {
         playbackControl()
     }
 
     fun onFavoriteClicked() {
         viewModelScope.launch {
+            val isTrackFavorite = track.isFavorite
+            if (!track.isFavorite) {
+                favoriteInteractor.addToFavorite(track)
+            } else {
+                favoriteInteractor.deleteFromFavorite(track)
+            }
+            track.isFavorite = !isTrackFavorite
+            renderState(
+                PlaybackState.Content(track)
+            )
+
+        }
+    }
+
+    fun fillData() {
+        viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val isTrackFavorite = track.isFavorite
-                if (!track.isFavorite) {
-                    favoriteInteractor.addToFavorite(track)
-                } else {
-                    favoriteInteractor.deleteFromFavorite(track)
-                }
-                track.isFavorite = !isTrackFavorite
-                renderState(
-                    PlaybackState.Content(track)
-                )
+                playlistInteractor
+                    .getPlaylists()
+                    .collect { playlists ->
+                        processResult(playlists)
+                    }
             }
         }
     }
 
+    private fun processResult(playlists: List<Playlist>) {
+        if (playlists.isEmpty()) {
+            renderList(BottomSheetState.Empty)
+        } else {
+            renderList(BottomSheetState.Content(playlists))
+        }
+    }
+
+    private fun renderList(state: BottomSheetState) {
+        bottomSheetLiveData.postValue(state)
+    }
 
     fun createAudioPlayer() {
         mediaPlayer.createAudioPlayer(track.url, object : PlayerListener {
@@ -119,6 +149,32 @@ class AudioPlayerViewModel(
         mediaPlayer.pause()
         timerJob?.cancel()
         renderState(PlaybackState.Pause(getCurrentPlayerPosition()))
+    }
+
+    private fun showToast(message: String) {
+        showToast.postValue(message)
+    }
+
+    fun addToPlaylist(playlist: Playlist) {
+        if (track.trackId in playlist.idList) {
+            showToast(
+                getApplication<App>().getString(
+                    R.string.track_in_playlist_already,
+                    playlist.playlistName
+                )
+            )
+            renderList(BottomSheetState.InPlaylist)
+        } else {
+            viewModelScope.launch {
+                playlistInteractor
+                    .addTrackToPlaylist(track, playlist)
+                    .collect { message ->
+                        fillData()
+                        showToast(message)
+                    }
+            }
+            renderList(BottomSheetState.AddToPlaylist)
+        }
     }
 
 }

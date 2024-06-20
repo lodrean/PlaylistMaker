@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.data
 
-import com.practicum.playlistmaker.mediateka.data.db.AppDatabase
+import com.practicum.playlistmaker.util.AppDatabase
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksRepository
 import com.practicum.playlistmaker.util.Resource

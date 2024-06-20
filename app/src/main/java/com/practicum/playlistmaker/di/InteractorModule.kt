@@ -3,6 +3,8 @@ package com.practicum.playlistmaker.di
 import android.content.Intent
 import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
 import com.practicum.playlistmaker.mediateka.domain.impl.FavoriteInteractorImpl
+import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
+import com.practicum.playlistmaker.new_playlist.domain.impl.PlaylistInteractorImpl
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractor
 import com.practicum.playlistmaker.player.domain.AudioPlayerInteractorImpl
 import com.practicum.playlistmaker.search.domain.TracksHistoryInteractor
@@ -29,15 +31,20 @@ val interactorModule = module {
     factory<TracksInteractor> {
         TracksInteractorImpl(get())
     }
-    single<SettingsInteractor> {
+    factory<SettingsInteractor> {
         SettingsInteractorImpl(get())
     }
-    single<SharingInteractor> {
+    factory<SharingInteractor> {
         SharingInteractorImpl(androidContext(), get())
     }
 
-    single<FavoriteInteractor> {
+    factory<FavoriteInteractor> {
         FavoriteInteractorImpl(get())
     }
+
+    factory<PlaylistInteractor> {
+        PlaylistInteractorImpl(get())
+    }
+
 
 }

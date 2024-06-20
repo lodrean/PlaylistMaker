@@ -163,7 +163,6 @@
             tools:itemCount="10"
             tools:listitem="@layout/item_track" />
 
-
         <Button
             android:id="@+id/clearButton"
             style="@style/RefreshButton"

@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.mediateka.data.db.AppDatabase
+import com.practicum.playlistmaker.util.AppDatabase
 import com.practicum.playlistmaker.search.domain.Constant
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksHistoryRepository
@@ -36,11 +36,7 @@ class TracksHistoryRepositoryImpl(
             tracks = itemsFromCache
             val allIds = appDatabase.trackDao().getAllIds()
             tracks.map {
-                if (it.trackId in allIds) {
-                    it.isFavorite = true
-                } else {
-                    it.isFavorite = false
-                }
+                it.isFavorite = it.trackId in allIds
             }
         }
         emit(tracks)

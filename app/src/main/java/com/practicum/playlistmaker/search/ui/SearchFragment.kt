@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
-import com.practicum.playlistmaker.player.ui.AudioPlayer
+import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.Track
@@ -141,6 +141,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 inputEditText.requestFocus()
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -165,14 +166,10 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         inputEditText.addTextChangedListener(simpleTextWatcher)
         recyclerView.adapter = trackAdapter
 
+
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-        /*viewModel.observeTrackList().observe(viewLifecycleOwner) {
-            inputEditText.requestFocus()
-            if (it.isNotEmpty()) showContent(it)
-            Log.d("tracadapter61", "trackadapter - ${trackAdapter.tracks.size}")
-        }*/
 
         viewModel.observeShowToast().observe(viewLifecycleOwner) { toast ->
             showToast(toast)
@@ -231,7 +228,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun launchAudioPlayer(track: Track) {
-        val intent = Intent(requireContext(), AudioPlayer::class.java)
+        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
         intent.putExtra(CHOSEN_TRACK, Json.encodeToString(track))
         startActivity(intent)
     }
