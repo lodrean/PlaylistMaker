@@ -60,7 +60,7 @@ class NewPlayLIstViewModel(
             playlistInteractor.createPlaylist(
                 playlistName,
                 description,
-                imageUri
+                imageUri.toString()
             )
 
         }

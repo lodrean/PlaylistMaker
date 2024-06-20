@@ -15,10 +15,8 @@ import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.util.AppDatabase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -30,27 +28,24 @@ class PlayListRepositoryImpl(
 ) : PlayListRepository {
 
 
-
     private var filename = ""
 
-    override fun createPlaylist(playlistName: String, description: String, imageUri: Uri) {
-        GlobalScope.launch { withContext(Dispatchers.IO){if (imageUri.toString() != "") {
-            saveImage(imageUri)
-            appDatabase.playlistDao()
-                .insert(PlaylistEntity(0, playlistName, description, getImage().toString(), ""))
-        } else {
-            appDatabase.playlistDao().insert(PlaylistEntity(0, playlistName, description, "", ""))
-        }} }
+    override suspend fun createPlaylist(playlistName: String, description: String, imageUri: String) {
 
+        withContext(Dispatchers.IO) {
+            if (imageUri != "") {
+                val newImageUri = saveImageToPrivateStorage(imageUri.toUri())
+                appDatabase.playlistDao()
+                    .insert(PlaylistEntity(0, playlistName, description, newImageUri.toString(), ""))
+            } else {
+                appDatabase.playlistDao()
+                    .insert(PlaylistEntity(0, playlistName, description, "", ""))
+            }
+        }
     }
 
-    override fun getImage(): Uri {
-        return getImageFromPrivateStorage()
-    }
 
-    override fun saveImage(imageUri: Uri) {
-        saveImageToPrivateStorage(imageUri)
-    }
+
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
 
@@ -61,7 +56,7 @@ class PlayListRepositoryImpl(
 
     }
 
-    override fun addTrackToPlaylist(track: Track, playlist: Playlist): Flow<String> = flow {
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Flow<String> = flow {
         withContext(Dispatchers.IO) {
             val playlistDto = PlaylistDto().map(playlist)
             playlistDto.idList += track.trackId
@@ -85,12 +80,8 @@ class PlayListRepositoryImpl(
         emit(context.getString(R.string.adding_to_playlist, playlist.playlistName))
     }
 
-private fun getDbId(): Int{
-   val size = appDatabase.playlistDao().getPlaylists().lastIndex
-    return size
 
-}
-    private fun saveImageToPrivateStorage(uri: Uri) {
+    private fun saveImageToPrivateStorage(uri: Uri) : Uri {
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath =
             File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
@@ -99,7 +90,7 @@ private fun getDbId(): Int{
             filePath.mkdirs()
         }
         //создаём экземпляр класса File, который указывает на файл внутри каталога
-        filename = "cover(%d).jpg".format(getDbId()+1)
+        filename = "cover(%d).jpg".format((System.currentTimeMillis())/1000)
         val file = File(filePath, filename)
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -109,6 +100,7 @@ private fun getDbId(): Int{
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+        return getImageFromPrivateStorage()
     }
 
     private fun getImageFromPrivateStorage(): Uri {
