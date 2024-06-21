@@ -13,17 +13,17 @@ import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
-import com.practicum.playlistmaker.player.domain.OnPlaylistClickListener
-import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_PLAYLIST
 import com.practicum.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
 import com.practicum.playlistmaker.util.debounce
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
     private lateinit var onPlaylistsClickListener : (Playlist) -> Unit
-    private val viewModel: PlaylistsViewModel by viewModel()
+    private val viewModel: PlaylistsViewModel by viewModel {
+        parametersOf(this.arguments)
+    }
     private var adapter: PlaylistsAdapter? = null
     override fun createBinding(
         inflater: LayoutInflater,
@@ -46,7 +46,7 @@ class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
             coroutineScope = viewLifecycleOwner.lifecycleScope,
             useLastParam = false
         ) { playlist ->
-            findNavController().navigate(R.id.action_playlistsFragment_to_playlistFragment, bundleOf("playlistID" to Json.encodeToString(playlist)))
+            findNavController().navigate(R.id.action_playlistsFragment_to_playlistFragment, bundleOf(CHOSEN_PLAYLIST to playlist.playlistId))
         }
 
 

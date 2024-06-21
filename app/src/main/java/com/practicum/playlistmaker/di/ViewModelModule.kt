@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Intent
+import android.os.Bundle
 import com.practicum.playlistmaker.mediateka.ui.FavoriteTracksViewModel
 import com.practicum.playlistmaker.mediateka.ui.PlaylistsViewModel
 import com.practicum.playlistmaker.new_playlist.ui.NewPlayLIstViewModel
@@ -14,13 +15,13 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
 
-    viewModel { (intent: Intent) ->
+    viewModel { (intent: Intent, arguments: Bundle) ->
         AudioPlayerViewModel(
             androidApplication(),
             get { parametersOf(intent) },
             get(),
             get(),
-            get()
+            get { parametersOf(arguments) }
         )
     }
 
@@ -36,11 +37,12 @@ val viewModelModule = module {
         FavoriteTracksViewModel(get())
     }
 
-    viewModel {
-        PlaylistsViewModel(get())
+    viewModel {(arguments: Bundle)->
+        PlaylistsViewModel(get { parametersOf(arguments)})
     }
 
-    viewModel {
-        NewPlayLIstViewModel(androidApplication(), get())
+    viewModel {(arguments: Bundle)->
+        NewPlayLIstViewModel(androidApplication(), get { parametersOf(arguments)})
     }
+
 }

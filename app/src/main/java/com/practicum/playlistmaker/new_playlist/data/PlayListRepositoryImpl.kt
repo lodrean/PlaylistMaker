@@ -7,22 +7,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import androidx.core.net.toUri
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistDbConvertor
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistEntity
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistTrackEntity
 import com.practicum.playlistmaker.new_playlist.domain.PlayListRepository
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
-import com.practicum.playlistmaker.playlist.ui.PlaylistFragment
+import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_PLAYLIST
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.util.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileOutputStream
 
@@ -33,24 +30,34 @@ class PlayListRepositoryImpl(
     private val playlistDbConvertor: PlaylistDbConvertor
 ) : PlayListRepository {
 
-
+    private var tracks = mutableListOf<Track>()
     private var filename = ""
 
-    override suspend fun createPlaylist(playlistName: String, description: String, imageUri: String) {
+    override suspend fun createPlaylist(
+        playlistName: String,
+        description: String,
+        imageUri: String
+    ) {
 
         withContext(Dispatchers.IO) {
             if (imageUri != "") {
                 val newImageUri = saveImageToPrivateStorage(imageUri.toUri())
                 appDatabase.playlistDao()
-                    .insert(PlaylistEntity(0, playlistName, description, newImageUri.toString(), ""))
+                    .insert(
+                        PlaylistEntity(
+                            0,
+                            playlistName,
+                            description,
+                            newImageUri.toString(),
+                            ""
+                        )
+                    )
             } else {
                 appDatabase.playlistDao()
                     .insert(PlaylistEntity(0, playlistName, description, "", ""))
             }
         }
     }
-
-
 
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
@@ -87,7 +94,7 @@ class PlayListRepositoryImpl(
     }
 
 
-    private fun saveImageToPrivateStorage(uri: Uri) : Uri {
+    private fun saveImageToPrivateStorage(uri: Uri): Uri {
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath =
             File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
@@ -96,7 +103,7 @@ class PlayListRepositoryImpl(
             filePath.mkdirs()
         }
         //создаём экземпляр класса File, который указывает на файл внутри каталога
-        filename = "cover(%d).jpg".format((System.currentTimeMillis())/1000)
+        filename = "cover(%d).jpg".format((System.currentTimeMillis()) / 1000)
         val file = File(filePath, filename)
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -119,9 +126,33 @@ class PlayListRepositoryImpl(
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
 
-    fun getPlaylistFromArguments() : Playlist {
-    val jsonPlaylist: String? = arguments.getString("Playlist")
-    return Json.decodeFromString(jsonPlaylist!!)
-}
+    override fun getPlaylist(): Playlist {
+        val playlistId = arguments.getString(CHOSEN_PLAYLIST)?.toInt()
+        return playlistDbConvertor.map(appDatabase.playlistDao().getPlaylistById(playlistId!!))
+    }
+
+
+    override suspend fun getTracksByIds(trackIds: List<String>): Flow<List<Track>> = flow {
+
+        withContext(Dispatchers.IO) {
+            tracks.addAll(appDatabase.playlistTrackDao().getTracks().map {
+                Track(
+                    it.trackId,
+                    it.trackName,
+                    it.artistName,
+                    it.url,
+                    it.trackTime,
+                    it.artworkUrl100,
+                    it.collectionName,
+                    it.releaseDate,
+                    it.genre,
+                    it.country
+                )
+            }
+                .filter { it.trackId in trackIds })
+        }
+        emit(tracks)
+    }
+
 
 }

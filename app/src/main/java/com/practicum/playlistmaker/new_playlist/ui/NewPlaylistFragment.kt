@@ -23,9 +23,12 @@ import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel
 import com.practicum.playlistmaker.search.ui.dpToPx
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
-    private val viewModel by viewModel<NewPlayLIstViewModel>()
+    private val viewModel by viewModel<NewPlayLIstViewModel> {
+        parametersOf(this.arguments)
+    }
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
     override fun createBinding(

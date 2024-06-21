@@ -7,14 +7,14 @@ import com.practicum.playlistmaker.new_playlist.domain.Playlist
 
 class PlaylistDbConvertor(private val gson: Gson) {
 
-    fun map(playlisyst: PlaylistDto): PlaylistEntity =
+    fun map(playlist: PlaylistDto): PlaylistEntity =
         PlaylistEntity(
-            playlisyst.playlistId.toInt(),
-            playlisyst.playlistName,
-            playlisyst.description,
-            playlisyst.imageUri,
-            createJsonFromIdList(playlisyst.idList),
-            playlisyst.tracksCount,
+            playlist.playlistId.toInt(),
+            playlist.playlistName,
+            playlist.description,
+            playlist.imageUri,
+            createJsonFromIdList(playlist.idList),
+            playlist.tracksCount,
         )
 
 
