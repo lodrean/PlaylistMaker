@@ -24,7 +24,6 @@ import java.io.File
 import java.io.FileOutputStream
 
 class PlayListRepositoryImpl(
-    private val arguments: Bundle,
     private val context: Context,
     private val appDatabase: AppDatabase,
     private val playlistDbConvertor: PlaylistDbConvertor
@@ -126,11 +125,15 @@ class PlayListRepositoryImpl(
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
 
-    override fun getPlaylist(): Playlist {
-        val playlistId = arguments.getString(CHOSEN_PLAYLIST)?.toInt()
-        return playlistDbConvertor.map(appDatabase.playlistDao().getPlaylistById(playlistId!!))
+    override suspend fun getPlaylist(playlistID: String?): Playlist {
+        var playlist = Playlist()
+        withContext(Dispatchers.IO) {
+            playlist = playlistDbConvertor.map(
+                appDatabase.playlistDao().getPlaylistById(playlistID!!.toInt())
+            )
+        }
+        return playlist
     }
-
 
     override suspend fun getTracksByIds(trackIds: List<String>): Flow<List<Track>> = flow {
 

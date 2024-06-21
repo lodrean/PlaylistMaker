@@ -21,9 +21,7 @@ import org.koin.core.parameter.parametersOf
 
 class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
     private lateinit var onPlaylistsClickListener : (Playlist) -> Unit
-    private val viewModel: PlaylistsViewModel by viewModel {
-        parametersOf(this.arguments)
-    }
+    private val viewModel: PlaylistsViewModel by viewModel ()
     private var adapter: PlaylistsAdapter? = null
     override fun createBinding(
         inflater: LayoutInflater,
@@ -46,7 +44,7 @@ class PlaylistsFragment : BindingFragment<FragmentPlaylistsBinding>() {
             coroutineScope = viewLifecycleOwner.lifecycleScope,
             useLastParam = false
         ) { playlist ->
-            findNavController().navigate(R.id.action_playlistsFragment_to_playlistFragment, bundleOf(CHOSEN_PLAYLIST to playlist.playlistId))
+            findNavController().navigate(R.id.action_mediatekaFragment_to_playlistFragment, bundleOf(CHOSEN_PLAYLIST to playlist.playlistId))
         }
 
 

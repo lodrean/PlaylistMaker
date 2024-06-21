@@ -50,7 +50,7 @@ val repositoryModule = module {
         FavoriteRepositoryImpl(get(), get())
     }
 
-    single<PlayListRepository> { (arguments: Bundle)->
-        PlayListRepositoryImpl(arguments, androidApplication(), get(), get())
+    single<PlayListRepository> {
+        PlayListRepositoryImpl(androidApplication(), get(), get())
     }
 }

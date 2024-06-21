@@ -43,8 +43,8 @@ val interactorModule = module {
         FavoriteInteractorImpl(get())
     }
 
-    factory<PlaylistInteractor> { (arguments: Bundle)->
-        PlaylistInteractorImpl(get { parametersOf(arguments) })
+    factory<PlaylistInteractor> {
+        PlaylistInteractorImpl(get())
     }
 
 

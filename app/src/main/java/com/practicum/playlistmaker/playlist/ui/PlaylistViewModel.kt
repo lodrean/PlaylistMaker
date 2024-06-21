@@ -1,23 +1,40 @@
 package com.practicum.playlistmaker.playlist.ui
 
 import android.app.Application
+import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.search.domain.Track
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class PlaylistViewModel(
     application: Application,
     private val playlistInteractor: PlaylistInteractor
 ) : AndroidViewModel(application) {
 
+    private val playlistLiveData = MutableLiveData<PlaylistState>()
+    fun getPlaylistLiveData(): LiveData<PlaylistState> = playlistLiveData
 
-    private val playlist = playlistInteractor.getPlaylist()
+    fun fillData(playlistID: String?) {
+        viewModelScope.launch {
+            val playlist = playlistInteractor.getPlaylist(playlistID)
+            val trackList = getTrackList(playlist)
+            val duration = getDurationOfTracklist(trackList)
+            renderState(PlaylistState.Content(playlist, duration, trackList))
+        }
 
-    private fun getTrackList(): List<Track> {
+    }
+
+
+    private fun getTrackList(playlist: Playlist): List<Track> {
         val trackList = mutableListOf<Track>()
         viewModelScope.launch {
+
             playlistInteractor.getTracksByIds(playlist.idList)
                 .collect { tracks ->
                     trackList.addAll(tracks)
@@ -26,4 +43,15 @@ class PlaylistViewModel(
         return trackList
     }
 
+    private fun renderState(state: PlaylistState) {
+        playlistLiveData.postValue(state)
+    }
+
+    private fun getDurationOfTracklist(trackList: List<Track>): String {
+        var duration = 0
+        for (track in trackList) {
+            duration += track.trackTime
+        }
+        return SimpleDateFormat("mm", Locale.getDefault()).format(duration)
+    }
 }

@@ -28,7 +28,7 @@ import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
     private val viewModel by viewModel<AudioPlayerViewModel> {
-        parametersOf(intent, Bundle())
+        parametersOf(intent)
     }
     private var binding: ActivityAudioPlayerBinding? = null
     private var mainThreadHandler: Handler? = null

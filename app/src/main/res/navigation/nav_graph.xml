@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_mediatekaFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
+        <action
+            android:id="@+id/action_mediatekaFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
