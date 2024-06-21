@@ -12,6 +12,6 @@ interface PlaylistTrackDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(track: PlaylistTrackEntity)
 
-    @Query("SELECT * FROM track_table")
+    @Query("SELECT * FROM playlist_track_table")
     fun getTracks(): List<PlaylistTrackEntity>
 }

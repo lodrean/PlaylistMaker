@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/Theme.PlaylistMaker">
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -154,6 +155,7 @@
 
                 app:color="?attr/text_color_primary"
                 app:layout_constraintTop_toBottomOf="@+id/tv_playlist_duration"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintBottom_toTopOf="@id/playlist_bottom_sheet"
                 app:srcCompat="@drawable/baseline_share_24"
                 tools:layout_editor_absoluteX="16dp" />

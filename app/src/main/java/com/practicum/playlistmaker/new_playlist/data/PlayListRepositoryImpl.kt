@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import androidx.core.net.toUri
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistDbConvertor
@@ -29,7 +30,6 @@ class PlayListRepositoryImpl(
     private val playlistDbConvertor: PlaylistDbConvertor
 ) : PlayListRepository {
 
-    private var tracks = mutableListOf<Track>()
     private var filename = ""
 
     override suspend fun createPlaylist(
@@ -136,7 +136,7 @@ class PlayListRepositoryImpl(
     }
 
     override suspend fun getTracksByIds(trackIds: List<String>): Flow<List<Track>> = flow {
-
+        val tracks = mutableListOf<Track>()
         withContext(Dispatchers.IO) {
             tracks.addAll(appDatabase.playlistTrackDao().getTracks().map {
                 Track(
