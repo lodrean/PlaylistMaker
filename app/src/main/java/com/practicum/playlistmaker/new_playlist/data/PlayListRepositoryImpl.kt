@@ -4,24 +4,30 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
 import androidx.core.net.toUri
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistDbConvertor
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistEntity
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistTrackEntity
 import com.practicum.playlistmaker.new_playlist.domain.PlayListRepository
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
+import com.practicum.playlistmaker.playlist.ui.PlaylistFragment
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.util.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileOutputStream
 
 class PlayListRepositoryImpl(
+    private val arguments: Bundle,
     private val context: Context,
     private val appDatabase: AppDatabase,
     private val playlistDbConvertor: PlaylistDbConvertor
@@ -112,5 +118,10 @@ class PlayListRepositoryImpl(
     private fun convertFromPlaylistsEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
+
+    fun getPlaylistFromArguments() : Playlist {
+    val jsonPlaylist: String? = arguments.getString("Playlist")
+    return Json.decodeFromString(jsonPlaylist!!)
+}
 
 }
