@@ -41,11 +41,11 @@ class PlaylistViewModel(
         playlistLiveData.postValue(state)
     }
 
-    private fun getDurationOfTracklist(trackList: List<Track>): String {
+    private fun getDurationOfTracklist(trackList: List<Track>): Int {
         var duration = 0L
         for (track in trackList) {
             duration += track.trackTime.toLong()
         }
-        return SimpleDateFormat("mm", Locale.getDefault()).format(duration).toString()
+        return SimpleDateFormat("mm", Locale.getDefault()).format(duration).toInt()
     }
 }

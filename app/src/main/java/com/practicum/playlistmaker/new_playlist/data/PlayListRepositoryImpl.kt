@@ -126,7 +126,7 @@ class PlayListRepositoryImpl(
     }
 
     override suspend fun getPlaylist(playlistID: String?): Playlist {
-        var playlist = Playlist()
+        var playlist: Playlist
         withContext(Dispatchers.IO) {
             playlist = playlistDbConvertor.map(
                 appDatabase.playlistDao().getPlaylistById(playlistID!!.toInt())

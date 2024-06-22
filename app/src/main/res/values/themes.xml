@@ -2,19 +2,20 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/YP_Blue</item>
-        <item name="background_color">@color/YP_Blue</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="background_color">@color/white</item>
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnPrimary">@color/YP_black</item>
         <!-- <item name="android:background">@color/YP_Blue</item>-->
         <item name="android:iconTint">@color/YP_Gray</item>
         <item name="main_font">@font/ys_display_regular</item>
         <item name="note_color">@color/YP_black</item>
-
+        <item name="android:statusBarColor" >@color/white</item>
 
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
+        <item name="background">@color/white</item>
         <item name="colorPrimary">@color/white</item>
         <item name="icon_color">@color/black</item>
         <item name="colorSecondary">@color/white</item>
@@ -41,6 +42,19 @@
         <item name="android:textColor">@color/YP_black</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
-
-
+    <style name="Theme.PlaylistMaker.Playlist" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:background">@color/YP_Light_Gray</item>
+        <item name="android:statusBarColor">@color/YP_Light_Gray</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="icon_color">@color/YP_black</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorOnPrimary">@color/YP_black</item>
+        <item name="tab_indicator_color">@color/YP_black</item>
+        <!-- <item name="android:background">@color/white</item>-->
+        <item name="android:iconTint">@color/YP_black</item>
+        <item name="text_color_primary">@color/YP_black</item>
+        <item name="text_color_secondary">@color/YP_Gray</item>
+        <item name="note_color">@color/YP_black</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+    </style>
 </resources>
