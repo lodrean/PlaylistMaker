@@ -5,10 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
@@ -21,12 +22,10 @@ import com.practicum.playlistmaker.search.domain.OnItemClickListener
 import com.practicum.playlistmaker.search.domain.OnLongClickListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
-import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.util.debounce
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
 
@@ -37,6 +36,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         return FragmentPlaylistBinding.inflate(inflater, container, false)
     }
     lateinit var confirmDialog: MaterialAlertDialogBuilder
+    private lateinit var bottomSheetAttributesBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var onTrackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: PlaylistBottomAdapter
     private val viewModel by viewModel<PlaylistViewModel>()
@@ -77,7 +77,41 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         trackAdapter =  PlaylistBottomAdapter(onItemClickListener, onLongClickListener)
         binding.bottomSheetRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.bottomSheetRecyclerView.adapter = trackAdapter
+
+
+        val bottomSheetAttributesContainer = binding.attributesBottomSheet
+        bottomSheetAttributesBehavior = BottomSheetBehavior.from(bottomSheetAttributesContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetAttributesBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                    }
+
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+
+                    else -> {
+                        binding.overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
+        binding.shareButton.setOnClickListener{
+            viewModel.sharePlaylist()
+        }
     }
+
 
     private fun render(state: PlaylistState) {
         when (state) {

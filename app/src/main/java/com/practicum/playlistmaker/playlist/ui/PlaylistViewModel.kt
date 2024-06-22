@@ -7,16 +7,19 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 class PlaylistViewModel(
     application: Application,
-    private val playlistInteractor: PlaylistInteractor
+    private val playlistInteractor: PlaylistInteractor,
+    private val sharingInteractor: SharingInteractor
 ) : AndroidViewModel(application) {
     private val playlistLiveData = MutableLiveData<PlaylistState>()
     fun getPlaylistLiveData(): LiveData<PlaylistState> = playlistLiveData
@@ -62,4 +65,13 @@ class PlaylistViewModel(
     }
 
 
+    fun sharePlaylist() {
+
+        viewModelScope.launch {
+            val trackList = getTracksByIds(playlist.idList)
+            sharingInteractor.sharePlaylist(playlist, trackList)
+        }
+
+
+    }
 }

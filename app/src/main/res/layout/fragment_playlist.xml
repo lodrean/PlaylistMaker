@@ -222,6 +222,7 @@
             android:minHeight="382dp"
             android:orientation="vertical"
             app:behavior_hideable="true"
+            android:visibility="gone"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <View
@@ -234,6 +235,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
+                android:background="?attr/colorPrimary"
                 android:minHeight="64dp">
 
                 <ImageView
@@ -242,7 +245,8 @@
                     android:layout_height="45dp"
                     android:layout_gravity="center"
                     android:layout_marginStart="13dp"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -250,16 +254,20 @@
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="14dp"
                     android:layout_weight="1"
+                    android:background="?attr/colorPrimary"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/bottomSheet_playlistName"
-                        style="@style/FontStyle.Track"
+                        style="@style/FontStyle.Track.BottomSheet"
+
+                        android:background="?attr/colorPrimary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:minHeight="20dp"
-                        tools:text="Long text to demonstrate problemLong text to demonstrate problem" />
+                        tools:text="Best songs 2021"
+                        />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -271,10 +279,11 @@
 
                         <TextView
                             android:id="@+id/bottomSheet_tracksCount"
-                            style="@style/FontStyle.Track.ArtistName"
+                            style="@style/FontStyle.Track.BottomSheet.TracksCount"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            tools:text="Long text to demonstrate problem with TextView in GridLayout taking up too much space despite ellipsis" />
+                            android:background="?attr/colorPrimary"
+                            tools:text="98 треков" />
 
                     </LinearLayout>
 
@@ -283,16 +292,67 @@
 
             </LinearLayout>
 
-            <View
+            <LinearLayout
+                android:id="@+id/share"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                />
-            <View
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:background="?attr/colorPrimary"
+                android:paddingStart="16dp">
+
+
+                <TextView
+
+                    style="@style/Playlist.Bottom"
+                    android:background="?attr/colorPrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/Share" />
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:id="@+id/redact"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"/>
-            <View
+                android:layout_height="60dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+
+                android:background="?attr/colorPrimary"
+                android:paddingStart="16dp">
+
+
+                <TextView
+                    style="@style/Playlist.Bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:background="?attr/colorPrimary"
+                    android:text="@string/redact" />
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:id="@+id/delete"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"/>
+                android:layout_height="60dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+
+                android:background="?attr/colorPrimary"
+                android:paddingStart="16dp">
+
+
+                <TextView
+                    style="@style/Playlist.Bottom"
+                    android:background="?attr/colorPrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/delete_playlist" />
+            </LinearLayout>
             <!-- Вёрстка Bottom Sheet с кнопкой и списком -->
 
         </LinearLayout>
