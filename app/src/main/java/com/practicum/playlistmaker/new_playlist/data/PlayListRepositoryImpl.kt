@@ -157,5 +157,38 @@ class PlayListRepositoryImpl(
         emit(tracks)
     }
 
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: String) {
 
+        withContext(Dispatchers.IO) {
+            val playlist = getPlaylist(playlistId)
+            appDatabase.playlistDao().updatePlaylist(
+                PlaylistEntity(
+                    playlist.playlistId.toInt(),
+                    playlist.playlistName,
+                    playlist.description,
+                    playlist.imageUri,
+                    playlist.idList.toList().remove(trackId).toString(),
+                    playlist.tracksCount - 1
+                )
+            )
+            checkTrackInPlaylists(trackId)
+        }
+    }
+
+    private fun checkTrackInPlaylists(trackId: String) {
+        val playlists = appDatabase.playlistDao().getPlaylists()
+        val trackLIst = mutableListOf<String>()
+        playlists.map { playlist ->
+            trackLIst += playlist.idList
+        }
+        Log.d("list", "$trackLIst")
+        if (trackId !in trackLIst) appDatabase.playlistTrackDao().delete(trackId) else  return
+    }
+
+    private fun List<String>.remove(trackId: String): List<String> {
+        val newList = this.toMutableList()
+        newList.remove(trackId)
+        return newList
+
+    }
 }

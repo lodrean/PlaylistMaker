@@ -20,14 +20,11 @@ class PlaylistViewModel(
 ) : AndroidViewModel(application) {
     private val playlistLiveData = MutableLiveData<PlaylistState>()
     fun getPlaylistLiveData(): LiveData<PlaylistState> = playlistLiveData
-
+    private var playlist: Playlist = Playlist()
     fun fillData(playlistID: String?) {
         viewModelScope.launch {
-            val playlist = playlistInteractor.getPlaylist(playlistID)
-            val trackList = mutableListOf<Track>()
-            playlistInteractor.getTracksByIds(playlist.idList).collect{tracks->
-                trackList.addAll(tracks)
-            }
+            playlist = playlistInteractor.getPlaylist(playlistID)
+            val trackList = getTracksByIds(playlist.idList)
             val duration = getDurationOfTracklist(trackList)
             renderState(PlaylistState.Content(playlist, duration, trackList))
         }
@@ -35,10 +32,16 @@ class PlaylistViewModel(
     }
 
 
-
-
     private fun renderState(state: PlaylistState) {
         playlistLiveData.postValue(state)
+    }
+
+    private suspend fun getTracksByIds(trackIds: List<String>): List<Track> {
+        val trackList = mutableListOf<Track>()
+        playlistInteractor.getTracksByIds(trackIds).collect { tracks ->
+            trackList.addAll(tracks)
+        }
+        return trackList
     }
 
     private fun getDurationOfTracklist(trackList: List<Track>): Int {
@@ -48,4 +51,15 @@ class PlaylistViewModel(
         }
         return SimpleDateFormat("mm", Locale.getDefault()).format(duration).toInt()
     }
+
+    fun deleteTrack(trackId: String) {
+        viewModelScope.launch {
+            playlistInteractor.deleteTrackFromPlaylist(trackId, playlist.playlistId)
+            val trackList = getTracksByIds(playlist.idList)
+            val duration = getDurationOfTracklist(trackList)
+            renderState(PlaylistState.Content(playlist, duration, trackList))
+        }
+    }
+
+
 }

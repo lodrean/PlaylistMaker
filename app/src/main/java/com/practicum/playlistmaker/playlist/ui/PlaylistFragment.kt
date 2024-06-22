@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.BindingFragment
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
@@ -17,6 +18,7 @@ import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_PLAYLIST
 import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_TRACK
 import com.practicum.playlistmaker.search.domain.OnItemClickListener
+import com.practicum.playlistmaker.search.domain.OnLongClickListener
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
 import com.practicum.playlistmaker.search.ui.TrackAdapter
@@ -34,7 +36,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
     ): FragmentPlaylistBinding {
         return FragmentPlaylistBinding.inflate(inflater, container, false)
     }
-
+    lateinit var confirmDialog: MaterialAlertDialogBuilder
     private lateinit var onTrackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: PlaylistBottomAdapter
     private val viewModel by viewModel<PlaylistViewModel>()
@@ -60,7 +62,19 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         val onItemClickListener = OnItemClickListener { track ->
             onTrackClickDebounce(track)
         }
-        trackAdapter =  PlaylistBottomAdapter(onItemClickListener)
+        val onLongClickListener = OnLongClickListener {track ->
+            confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_MaterialAlertDialog)
+                .setTitle("Хотите удалить трек?")
+                .setNeutralButton(getString(R.string.cancel)) { dialog, which ->
+                    // ничего не делаем
+                }.setPositiveButton("Да") { dialog, which ->
+                    viewModel.deleteTrack(track.trackId)
+                    parentFragmentManager.popBackStack()
+                }
+                confirmDialog.show()
+
+        }
+        trackAdapter =  PlaylistBottomAdapter(onItemClickListener, onLongClickListener)
         binding.bottomSheetRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.bottomSheetRecyclerView.adapter = trackAdapter
     }
