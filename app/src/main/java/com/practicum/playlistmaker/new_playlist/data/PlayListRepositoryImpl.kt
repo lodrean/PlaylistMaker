@@ -168,7 +168,7 @@ class PlayListRepositoryImpl(
                     playlist.description,
                     playlist.imageUri,
                     playlist.idList.toList().remove(trackId).toString(),
-                    playlist.tracksCount - 1
+                    playlist.idList.size-1
                 )
             )
             checkTrackInPlaylists(trackId)

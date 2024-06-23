@@ -6,10 +6,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
+import com.practicum.playlistmaker.new_playlist.ui.NewPlaylistState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.sharing.domain.SharingInteractor
+import com.practicum.playlistmaker.util.App
+import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -18,6 +22,10 @@ class PlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
     private val sharingInteractor: SharingInteractor
 ) : AndroidViewModel(application) {
+
+
+    private val showToast = SingleLiveEvent<String>()
+    fun observeShowToast(): LiveData<String> = showToast
     private val playlistLiveData = MutableLiveData<PlaylistState>()
     fun getPlaylistLiveData(): LiveData<PlaylistState> = playlistLiveData
     private var playlist: Playlist = Playlist()
@@ -62,6 +70,13 @@ class PlaylistViewModel(
         }
     }
 
+    fun outOfTracks() {
+        showToast(
+            getApplication<App>().getString(
+                R.string.out_of_tracks_to_share
+            )
+        )
+    }
 
     fun sharePlaylist() {
 
@@ -81,5 +96,9 @@ class PlaylistViewModel(
 
     fun updateFillData() {
         fillData(playlist.playlistId)
+    }
+
+    private fun showToast(message: String) {
+        showToast.postValue(message)
     }
 }

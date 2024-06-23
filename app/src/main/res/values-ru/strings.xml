@@ -98,4 +98,12 @@
         <item quantity="many">%d минут</item>
         <item quantity="other">%d минут</item>
     </plurals>
+    <string name="Share">Поделиться</string>
+    <string name="redact">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="share_playlist">Поделиться плейлистом</string>
+    <string name="save">сохранить</string>
+    <string name="to_redact">Редактировать</string>
+    <string name="out_of_tracks">В этом плейлисте нет треков</string>
+    <string name="out_of_tracks_to_share">В этом плейлисте нет\nсписка треков,\nкоторым можно поделиться</string>
 </resources>

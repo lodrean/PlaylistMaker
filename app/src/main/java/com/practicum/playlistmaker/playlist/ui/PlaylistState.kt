@@ -9,4 +9,5 @@ sealed class PlaylistState {
         val duration: Int,
         val trackList: List<Track>
     ) : PlaylistState()
+
 }

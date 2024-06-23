@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +47,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
     private lateinit var bottomSheetAttributesBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetTrackListBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var onTrackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: PlaylistBottomAdapter
     private val viewModel by viewModel<PlaylistViewModel>()
@@ -64,6 +66,10 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
                     playlistName = it.playlist.playlistName
                 }
             }
+        }
+        viewModel.observeShowToast().observe(viewLifecycleOwner)
+        { toast ->
+            showToast(toast)
         }
         val playlistID = arguments?.getString(CHOSEN_PLAYLIST)
         viewModel.fillData(playlistID)
@@ -88,10 +94,9 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
                     // ничего не делаем
                 }.setPositiveButton("Да") { dialog, which ->
                     viewModel.deleteTrack(track.trackId)
-                    viewModel.updateFillData()
                 }
             confirmDialog.show()
-
+            viewModel.updateFillData()
         }
         trackAdapter = PlaylistBottomAdapter(onItemClickListener, onLongClickListener)
         binding.bottomSheetRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -110,19 +115,12 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
 
                 when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        binding.overlay.visibility = View.VISIBLE
-                        binding.bottomSheetRecyclerView.isVisible = false
-                    }
-
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlay.visibility = View.GONE
-                        binding.bottomSheetRecyclerView.isVisible = true
                     }
 
                     else -> {
                         binding.overlay.visibility = View.VISIBLE
-                        binding.bottomSheetRecyclerView.isVisible = false
                     }
                 }
             }
@@ -131,15 +129,25 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
 
             }
         })
+
+
+        val bottomSheetTrackListContainer = binding.playlistBottomSheet
+        bottomSheetTrackListBehavior =
+            BottomSheetBehavior.from(bottomSheetTrackListContainer).apply {
+                state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+
+
+
         binding.shareButton.setOnClickListener {
-            viewModel.sharePlaylist()
+            checkTrackListToShare()
         }
 
         binding.attributesButton.setOnClickListener {
             bottomSheetAttributesBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         binding.share.setOnClickListener {
-            viewModel.sharePlaylist()
+            checkTrackListToShare()
         }
         binding.delete.setOnClickListener {
             val dialogDeletePlaylist = MaterialAlertDialogBuilder(
@@ -162,6 +170,18 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
                 )
             )
         }
+    }
+
+    private fun checkTrackListToShare() {
+        if (trackAdapter.tracks.isEmpty()) {
+            viewModel.outOfTracks()
+        } else {
+            viewModel.sharePlaylist()
+        }
+    }
+
+    private fun showToast(additionalMessage: String) {
+        Toast.makeText(requireContext(), additionalMessage, Toast.LENGTH_LONG).show()
     }
 
 
