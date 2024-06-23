@@ -25,8 +25,9 @@ import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
-    private val viewModel by viewModel<NewPlayLIstViewModel> {
+open class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
+
+    open val viewModel by viewModel<NewPlayLIstViewModel> {
         parametersOf(this.arguments)
     }
 

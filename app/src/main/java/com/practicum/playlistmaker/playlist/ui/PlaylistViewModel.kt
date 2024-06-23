@@ -2,17 +2,14 @@ package com.practicum.playlistmaker.playlist.ui
 
 import android.app.Application
 import android.icu.text.SimpleDateFormat
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.sharing.domain.SharingInteractor
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -24,6 +21,7 @@ class PlaylistViewModel(
     private val playlistLiveData = MutableLiveData<PlaylistState>()
     fun getPlaylistLiveData(): LiveData<PlaylistState> = playlistLiveData
     private var playlist: Playlist = Playlist()
+
     fun fillData(playlistID: String?) {
         viewModelScope.launch {
             playlist = playlistInteractor.getPlaylist(playlistID)
@@ -73,5 +71,15 @@ class PlaylistViewModel(
         }
 
 
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            playlistInteractor.deletePlaylist(playlist)
+        }
+    }
+
+    fun updateFillData() {
+        fillData(playlist.playlistId)
     }
 }

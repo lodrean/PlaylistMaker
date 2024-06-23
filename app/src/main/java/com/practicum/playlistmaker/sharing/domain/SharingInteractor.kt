@@ -8,7 +8,5 @@ interface SharingInteractor {
     fun shareApp()
     fun openTerms()
     fun openSupport()
-    fun sharePlaylist(playlist: Playlist, tracklist: List<Track>) {
-
-    }
+    fun sharePlaylist(playlist: Playlist, tracklist: List<Track>)
 }

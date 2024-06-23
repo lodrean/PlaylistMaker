@@ -31,6 +31,7 @@
             app:srcCompat="@drawable/arrow_back" />
 
         <TextView
+            android:id="@+id/title"
             style="@style/TextSettingsStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
