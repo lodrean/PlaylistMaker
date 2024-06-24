@@ -9,12 +9,13 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
-import com.practicum.playlistmaker.new_playlist.ui.NewPlaylistState
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 import com.practicum.playlistmaker.util.App
 import com.practicum.playlistmaker.util.SingleLiveEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 class PlaylistViewModel(
@@ -32,10 +33,12 @@ class PlaylistViewModel(
 
     fun fillData(playlistID: String?) {
         viewModelScope.launch {
-            playlist = playlistInteractor.getPlaylist(playlistID)
-            val trackList = getTracksByIds(playlist.idList)
-            val duration = getDurationOfTracklist(trackList)
-            renderState(PlaylistState.Content(playlist, duration, trackList))
+            withContext(Dispatchers.Default) {
+                playlist = playlistInteractor.getPlaylist(playlistID)
+                val trackList = getTracksByIds(playlist.idList)
+                val duration = getDurationOfTracklist(trackList)
+                renderState(PlaylistState.Content(playlist, duration, trackList))
+            }
         }
 
     }
@@ -63,10 +66,12 @@ class PlaylistViewModel(
 
     fun deleteTrack(trackId: String) {
         viewModelScope.launch {
-            playlistInteractor.deleteTrackFromPlaylist(trackId, playlist.playlistId)
-            val trackList = getTracksByIds(playlist.idList)
-            val duration = getDurationOfTracklist(trackList)
-            renderState(PlaylistState.Content(playlist, duration, trackList))
+            withContext(Dispatchers.Default) {
+                playlistInteractor.deleteTrackFromPlaylist(trackId, playlist.playlistId)
+                val trackList = getTracksByIds(playlist.idList)
+                val duration = getDurationOfTracklist(trackList)
+                renderState(PlaylistState.Content(playlist, duration, trackList))
+            }
         }
     }
 

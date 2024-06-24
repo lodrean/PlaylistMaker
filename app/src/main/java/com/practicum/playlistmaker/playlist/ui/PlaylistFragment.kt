@@ -45,7 +45,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         return FragmentPlaylistBinding.inflate(inflater, container, false)
     }
 
-    lateinit var confirmDialog: MaterialAlertDialogBuilder
+    private lateinit var confirmDialog: MaterialAlertDialogBuilder
     private lateinit var bottomSheetAttributesBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var bottomSheetTrackListBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var onTrackClickDebounce: (Track) -> Unit
@@ -148,6 +148,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         }
         binding.share.setOnClickListener {
             checkTrackListToShare()
+            bottomSheetAttributesBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
         binding.delete.setOnClickListener {
             val dialogDeletePlaylist = MaterialAlertDialogBuilder(
@@ -162,6 +163,7 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
                     parentFragmentManager.popBackStack()
                 }
             dialogDeletePlaylist.show()
+            bottomSheetAttributesBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
         binding.redact.setOnClickListener {
             findNavController().navigate(
@@ -215,12 +217,14 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         binding.tvPlaylistTitle.text = playlist.playlistName
         binding.tvPlaylistDuration.text =
             context?.resources?.getQuantityString(R.plurals.countOfMinutes, duration, duration)
+        binding.tvPlaylistDuration.requestLayout()
         binding.tvPlaylistDescription.text = playlist.description
         binding.tvTracksCount.text = context?.resources?.getQuantityString(
             R.plurals.numberOfTracks,
-            playlist.tracksCount,
-            playlist.tracksCount
+            trackList.size,
+            trackList.size
         )
+        binding.tvTracksCount.requestLayout()
         trackAdapter.tracks.clear()
         trackAdapter.tracks.addAll(trackList)
         binding.bottomSheetCover.let {
@@ -242,8 +246,8 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         binding.bottomSheetPlaylistName.text = playlist.playlistName
         binding.bottomSheetTracksCount.text = context?.resources?.getQuantityString(
             R.plurals.numberOfTracks,
-            playlist.tracksCount,
-            playlist.tracksCount
+            trackList.size,
+            trackList.size
         )
         trackAdapter.notifyDataSetChanged()
 

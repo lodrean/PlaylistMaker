@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.di
 
 import android.content.Intent
-import android.os.Bundle
 import com.practicum.playlistmaker.mediateka.domain.FavoriteInteractor
 import com.practicum.playlistmaker.mediateka.domain.impl.FavoriteInteractorImpl
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor

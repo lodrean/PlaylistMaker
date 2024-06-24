@@ -4,9 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import androidx.core.net.toUri
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistDbConvertor
@@ -14,7 +12,6 @@ import com.practicum.playlistmaker.new_playlist.data.db.PlaylistEntity
 import com.practicum.playlistmaker.new_playlist.data.db.PlaylistTrackEntity
 import com.practicum.playlistmaker.new_playlist.domain.PlayListRepository
 import com.practicum.playlistmaker.new_playlist.domain.Playlist
-import com.practicum.playlistmaker.search.domain.Constant.Companion.CHOSEN_PLAYLIST
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.util.AppDatabase
 import kotlinx.coroutines.Dispatchers

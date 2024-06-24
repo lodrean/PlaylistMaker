@@ -12,9 +12,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.new_playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.util.App
 import com.practicum.playlistmaker.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 open class NewPlayLIstViewModel(
     application: Application,

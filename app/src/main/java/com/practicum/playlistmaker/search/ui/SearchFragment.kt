@@ -121,7 +121,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         clearButton.setOnClickListener {
             trackAdapter.tracks.clear()
-            inputEditText.setText("")
+            inputEditText.setText(getString(R.string.empty_string))
             trackHistoryAdapter.notifyDataSetChanged()
             viewModel.showHistoryTrackList()
             placeholder.isVisible = false
