@@ -121,7 +121,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         clearButton.setOnClickListener {
             trackAdapter.tracks.clear()
-            inputEditText.setText("")
+            inputEditText.setText(getString(R.string.empty_string))
             trackHistoryAdapter.notifyDataSetChanged()
             viewModel.showHistoryTrackList()
             placeholder.isVisible = false
@@ -335,6 +335,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     companion object {
         const val AMOUNT_DEF = ""
-        private const val CLICK_DEBOUNCE_DELAY = 300L
+        const val CLICK_DEBOUNCE_DELAY = 300L
     }
 }

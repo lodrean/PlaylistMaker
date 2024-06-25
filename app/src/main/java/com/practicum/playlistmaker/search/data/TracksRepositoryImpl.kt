@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker.search.data
 
+import android.app.Application
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.util.AppDatabase
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksRepository
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 class TracksRepositoryImpl(
+    private val application: Application,
     private val networkClient: NetworkClient,
     private val appDatabase: AppDatabase
 ) : TracksRepository {
@@ -18,7 +21,7 @@ class TracksRepositoryImpl(
         val response = networkClient.doRequest(TracksSearchRequest(expression))
         when (response.resultCode) {
             -1 -> {
-                emit(Resource.Error("Проверьте подключение к интернету"))
+                emit(Resource.Error(application.getString(R.string.check_internet)))
             }
 
             200 -> {

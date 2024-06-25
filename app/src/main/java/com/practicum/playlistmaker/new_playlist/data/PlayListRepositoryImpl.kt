@@ -27,24 +27,33 @@ class PlayListRepositoryImpl(
     private val playlistDbConvertor: PlaylistDbConvertor
 ) : PlayListRepository {
 
-
     private var filename = ""
 
-    override suspend fun createPlaylist(playlistName: String, description: String, imageUri: String) {
+    override suspend fun createPlaylist(
+        playlistName: String,
+        description: String,
+        imageUri: String
+    ) {
 
         withContext(Dispatchers.IO) {
             if (imageUri != "") {
                 val newImageUri = saveImageToPrivateStorage(imageUri.toUri())
                 appDatabase.playlistDao()
-                    .insert(PlaylistEntity(0, playlistName, description, newImageUri.toString(), ""))
+                    .insert(
+                        PlaylistEntity(
+                            0,
+                            playlistName,
+                            description,
+                            newImageUri.toString(),
+                            ""
+                        )
+                    )
             } else {
                 appDatabase.playlistDao()
                     .insert(PlaylistEntity(0, playlistName, description, "", ""))
             }
         }
     }
-
-
 
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
@@ -81,7 +90,7 @@ class PlayListRepositoryImpl(
     }
 
 
-    private fun saveImageToPrivateStorage(uri: Uri) : Uri {
+    private fun saveImageToPrivateStorage(uri: Uri): Uri {
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath =
             File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
@@ -90,7 +99,7 @@ class PlayListRepositoryImpl(
             filePath.mkdirs()
         }
         //создаём экземпляр класса File, который указывает на файл внутри каталога
-        filename = "cover(%d).jpg".format((System.currentTimeMillis())/1000)
+        filename = "%d".format((System.currentTimeMillis()) / 1000)
         val file = File(filePath, filename)
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -113,4 +122,108 @@ class PlayListRepositoryImpl(
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
 
+    override suspend fun getPlaylist(playlistID: String?): Playlist {
+        var playlist: Playlist
+        withContext(Dispatchers.IO) {
+            playlist = playlistDbConvertor.map(
+                appDatabase.playlistDao().getPlaylistById(playlistID!!.toInt())
+            )
+        }
+        return playlist
+    }
+
+    override suspend fun getTracksByIds(trackIds: List<String>): Flow<List<Track>> = flow {
+        val tracks = mutableListOf<Track>()
+        withContext(Dispatchers.IO) {
+            tracks.addAll(appDatabase.playlistTrackDao().getTracks().map {
+                Track(
+                    it.trackId,
+                    it.trackName,
+                    it.artistName,
+                    it.url,
+                    it.trackTime,
+                    it.artworkUrl100,
+                    it.collectionName,
+                    it.releaseDate,
+                    it.genre,
+                    it.country
+                )
+            }
+                .filter { it.trackId in trackIds })
+        }
+        emit(tracks)
+    }
+
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: String) {
+
+        withContext(Dispatchers.IO) {
+            val playlist = getPlaylist(playlistId)
+            appDatabase.playlistDao().updatePlaylist(
+                PlaylistEntity(
+                    playlist.playlistId.toInt(),
+                    playlist.playlistName,
+                    playlist.description,
+                    playlist.imageUri,
+                    playlist.idList.toList().remove(trackId).toString(),
+                    playlist.idList.size-1
+                )
+            )
+            checkTrackInPlaylists(trackId)
+        }
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        withContext(Dispatchers.IO) {
+            appDatabase.playlistDao().delete(
+                playlistDbConvertor.map(
+                    PlaylistDto(
+                        playlist.playlistId,
+                        playlist.playlistName,
+                        playlist.description,
+                        playlist.imageUri,
+                        playlist.idList,
+                        playlist.tracksCount
+                    )
+                )
+            )
+            for (trackId in playlist.idList) {
+                checkTrackInPlaylists(trackId)
+            }
+        }
+    }
+
+    override fun getImageUri(uri: String): String {
+        return saveImageToPrivateStorage(uri.toUri()).toString()
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        withContext(Dispatchers.IO) {
+            val playlistDto = PlaylistDto(
+                playlist.playlistId,
+                playlist.playlistName,
+                playlist.description,
+                playlist.imageUri,
+                playlist.idList,
+                playlist.tracksCount
+            )
+            appDatabase.playlistDao().updatePlaylist(playlistDbConvertor.map(playlistDto))
+        }
+
+    }
+
+    private fun checkTrackInPlaylists(trackId: String) {
+        val playlists = appDatabase.playlistDao().getPlaylists()
+        val trackLIst = mutableListOf<String>()
+        for (playlist in playlists) {
+            trackLIst.addAll(playlistDbConvertor.map(playlist).idList)
+        }
+        if (trackId !in trackLIst) appDatabase.playlistTrackDao().delete(trackId) else return
+    }
+
+    private fun List<String>.remove(trackId: String): List<String> {
+        val newList = this.toMutableList()
+        newList.remove(trackId)
+        return newList
+
+    }
 }

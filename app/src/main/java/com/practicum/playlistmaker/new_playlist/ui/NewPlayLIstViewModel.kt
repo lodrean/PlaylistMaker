@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.new_playlist.ui
 
 import android.app.Application
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -13,7 +14,7 @@ import com.practicum.playlistmaker.util.App
 import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.launch
 
-class NewPlayLIstViewModel(
+open class NewPlayLIstViewModel(
     application: Application,
     private val playlistInteractor: PlaylistInteractor
 ) : AndroidViewModel(application) {
@@ -45,9 +46,15 @@ class NewPlayLIstViewModel(
         )
     }
 
-    fun setImage(uri: Uri) {
-        imageUri = uri
-        stateLiveData.postValue(NewPlaylistState.Creation(true, uri))
+    open fun getImageUri(): Uri {
+        return imageUri
+    }
+
+    open fun setImage(uri: Uri) {
+
+        imageUri = playlistInteractor.getImageUri(uri.toString()).toUri()
+        Log.d("imageUri", imageUri.toString())
+        stateLiveData.postValue(NewPlaylistState.Creation(true, imageUri))
     }
 
     fun deleteImage() {

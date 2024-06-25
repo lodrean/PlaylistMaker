@@ -24,4 +24,7 @@ interface PlaylistDao {
 
     @Update(entity = PlaylistEntity::class, onConflict = OnConflictStrategy.REPLACE)
     fun updatePlaylist(playlist: PlaylistEntity)
+
+    @Query("SELECT *  FROM playlist_table WHERE playlistId = :playlistId")
+    fun getPlaylistById(playlistId: Int): PlaylistEntity
 }

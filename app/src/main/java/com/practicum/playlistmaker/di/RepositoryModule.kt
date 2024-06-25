@@ -33,7 +33,7 @@ val repositoryModule = module {
         TracksHistoryRepositoryImpl(intent, get(), get(), get())
     }
     factory<TracksRepository> {
-        TracksRepositoryImpl(get(), get())
+        TracksRepositoryImpl(androidApplication(),get(), get())
     }
     factory<SettingsRepository> {
         SettingsRepositoryImpl(androidContext())

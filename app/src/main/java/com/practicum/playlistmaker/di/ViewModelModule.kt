@@ -5,6 +5,8 @@ import com.practicum.playlistmaker.mediateka.ui.FavoriteTracksViewModel
 import com.practicum.playlistmaker.mediateka.ui.PlaylistsViewModel
 import com.practicum.playlistmaker.new_playlist.ui.NewPlayLIstViewModel
 import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel
+import com.practicum.playlistmaker.playlist.ui.PlaylistViewModel
+import com.practicum.playlistmaker.playlist.ui.RedactPlaylistViewModel
 import com.practicum.playlistmaker.search.ui.SearchViewModel
 import com.practicum.playlistmaker.settings.ui.SettingsViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -40,7 +42,13 @@ val viewModelModule = module {
         PlaylistsViewModel(get())
     }
 
-    viewModel {
+    viewModel<NewPlayLIstViewModel> {
         NewPlayLIstViewModel(androidApplication(), get())
+    }
+    viewModel {
+        PlaylistViewModel(androidApplication(), get(), get())
+    }
+    viewModel<RedactPlaylistViewModel> { (playlistId: String) ->
+        RedactPlaylistViewModel(androidApplication(), get { parametersOf(playlistId) }, get())
     }
 }

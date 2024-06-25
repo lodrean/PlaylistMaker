@@ -10,10 +10,13 @@ import kotlinx.coroutines.flow.map
 class PlaylistInteractorImpl(
     private val playlistRepositrory: PlayListRepository
 ) : PlaylistInteractor {
-      override suspend fun createPlaylist(playlistName: String, description: String, imageUri: String) {
+    override suspend fun createPlaylist(
+        playlistName: String,
+        description: String,
+        imageUri: String
+    ) {
         playlistRepositrory.createPlaylist(playlistName, description, imageUri)
     }
-
 
 
     override fun getPlaylists(): Flow<List<Playlist>> {
@@ -25,5 +28,30 @@ class PlaylistInteractorImpl(
             value
         }
     }
+
+    override suspend fun getPlaylist(playlistID: String?): Playlist {
+        return playlistRepositrory.getPlaylist(playlistID)
+    }
+
+    override suspend fun getTracksByIds(trackIds: List<String>): Flow<List<Track>> {
+        return playlistRepositrory.getTracksByIds(trackIds).map { tracks -> tracks.reversed()  }
+    }
+
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: String) {
+        playlistRepositrory.deleteTrackFromPlaylist(trackId, playlistId)
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        playlistRepositrory.deletePlaylist(playlist)
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        playlistRepositrory.updatePlaylist(playlist)
+    }
+
+    override fun getImageUri(uri: String): String {
+       return playlistRepositrory.getImageUri(uri)
+    }
+
 
 }
