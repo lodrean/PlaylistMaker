@@ -95,10 +95,9 @@ class SearchViewModel(
             errorMessage != null -> {
                 renderState(
                     SearchState.Error(
-                        errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
+                        errorMessage = errorMessage,
                     )
                 )
-                showToast(errorMessage)
             }
 
             trackList.isEmpty() -> {

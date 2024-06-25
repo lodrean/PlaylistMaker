@@ -65,8 +65,8 @@ class RedactPlaylistFragment : NewPlaylistFragment() {
         binding.textInputName.setText(playlist.playlistName)
         binding.textInputDescription.setText(playlist.description)
         Log.d("image", playlist.imageUri)
-        viewModel.setImage(playlist.imageUri.toUri())
         if (playlist.imageUri != "") {
+            viewModel.setImage(playlist.imageUri.toUri())
             binding.imageView.isVisible = true
             binding.placeHolder.isVisible = false
         }
