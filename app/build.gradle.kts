@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 
@@ -63,6 +63,6 @@ dependencies {
     //Room
     val room_version = "2.5.1"
     implementation("androidx.room:room-runtime:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 }
