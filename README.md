@@ -31,13 +31,11 @@
 
 ## 📸 Скриншоты
 
-> _Скриншоты будут добавлены позже_
-
-<!--
-<img src="screenshots/search.png" width="300"/>
-<img src="screenshots/player.png" width="300"/>
-<img src="screenshots/library.png" width="300"/>
--->
+<p>
+  <img src="screenshots/01-search.png" width="300"/>
+  <img src="screenshots/02-mediateka.png" width="300"/>
+  <img src="screenshots/03-settings.png" width="300"/>
+</p>
 
 ---
 
@@ -87,7 +85,7 @@ cd PlaylistMaker
 
 - [ ] Миграция на Jetpack Compose
 - [ ] Добавить Unit-тесты
-- [ ] Добавить скриншоты в README
+- [x] Добавить скриншоты в README
 - [ ] Интеграция с другими музыкальными сервисами
 
 ---
