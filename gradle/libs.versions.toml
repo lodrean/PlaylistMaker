@@ -1,0 +1,47 @@
+[versions]
+agp = "8.4.1"
+kotlin = "1.9.23"
+ksp = "1.9.23-1.0.20"
+
+androidxCore = "1.12.0"
+androidxAppcompat = "1.6.1"
+androidxConstraintlayout = "2.1.4"
+androidxFragment = "1.5.6"
+androidxNavigation = "2.7.7"
+androidxRoom = "2.5.1"
+androidxTestExtJunit = "1.1.5"
+androidxTestEspresso = "3.5.1"
+glide = "4.15.1"
+junit = "4.13.2"
+koin = "3.3.0"
+kotlinxSerialization = "1.6.0"
+material = "1.11.0"
+retrofit = "2.9.0"
+
+[libraries]
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidxConstraintlayout" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "androidxNavigation" }
+androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidxNavigation" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidxRoom" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidxRoom" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+
+# Test libraries
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxTestEspresso" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
