@@ -12,6 +12,7 @@ import com.practicum.playlistmaker.search.domain.TracksInteractor
 import com.practicum.playlistmaker.util.SingleLiveEvent
 import com.practicum.playlistmaker.util.debounce
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -48,14 +49,8 @@ class SearchViewModel(
 
 
     fun showHistoryTrackList() {
-        val trackList = mutableListOf<Track>()
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                tracksHistoryInteractor.getItems()
-                    .collect { tracks ->
-                        trackList.addAll(tracks)
-                    }
-            }
+            val trackList = tracksHistoryInteractor.getItems().first()
             renderState(SearchState.History(trackList))
         }
     }
