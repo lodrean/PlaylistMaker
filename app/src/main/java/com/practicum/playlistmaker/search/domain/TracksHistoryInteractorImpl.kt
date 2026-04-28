@@ -13,7 +13,7 @@ class TracksHistoryInteractorImpl(private val repository: TracksHistoryRepositor
         repository.clearHistory()
     }
 
-    override fun addTrackToHistory(track: Track) {
+    override suspend fun addTrackToHistory(track: Track) {
         repository.addTrackToHistory(track)
     }
 

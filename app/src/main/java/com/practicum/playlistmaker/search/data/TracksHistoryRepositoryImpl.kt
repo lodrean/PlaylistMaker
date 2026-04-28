@@ -46,21 +46,16 @@ class TracksHistoryRepositoryImpl(
         prefs.edit().clear().apply()
     }
 
-    override fun addTrackToHistory(track: Track) {
-        val tracklist = mutableListOf<Track>()
-        GlobalScope.launch {
-            withContext(Dispatchers.IO) {
-                getItems()
-                    .collect { tracks ->
-                        tracklist.addAll(tracks)
-                        if (track in tracklist) {
-                            tracklist.remove(track)
-                        }
-                    }
+    override suspend fun addTrackToHistory(track: Track) {
+        val tracklist = withContext(Dispatchers.IO) {
+            val tracks = getItemsFromCache().toMutableList()
+            if (track in tracks) {
+                tracks.remove(track)
             }
-            tracklist.add(0, track)
-            saveTracklist(prefs, tracklist)
+            tracks.add(0, track)
+            tracks
         }
+        saveTracklist(prefs, tracklist)
     }
 
 
