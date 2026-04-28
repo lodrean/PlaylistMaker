@@ -158,16 +158,9 @@ class PlayListRepositoryImpl(
 
         withContext(Dispatchers.IO) {
             val playlist = getPlaylist(playlistId)
-            appDatabase.playlistDao().updatePlaylist(
-                PlaylistEntity(
-                    playlist.playlistId.toInt(),
-                    playlist.playlistName,
-                    playlist.description,
-                    playlist.imageUri,
-                    playlist.idList.toList().remove(trackId).toString(),
-                    playlist.idList.size-1
-                )
-            )
+            val updatedIdList = playlist.idList.toMutableList().apply { remove(trackId) }
+            val playlistDto = PlaylistDto().map(playlist.copy(idList = updatedIdList, tracksCount = updatedIdList.size))
+            appDatabase.playlistDao().updatePlaylist(playlistDbConvertor.map(playlistDto))
             checkTrackInPlaylists(trackId)
         }
     }

@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.playlist.ui
 
 import android.app.Application
-import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,8 +15,6 @@ import com.practicum.playlistmaker.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Locale
-
 class PlaylistViewModel(
     application: Application,
     private val playlistInteractor: PlaylistInteractor,
@@ -61,7 +58,7 @@ class PlaylistViewModel(
         for (track in trackList) {
             duration += track.trackTime.toLong()
         }
-        return SimpleDateFormat("mm", Locale.getDefault()).format(duration).toInt()
+        return (duration / 60000).toInt()
     }
 
     fun deleteTrack(trackId: String) {
