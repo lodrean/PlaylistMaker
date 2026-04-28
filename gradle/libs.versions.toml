@@ -17,6 +17,10 @@ koin = "3.3.0"
 kotlinxSerialization = "1.6.0"
 material = "1.11.0"
 retrofit = "2.9.0"
+coroutines = "1.7.2"
+turbine = "1.0.0"
+archCore = "2.2.0"
+mockito = "5.11.0"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
@@ -39,6 +43,10 @@ retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-
 # Test libraries
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxTestEspresso" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
